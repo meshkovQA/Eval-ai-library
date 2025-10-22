@@ -34,7 +34,6 @@ class TaskSuccessRateMetric(ConversationalMetricPattern):
     """
 
     name = "taskSuccessRateMetric"
-    template_cls = None
 
     def __init__(
         self,

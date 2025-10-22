@@ -123,7 +123,6 @@ class ConversationalMetricPattern:
     Used for metrics like RoleAdherence, DialogueCoherence, etc.
     """
     name: str
-    template_cls: Type
 
     def __init__(self, model: str, threshold: float, verbose: bool = True):
         self.model = model

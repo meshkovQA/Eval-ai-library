@@ -2,11 +2,8 @@
 from __future__ import annotations
 from pathlib import Path
 from typing import List
-
 from langchain_core.documents import Document
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-
-# LangChain loaders (оставляем существующие)
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_community.document_loaders import Docx2txtLoader
 from langchain_community.document_loaders import TextLoader
@@ -29,11 +26,16 @@ from PIL import Image
 import io as _io
 import docx  # python-docx
 import mammoth
-import textract
-
 import io
 import json
 import zipfile
+
+try:
+    import textract
+    HAS_TEXTRACT = True
+except ImportError:
+    HAS_TEXTRACT = False
+    textract = None
 
 # ---------------------------
 # Helper functions
@@ -261,10 +263,9 @@ def _docx_to_text_zipxml(p: Path) -> str:
                 with z.open("word/document.xml") as f:
                     root = ET.parse(f).getroot()
                     for el in root.iter():
-                        tag = el.tag.rsplit("}", 1)[-1]  # убрать namespace
+                        tag = el.tag.rsplit("}", 1)[-1]
                         if tag == "t" and el.text and el.text.strip():
                             texts.append(el.text.strip())
-            # заголовки/футеры тоже могут содержать текст
             for name in z.namelist():
                 if name.startswith("word/header") and name.endswith(".xml"):
                     with z.open(name) as f:
@@ -286,7 +287,8 @@ def _docx_to_text_zipxml(p: Path) -> str:
 
 
 def _doc_to_text_textract(p: Path) -> str:
-    """Для старого .doc. Работает, если установлен textract и системные бинарники (antiword/catdoc)."""
+    if not HAS_TEXTRACT:
+        return ""
     try:
         return textract.process(str(p)).decode("utf-8", errors="ignore")
     except Exception:

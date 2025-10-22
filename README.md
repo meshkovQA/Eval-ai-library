@@ -3,27 +3,28 @@
 [![Python Version](https://img.shields.io/badge/python-3.9%2B-blue)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Comprehensive AI Model Evaluation Framework with support for multiple LLM providers and a wide range of evaluation metrics for RAG systems and AI agents.
+Comprehensive AI Model Evaluation Framework with advanced techniques including **Probability-Weighted Scoring** and **Auto Chain-of-Thought**. Support for multiple LLM providers and 15+ evaluation metrics for RAG systems and AI agents.
 
 ## Features
 
-- 🎯 **Multiple Evaluation Metrics**: 15+ built-in metrics for RAG and AI agents
+- 🎯 **15+ Evaluation Metrics**: RAG metrics and agent-specific evaluations
+- 🧠 **G-Eval Implementation**: State-of-the-art evaluation with probability-weighted scoring
+- 🔗 **Chain-of-Thought**: Automatic generation of evaluation steps from criteria
 - 🤖 **Multi-Provider Support**: OpenAI, Azure OpenAI, Google Gemini, Anthropic Claude, Ollama
 - 📊 **RAG Metrics**: Answer relevancy, faithfulness, contextual precision/recall, and more
 - 🔧 **Agent Metrics**: Tool correctness, task success rate, role adherence, knowledge retention
-- 🎨 **Custom Metrics**: Easy-to-extend framework for creating custom evaluation metrics
+- 🎨 **Custom Metrics**: Advanced custom evaluation with CoT and probability weighting
 - 📦 **Data Generation**: Built-in test case generator from documents
 - ⚡ **Async Support**: Full async/await support for efficient evaluation
 - 💰 **Cost Tracking**: Automatic cost calculation for LLM API calls
+- 📝 **Detailed Logging**: Comprehensive evaluation logs for transparency
 
 ## Installation
-
 ```bash
 pip install eval-ai-library
 ```
 
 ### Development Installation
-
 ```bash
 git clone https://github.com/yourusername/eval-ai-library.git
 cd eval-ai-library
@@ -33,7 +34,6 @@ pip install -e ".[dev]"
 ## Quick Start
 
 ### Basic RAG Evaluation
-
 ```python
 import asyncio
 from eval_lib import (
@@ -54,8 +54,16 @@ async def main():
     
     # Define metrics
     metrics = [
-        AnswerRelevancyMetric(model="gpt-4o-mini", threshold=0.7),
-        FaithfulnessMetric(model="gpt-4o-mini", threshold=0.8)
+        AnswerRelevancyMetric(
+            model="gpt-4o-mini",
+            threshold=0.7,
+            temperature=0.5  # Softmax temperature for score aggregation
+        ),
+        FaithfulnessMetric(
+            model="gpt-4o-mini",
+            threshold=0.8,
+            temperature=0.5
+        )
     ]
     
     # Evaluate
@@ -64,18 +72,91 @@ async def main():
         metrics=metrics
     )
     
-    # Print results
+    # Print results with detailed logs
     for _, test_results in results:
         for result in test_results:
             print(f"Success: {result.success}")
             for metric in result.metrics_data:
-                print(f"{metric.name}: {metric.score:.2f} (threshold: {metric.threshold})")
+                print(f"{metric.name}: {metric.score:.2f}")
+                print(f"Reason: {metric.reason}")
+                print(f"Cost: ${metric.evaluation_cost:.6f}")
+                # Access detailed evaluation log
+                if hasattr(metric, 'evaluation_log'):
+                    print(f"Log: {metric.evaluation_log}")
 
 asyncio.run(main())
 ```
 
-### Agent Evaluation
+### G-Eval with Probability-Weighted Scoring
 
+G-Eval implements the state-of-the-art evaluation method from the paper ["G-Eval: NLG Evaluation using GPT-4 with Better Human Alignment"](https://arxiv.org/abs/2303.16634). It uses **probability-weighted scoring** (score = Σ p(si) × si) for fine-grained, continuous evaluation scores.
+```python
+from eval_lib import GEval, EvalTestCase
+
+async def evaluate_with_geval():
+    test_case = EvalTestCase(
+        input="Explain quantum computing to a 10-year-old",
+        actual_output="Quantum computers are like super-powerful regular computers that use special tiny particles to solve really hard problems much faster.",
+        expected_output="A simple explanation using analogies suitable for children"
+    )
+    
+    # G-Eval with auto chain-of-thought
+    metric = GEval(
+        model="gpt-4o",  # Works best with GPT-4
+        threshold=70.0,  # Score range: 0-100
+        name="Clarity & Simplicity",
+        criteria="Evaluate how clear and age-appropriate the explanation is for a 10-year-old child",
+        # evaluation_steps is auto-generated from criteria if not provided
+        n_samples=20,  # Number of samples for probability estimation (default: 20)
+        sampling_temperature=2.0  # High temperature for diverse sampling (default: 2.0)
+    )
+    
+    result = await metric.evaluate(test_case)
+    
+    print(f"Score: {result['score']:.2f}/100")  # Fine-grained score like 73.45
+    print(f"Success: {result['success']}")
+    print(f"Reason: {result['reason']}")
+    print(f"Sampled scores: {result['metadata']['sampled_scores']}")  # See all 20 samples
+    print(f"Score distribution: {result['evaluation_log']['score_distribution']}")
+
+asyncio.run(evaluate_with_geval())
+```
+
+### Custom Evaluation with Advanced Features
+
+The CustomEvalMetric now includes **Chain-of-Thought** and **Probability-Weighted Scoring** from G-Eval for maximum accuracy:
+```python
+from eval_lib import CustomEvalMetric
+
+async def custom_evaluation():
+    test_case = EvalTestCase(
+        input="How do I reset my password?",
+        actual_output="To reset your password, click 'Forgot Password' on the login page, enter your email, and follow the link sent to your inbox.",
+        expected_output="Clear step-by-step instructions"
+    )
+    
+    metric = CustomEvalMetric(
+        model="gpt-4o",
+        threshold=75.0,
+        name="HelpfulnessScore",
+        criteria="Evaluate if the response provides clear, actionable steps that directly answer the user's question"
+        # Auto-generates evaluation steps using CoT
+        # Auto-applies probability-weighted scoring (20 samples)
+    )
+    
+    result = await metric.evaluate(test_case)
+    
+    # Access detailed evaluation log
+    log = result['evaluation_log']
+    print(f"Auto-generated steps: {log['evaluation_steps']}")
+    print(f"Sampled scores: {log['sampled_scores']}")
+    print(f"Score distribution: {log['score_distribution']}")
+    print(f"Final score: {log['final_score']:.2f}")
+
+asyncio.run(custom_evaluation())
+```
+
+### Agent Evaluation
 ```python
 from eval_lib import (
     evaluate,
@@ -94,7 +175,11 @@ async def evaluate_agent():
     
     metrics = [
         ToolCorrectnessMetric(model="gpt-4o-mini", threshold=0.8),
-        TaskSuccessRateMetric(model="gpt-4o-mini", threshold=0.7)
+        TaskSuccessRateMetric(
+            model="gpt-4o-mini",
+            threshold=0.7,
+            temperature=1.1  # Controls score aggregation strictness
+        )
     ]
     
     results = await evaluate([test_case], metrics)
@@ -104,18 +189,18 @@ asyncio.run(evaluate_agent())
 ```
 
 ### Conversational Evaluation
-
 ```python
 from eval_lib import (
     evaluate_conversations,
     ConversationalEvalTestCase,
     EvalTestCase,
-    RoleAdherenceMetric
+    RoleAdherenceMetric,
+    KnowledgeRetentionMetric
 )
 
 async def evaluate_conversation():
     conversation = ConversationalEvalTestCase(
-        chatbot_role="You are a helpful customer support assistant.",
+        chatbot_role="You are a helpful customer support assistant. Be professional and empathetic.",
         turns=[
             EvalTestCase(
                 input="I need help with my order",
@@ -128,10 +213,30 @@ async def evaluate_conversation():
         ]
     )
     
-    metric = RoleAdherenceMetric(model="gpt-4o-mini", threshold=0.8)
-    metric.chatbot_role = conversation.chatbot_role
+    metrics = [
+        RoleAdherenceMetric(
+            model="gpt-4o-mini",
+            threshold=0.8,
+            temperature=0.5  # Softmax temperature for verdict aggregation
+        ),
+        KnowledgeRetentionMetric(
+            model="gpt-4o-mini",
+            threshold=0.7,
+            temperature=0.5
+        )
+    ]
     
-    results = await evaluate_conversations([conversation], [metric])
+    # Set chatbot role for role adherence
+    metrics[0].chatbot_role = conversation.chatbot_role
+    
+    results = await evaluate_conversations([conversation], metrics)
+    
+    # Access detailed logs
+    for result in results:
+        print(f"Dialogue: {result.evaluation_log['dialogue']}")
+        print(f"Verdicts: {result.evaluation_log['verdicts']}")
+        print(f"Score: {result.score}")
+    
     return results
 
 asyncio.run(evaluate_conversation())
@@ -141,40 +246,237 @@ asyncio.run(evaluate_conversation())
 
 ### RAG Metrics
 
-- **AnswerRelevancyMetric**: Measures how relevant the answer is to the question
-- **AnswerPrecisionMetric**: Evaluates precision of the answer
-- **FaithfulnessMetric**: Checks if the answer is faithful to the context
-- **ContextualRelevancyMetric**: Measures relevance of retrieved context
-- **ContextualPrecisionMetric**: Evaluates precision of context retrieval
-- **ContextualRecallMetric**: Measures recall of relevant context
-- **BiasMetric**: Detects bias in responses
-- **ToxicityMetric**: Identifies toxic content
-- **RestrictedRefusalMetric**: Checks appropriate refusals
-
-### Agent Metrics
-
-- **ToolCorrectnessMetric**: Validates correct tool usage
-- **TaskSuccessRateMetric**: Measures task completion success
-- **RoleAdherenceMetric**: Evaluates adherence to assigned role
-- **KnowledgeRetentionMetric**: Checks information retention across conversation
-
-### Custom Metrics
-
+#### AnswerRelevancyMetric
+Measures how relevant the answer is to the question using multi-step evaluation:
+1. Infers user intent
+2. Extracts atomic statements from answer
+3. Generates verdicts (fully/mostly/partial/minor/none) for each statement
+4. Aggregates using softmax
 ```python
-from eval_lib import CustomEvalMetric
+metric = AnswerRelevancyMetric(
+    model="gpt-4o-mini",
+    threshold=0.7,
+    temperature=0.5  # Controls aggregation strictness
+)
+```
 
-metric = CustomEvalMetric(
-    name="CustomQuality",
-    evaluation_params=["clarity", "completeness", "accuracy"],
+#### FaithfulnessMetric
+Checks if the answer is faithful to the provided context:
+1. Extracts factual claims from answer
+2. Verifies each claim against context (fully/mostly/partial/minor/none)
+3. Aggregates faithfulness score
+```python
+metric = FaithfulnessMetric(
+    model="gpt-4o-mini",
+    threshold=0.8,
+    temperature=0.5
+)
+```
+
+#### ContextualRelevancyMetric
+Evaluates relevance of retrieved context to the question.
+```python
+metric = ContextualRelevancyMetric(
+    model="gpt-4o-mini",
+    threshold=0.7,
+    temperature=0.5
+)
+```
+
+#### ContextualPrecisionMetric
+Measures precision of context retrieval - are the retrieved chunks relevant?
+```python
+metric = ContextualPrecisionMetric(
     model="gpt-4o-mini",
     threshold=0.7
 )
 ```
 
+#### ContextualRecallMetric
+Measures recall of relevant context - was all relevant information retrieved?
+```python
+metric = ContextualRecallMetric(
+    model="gpt-4o-mini",
+    threshold=0.7
+)
+```
+
+#### BiasMetric
+Detects bias and prejudice in AI-generated output. Score range: 0 (strong bias) to 100 (no bias).
+```python
+metric = BiasMetric(
+    model="gpt-4o-mini",
+    threshold=70.0  # Score range: 0-100
+)
+```
+
+#### ToxicityMetric
+Identifies toxic content in responses. Score range: 0 (highly toxic) to 100 (no toxicity).
+```python
+metric = ToxicityMetric(
+    model="gpt-4o-mini",
+    threshold=80.0  # Score range: 0-100
+)
+```
+
+#### RestrictedRefusalMetric
+Checks if the AI appropriately refuses harmful or out-of-scope requests.
+```python
+metric = RestrictedRefusalMetric(
+    model="gpt-4o-mini",
+    threshold=0.7
+)
+```
+
+### Agent Metrics
+
+#### ToolCorrectnessMetric
+Validates that the agent calls the correct tools in the right sequence.
+```python
+metric = ToolCorrectnessMetric(
+    model="gpt-4o-mini",
+    threshold=0.8
+)
+```
+
+#### TaskSuccessRateMetric
+Measures task completion success across conversation:
+1. Infers user's goal
+2. Generates success criteria
+3. Evaluates each criterion (fully/mostly/partial/minor/none)
+4. Aggregates into final score
+```python
+metric = TaskSuccessRateMetric(
+    model="gpt-4o-mini",
+    threshold=0.7,
+    temperature=1.1  # Higher = more lenient aggregation
+)
+```
+
+#### RoleAdherenceMetric
+Evaluates how well the agent maintains its assigned role:
+1. Compares each response against role description
+2. Generates adherence verdicts (fully/mostly/partial/minor/none)
+3. Aggregates across all turns
+```python
+metric = RoleAdherenceMetric(
+    model="gpt-4o-mini",
+    threshold=0.8,
+    temperature=0.5
+)
+# Don't forget to set: metric.chatbot_role = "Your role description"
+```
+
+#### KnowledgeRetentionMetric
+Checks if the agent remembers and recalls information from earlier in the conversation:
+1. Analyzes conversation for retention quality
+2. Generates retention verdicts (fully/mostly/partial/minor/none)
+3. Aggregates into retention score
+```python
+metric = KnowledgeRetentionMetric(
+    model="gpt-4o-mini",
+    threshold=0.7,
+    temperature=0.5
+)
+```
+
+### Custom & Advanced Metrics
+
+#### GEval
+State-of-the-art evaluation using probability-weighted scoring from the [G-Eval paper](https://arxiv.org/abs/2303.16634):
+- **Auto Chain-of-Thought**: Automatically generates evaluation steps from criteria
+- **Probability-Weighted Scoring**: score = Σ p(si) × si using 20 samples
+- **Fine-Grained Scores**: Continuous scores (e.g., 73.45) instead of integers
+```python
+metric = GEval(
+    model="gpt-4o",  # Best with GPT-4 for probability estimation
+    threshold=75.0,
+    name="Coherence",
+    criteria="Evaluate logical flow and structure of the response",
+    evaluation_steps=None,  # Auto-generated if not provided
+    n_samples=20,  # Number of samples for probability estimation
+    sampling_temperature=2.0  # High temperature for diverse sampling
+)
+```
+
+#### CustomEvalMetric
+Enhanced custom evaluation with CoT and probability-weighted scoring:
+```python
+metric = CustomEvalMetric(
+    model="gpt-4o",
+    threshold=75.0,
+    name="QualityScore",
+    criteria="Your custom evaluation criteria"
+    # Automatically uses:
+    # - Chain-of-Thought (generates evaluation steps)
+    # - Probability-Weighted Scoring (20 samples, temp=2.0)
+)
+```
+
+## Understanding Evaluation Results
+
+### Score Ranges
+
+- **RAG Metrics** (Answer Relevancy, Faithfulness, etc.): 0.0 - 1.0
+- **Safety Metrics** (Bias, Toxicity): 0 - 100
+- **G-Eval & Custom Metrics**: 0 - 100
+- **Agent Metrics** (Task Success, Role Adherence, etc.): 0.0 - 1.0
+
+### Evaluation Log
+
+All metrics provide detailed `evaluation_log` for transparency:
+```python
+result = await metric.evaluate(test_case)
+
+log = result['evaluation_log']
+
+# Common fields across all metrics:
+print(log['input_question'])          # Original input
+print(log['actual_output'])           # AI's response
+print(log['final_score'])             # Numeric score
+print(log['success'])                 # Boolean: score >= threshold
+print(log['final_reason'])            # Explanation
+print(log['threshold'])               # Threshold used
+
+# Metric-specific fields:
+# For G-Eval:
+print(log['evaluation_steps'])        # Auto-generated CoT steps
+print(log['sampled_scores'])          # All 20 samples
+print(log['score_distribution'])      # Frequency of each score
+
+# For Faithfulness:
+print(log['statements'])              # Extracted claims
+print(log['verdicts'])                # Per-statement verdicts
+
+# For Answer Relevancy:
+print(log['user_intent'])             # Inferred intent
+print(log['statements'])              # Extracted statements
+print(log['verdicts'])                # Relevance verdicts
+
+# For Agent Metrics:
+print(log['dialogue'])                # Full conversation
+print(log['verdicts'])                # Per-turn evaluations
+print(log['verdict_weights'])         # Numeric weights
+```
+
+## Temperature Parameter
+
+Many metrics use a **temperature** parameter for score aggregation (via softmax):
+
+- **Lower (0.1-0.3)**: **Strict** - high scores dominate, penalizes any low scores heavily
+- **Medium (0.4-0.6)**: **Balanced** - default behavior
+- **Higher (0.8-1.5)**: **Lenient** - closer to arithmetic mean, more forgiving
+```python
+# Strict evaluation - one bad verdict significantly lowers score
+metric = AnswerRelevancyMetric(model="gpt-4o-mini", threshold=0.7, temperature=0.3)
+
+# Lenient evaluation - focuses on overall trend
+metric = TaskSuccessRateMetric(model="gpt-4o-mini", threshold=0.7, temperature=1.2)
+```
+
 ## LLM Provider Configuration
 
 ### OpenAI
-
 ```python
 import os
 os.environ["OPENAI_API_KEY"] = "your-api-key"
@@ -188,7 +490,6 @@ response, cost = await chat_complete(
 ```
 
 ### Azure OpenAI
-
 ```python
 os.environ["AZURE_OPENAI_API_KEY"] = "your-api-key"
 os.environ["AZURE_OPENAI_ENDPOINT"] = "https://your-endpoint.openai.azure.com/"
@@ -201,7 +502,6 @@ response, cost = await chat_complete(
 ```
 
 ### Google Gemini
-
 ```python
 os.environ["GOOGLE_API_KEY"] = "your-api-key"
 
@@ -212,7 +512,6 @@ response, cost = await chat_complete(
 ```
 
 ### Anthropic Claude
-
 ```python
 os.environ["ANTHROPIC_API_KEY"] = "your-api-key"
 
@@ -223,7 +522,6 @@ response, cost = await chat_complete(
 ```
 
 ### Ollama (Local)
-
 ```python
 os.environ["OLLAMA_API_KEY"] = "ollama"  # Can be any value
 os.environ["OLLAMA_API_BASE_URL"] = "http://localhost:11434/v1"
@@ -236,91 +534,55 @@ response, cost = await chat_complete(
 
 ## Test Data Generation
 
-The library includes a powerful test data generator that can create realistic test cases either from scratch or based on your documents. This is perfect for quickly building comprehensive test suites for your AI agents.
+The library includes a powerful test data generator that can create realistic test cases either from scratch or based on your documents.
 
 ### Supported Document Formats
 
-The DocumentLoader supports a wide range of file formats:
 - **Documents**: PDF, DOCX, DOC, TXT, RTF, ODT
 - **Structured Data**: CSV, TSV, XLSX, JSON, YAML, XML
 - **Web**: HTML, Markdown
 - **Presentations**: PPTX
 - **Images**: PNG, JPG, JPEG (with OCR support)
 
-### Method 1: Generate from Scratch
-
-Create test cases without any reference documents - useful for testing general capabilities:
+### Generate from Scratch
 ```python
 from eval_lib.datagenerator.datagenerator import DatasetGenerator
 
 generator = DatasetGenerator(
     model="gpt-4o-mini",
-    agent_description="A customer support chatbot that helps users with product inquiries",
+    agent_description="A customer support chatbot",
     input_format="User question or request",
-    expected_output_format="Helpful and concise response",
-    test_types=["functionality", "edge_cases", "error_handling"],
+    expected_output_format="Helpful response",
+    test_types=["functionality", "edge_cases"],
     max_rows=20,
     question_length="mixed",  # "short", "long", or "mixed"
     question_openness="mixed",  # "open", "closed", or "mixed"
-    trap_density=0.1,  # 10% trap questions (0.0 to 1.0)
+    trap_density=0.1,  # 10% trap questions
     language="en"
 )
 
-# Generate test cases
 dataset = await generator.generate_from_scratch()
-
-# Convert to EvalTestCase format
-from eval_lib import EvalTestCase
-test_cases = [
-    EvalTestCase(
-        input=item["input"],
-        expected_output=item["expected_output"]
-    )
-    for item in dataset
-]
 ```
 
-### Method 2: Generate from Documents
-
-Generate test cases based on your documentation, knowledge base, or any text documents:
+### Generate from Documents
 ```python
-from eval_lib.datagenerator.datagenerator import DatasetGenerator
-
 generator = DatasetGenerator(
     model="gpt-4o-mini",
-    agent_description="A technical support agent with access to product documentation",
-    input_format="Technical question from user",
-    expected_output_format="Detailed answer with references to documentation",
-    test_types=["retrieval", "accuracy", "completeness"],
-    
-    # Generation parameters
+    agent_description="Technical support agent",
+    input_format="Technical question",
+    expected_output_format="Detailed answer with references",
+    test_types=["retrieval", "accuracy"],
     max_rows=50,
-    question_length="mixed",
-    question_openness="open",
-    trap_density=0.15,
-    language="en",
-    
-    # Document processing parameters
-    chunk_size=1024,  # Size of text chunks
-    chunk_overlap=100,  # Overlap between chunks
-    max_chunks=30,  # Maximum chunks to process
-    relevance_margin=1.5,  # Multiplier for chunk selection
-    
-    # Advanced parameters
-    temperature=0.3,  # LLM temperature for generation
-    embedding_model="openai:text-embedding-3-small"  # For chunk ranking
+    chunk_size=1024,
+    chunk_overlap=100,
+    max_chunks=30
 )
 
-# Generate from your documents
-file_paths = [
-    "docs/user_guide.pdf",
-    "docs/api_reference.docx",
-    "docs/faq.md"
-]
-
+file_paths = ["docs/user_guide.pdf", "docs/faq.md"]
 dataset = await generator.generate_from_documents(file_paths)
 
 # Convert to test cases
+from eval_lib import EvalTestCase
 test_cases = [
     EvalTestCase(
         input=item["input"],
@@ -331,139 +593,98 @@ test_cases = [
 ]
 ```
 
-### Generator Parameters Explained
+## Best Practices
 
-#### Required Parameters:
-- **model** (`str`): LLM model for generation (e.g., "gpt-4o-mini", "claude-sonnet-4-0")
-- **agent_description** (`str`): Description of what your agent does
-- **input_format** (`str`): Expected format of user inputs
-- **expected_output_format** (`str`): Expected format of agent outputs
-- **test_types** (`List[str]`): Types of tests to generate (e.g., ["accuracy", "edge_cases"])
+### 1. Choose the Right Model
 
-#### Generation Control:
-- **max_rows** (`int`, default=10): Maximum number of test cases to generate
-- **question_length** (`str`, default="mixed"): 
-  - `"short"`: Concise, direct questions (1-2 sentences)
-  - `"long"`: Detailed scenarios with context (3+ sentences)
-  - `"mixed"`: Variety of lengths
-  
-- **question_openness** (`str`, default="mixed"):
-  - `"open"`: Open-ended questions requiring explanations
-  - `"closed"`: Specific questions with definitive answers
-  - `"mixed"`: Mix of both types
-  
-- **trap_density** (`float`, default=0.1): Proportion of "trap" questions (0.0-1.0)
-  - Trap questions test if agent properly handles missing information or corrections
-  - 0.0 = no traps, 1.0 = all traps
-  
-- **language** (`str`, default="en"): Language for generated test cases
-- **temperature** (`float`, default=0.3): LLM temperature for generation
+- **G-Eval**: Use GPT-4 for best results with probability-weighted scoring
+- **Other Metrics**: GPT-4o-mini is cost-effective and sufficient
+- **Custom Eval**: Use GPT-4 for complex criteria, GPT-4o-mini for simple ones
 
-#### Document Processing (for generate_from_documents):
-- **chunk_size** (`int`, default=1024): Size of document chunks in characters
-- **chunk_overlap** (`int`, default=100): Overlap between consecutive chunks
-- **max_chunks** (`int`, default=30): Maximum number of chunks to process
-- **relevance_margin** (`float`, default=1.5): Multiplier for selecting relevant chunks
-- **embedding_model** (`str`): Model for ranking chunk relevance
-
-### Advanced Usage Examples
-
-#### Example 1: High-Quality Open Questions from Documents
+### 2. Set Appropriate Thresholds
 ```python
-generator = DatasetGenerator(
-    model="gpt-4o",  # Better model for quality
-    agent_description="Expert medical advisor with access to research papers",
-    input_format="Medical question from healthcare professional",
-    expected_output_format="Evidence-based answer with citations",
-    test_types=["medical_accuracy", "clinical_relevance"],
-    max_rows=30,
-    question_length="long",  # Detailed clinical scenarios
-    question_openness="open",  # Complex, open-ended questions
-    trap_density=0.2,  # 20% questions test handling of out-of-scope queries
-    chunk_size=2048,  # Larger chunks for medical context
-    relevance_margin=2.0  # More selective chunk filtering
-)
+# Safety metrics - high bar
+BiasMetric(threshold=80.0)
+ToxicityMetric(threshold=85.0)
 
-dataset = await generator.generate_from_documents(["research_papers.pdf"])
+# Quality metrics - moderate bar
+AnswerRelevancyMetric(threshold=0.7)
+FaithfulnessMetric(threshold=0.75)
+
+# Agent metrics - context-dependent
+TaskSuccessRateMetric(threshold=0.7)  # Most tasks
+RoleAdherenceMetric(threshold=0.9)  # Strict role requirements
 ```
 
-#### Example 2: Quick Functional Tests from Scratch
+### 3. Use Temperature Wisely
 ```python
-generator = DatasetGenerator(
-    model="gpt-4o-mini",  # Fast and cost-effective
-    agent_description="Simple calculator bot",
-    input_format="Math expression or question",
-    expected_output_format="Numerical answer",
-    test_types=["basic_operations", "edge_cases"],
-    max_rows=100,
-    question_length="short",  # Brief math queries
-    question_openness="closed",  # Specific calculations
-    trap_density=0.0  # No traps, just functional tests
-)
+# Strict evaluation - critical applications
+metric = FaithfulnessMetric(temperature=0.3)
 
-dataset = await generator.generate_from_scratch()
+# Balanced - general use (default)
+metric = AnswerRelevancyMetric(temperature=0.5)
+
+# Lenient - exploratory evaluation
+metric = TaskSuccessRateMetric(temperature=1.2)
 ```
 
-#### Example 3: Multi-Language Support
+### 4. Leverage Evaluation Logs
 ```python
-generator = DatasetGenerator(
-    model="gpt-4o-mini",
-    agent_description="Customer support chatbot for e-commerce",
-    input_format="Customer inquiry",
-    expected_output_format="Helpful response",
-    test_types=["order_status", "returns", "product_info"],
-    max_rows=25,
-    language="ru",  # Generate in Russian
-    question_length="mixed",
-    question_openness="mixed"
-)
+result = await metric.evaluate(test_case)
 
-dataset = await generator.generate_from_scratch()
+# Always check the log for insights
+log = result['evaluation_log']
+
+# For debugging failures:
+if not result['success']:
+    print(f"Failed because: {log['final_reason']}")
+    print(f"Verdicts: {log.get('verdicts', [])}")
+    print(f"Steps taken: {log.get('evaluation_steps', [])}")
 ```
 
-### Tips for Best Results
-
-1. **Be Specific in Descriptions**: Clear agent_description helps generate relevant test cases
-2. **Use Trap Questions Wisely**: 10-20% trap_density is usually sufficient
-3. **Start Small**: Generate 10-20 cases first, then scale up
-4. **Mix Question Types**: Use "mixed" settings for comprehensive coverage
-5. **Chunk Size Matters**: Larger chunks (1024-2048) for technical docs, smaller for FAQs
-6. **Review Generated Data**: Always review and refine generated test cases
-7. **Cost Awareness**: Larger documents and more test cases = higher API costs
-
-
-## Advanced Usage
-
-### Custom Evaluation with G-Eval
-
+### 5. Batch Evaluation for Efficiency
 ```python
-from eval_lib import GEval
-
-metric = GEval(
-    name="Coherence",
-    criteria="Evaluate the coherence and logical flow of the response",
-    evaluation_steps=[
-        "Check if the response has a clear structure",
-        "Verify logical connections between ideas",
-        "Assess overall coherence"
-    ],
-    model="gpt-4o-mini",
-    threshold=0.7
+# Evaluate multiple test cases at once
+results = await evaluate(
+    test_cases=[test_case1, test_case2, test_case3],
+    metrics=[metric1, metric2, metric3]
 )
+
+# Calculate aggregate statistics
+total_cost = sum(
+    metric.evaluation_cost or 0
+    for _, test_results in results
+    for result in test_results
+    for metric in result.metrics_data
+)
+
+success_rate = sum(
+    1 for _, test_results in results
+    for result in test_results
+    if result.success
+) / len(results)
+
+print(f"Total cost: ${total_cost:.4f}")
+print(f"Success rate: {success_rate:.2%}")
 ```
 
-### Cost Tracking
+## Cost Tracking
 
-All evaluation methods automatically track API costs:
-
+All evaluations automatically track API costs:
 ```python
 results = await evaluate(test_cases, metrics)
 
 for _, test_results in results:
     for result in test_results:
-        total_cost = sum(m.evaluation_cost or 0 for m in result.metrics_data)
-        print(f"Total evaluation cost: ${total_cost:.4f}")
+        for metric in result.metrics_data:
+            print(f"{metric.name}: ${metric.evaluation_cost:.6f}")
 ```
+
+**Cost Estimates** (as of 2025):
+- **G-Eval with GPT-4**: ~$0.10-0.15 per evaluation (20 samples)
+- **Custom Eval with GPT-4**: ~$0.10-0.15 per evaluation (20 samples + CoT)
+- **Standard metrics with GPT-4o-mini**: ~$0.001-0.005 per evaluation
+- **Faithfulness/Answer Relevancy**: ~$0.003-0.010 per evaluation (multiple LLM calls)
 
 ## Environment Variables
 
@@ -495,13 +716,24 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Citation
 
 If you use this library in your research, please cite:
-
 ```bibtex
 @software{eval_ai_library,
   author = {Meshkov, Aleksandr},
   title = {Eval AI Library: Comprehensive AI Model Evaluation Framework},
   year = {2025},
   url = {https://github.com/meshkovQA/Eval-ai-library.git}
+}
+```
+
+### References
+
+This library implements techniques from:
+```bibtex
+@inproceedings{liu2023geval,
+  title={G-Eval: NLG Evaluation using GPT-4 with Better Human Alignment},
+  author={Liu, Yang and Iter, Dan and Xu, Yichong and Wang, Shuohang and Xu, Ruochen and Zhu, Chenguang},
+  booktitle={Proceedings of EMNLP},
+  year={2023}
 }
 ```
 
@@ -513,4 +745,4 @@ If you use this library in your research, please cite:
 
 ## Acknowledgments
 
-This library was developed to provide a comprehensive solution for evaluating AI models across different use cases and providers.
+This library was developed to provide a comprehensive solution for evaluating AI models across different use cases and providers, with state-of-the-art techniques including G-Eval's probability-weighted scoring and automatic chain-of-thought generation.

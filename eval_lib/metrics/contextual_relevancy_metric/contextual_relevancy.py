@@ -1,5 +1,11 @@
 # contextual_relevancy_llm.py
+'''
+Contextual Relevancy Metric: Evaluates how well the retrieved context supports
+the user's question and inferred intent.
 
+Score calculation: Softmax aggregation of relevancy verdicts
+
+'''
 from typing import List, Dict, Tuple, Any
 import json
 import re
@@ -8,6 +14,7 @@ import numpy as np
 from eval_lib.testcases_schema import EvalTestCase
 from eval_lib.metric_pattern import MetricPattern
 from eval_lib.llm_client import chat_complete
+from eval_lib.utils import score_agg, extract_json_block
 
 # weights for each verdict category
 VERDICT_WEIGHTS = {
@@ -19,60 +26,17 @@ VERDICT_WEIGHTS = {
 }
 
 
-def extract_json_block(text: str) -> str:
-    """
-    Extracts the first JSON block from Markdown-like fenced code blocks.
-    """
-    match = re.search(r"```json\s*(.*?)```", text, re.DOTALL)
-    if match:
-        return match.group(1).strip()
-
-    try:
-        obj = json.loads(text)
-        return json.dumps(obj, ensure_ascii=False)
-    except Exception:
-        pass
-
-    json_match = re.search(r"({.*?})", text, re.DOTALL)
-    if json_match:
-        return json_match.group(1).strip()
-
-    return text.strip()
-
-
-def score_agg(
-        scores: List[float],
-        temperature: float = 0.5,
-        penalty: float = 0.1
-) -> float:
-    """
-    Compute a softmax-weighted aggregate of scores, then
-    apply a penalty proportional to the count of low-scoring items.
-    """
-    if not scores:
-        return 0.0
-    exp_scores = [exp(s / temperature) for s in scores]
-    total = sum(exp_scores)
-    softmax_score = sum(s * e / total for s, e in zip(scores, exp_scores))
-    # penalize if many statements have verdict ≤ minor
-    irrelevant = sum(1 for s in scores if s <= 0.3)
-    penalty_factor = max(0.0, 1 - penalty * irrelevant)
-    return round(softmax_score * penalty_factor, 4)
-
-
 class ContextualRelevancyMetric(MetricPattern):
-    """
-    Evaluates how relevant the retrieved context passages are to the user's intent.
-    1) Infer intent from the question.
-    2) For each context segment, ask the LLM to judge its relevance.
-    3) Aggregate verdicts into a final score via softmax.
-    """
-
     name = "contextualRelevancyMetric"
-    template_cls = None
 
-    def __init__(self, model: str, threshold: float = 0.6):
+    def __init__(
+            self,
+            model: str,
+            threshold: float = 0.6,
+            temperature: float = 0.5,
+    ):
         super().__init__(model=model, threshold=threshold)
+        self.temperature = temperature
 
     async def _infer_user_intent(self, question: str) -> Tuple[str, float]:
         """
@@ -127,7 +91,7 @@ class ContextualRelevancyMetric(MetricPattern):
         # compute weights list
         scores = [VERDICT_WEIGHTS.get(v["verdict"].lower(), 0.0)
                   for v in verdicts]
-        agg = score_agg(scores, temperature=0.5)
+        agg = score_agg(scores, temperature=self.temperature)
         return verdicts, round(agg, 4), cost or 0.0
 
     async def _summarize_reasons(

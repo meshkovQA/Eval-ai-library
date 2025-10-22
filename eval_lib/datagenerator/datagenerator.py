@@ -1,14 +1,14 @@
 from typing import List
-import re
-import json
 from eval_lib.llm_client import chat_complete
 from .document_loader import load_documents, chunk_documents
 import math
 from eval_lib.llm_client import get_embeddings
 import numpy as np
 from .prompts import dataset_generation_prompt, dataset_generation_from_scratch_prompt
+from eval_lib.utils import extract_json_block
 import asyncio
 import random
+import json
 
 
 async def retry_async(fn, *args, retries=4, base_delay=0.6, max_delay=6.0,
@@ -38,36 +38,6 @@ async def retry_async(fn, *args, retries=4, base_delay=0.6, max_delay=6.0,
             delay = min(max_delay, base_delay * (2 ** (attempt - 1)))
             delay += random.uniform(0, 0.4)
             await asyncio.sleep(delay)
-
-
-def _parse_json_response(raw_response: str) -> list[dict]:
-
-    # Remove leading/trailing whitespace
-    content = raw_response.strip()
-
-    # Try to extract JSON from markdown code blocks
-    json_pattern = r'```(?:json)?\s*\n?(.*?)\n?```'
-    match = re.search(json_pattern, content, re.DOTALL | re.IGNORECASE)
-
-    if match:
-        content = match.group(1).strip()
-
-    # If no markdown blocks found, try to find JSON array directly
-    if not match:
-        # Look for JSON array pattern
-        array_pattern = r'\[.*?\]'
-        match = re.search(array_pattern, content, re.DOTALL)
-        if match:
-            content = match.group(0)
-
-    try:
-        data = json.loads(content)
-        if not isinstance(data, list):
-            raise ValueError("Response is not a JSON array")
-        return data
-    except Exception as exc:
-        raise RuntimeError(
-            f"Failed to parse JSON response:\n{exc}\n\nRaw content:\n{content}")
 
 
 class DatasetGenerator:
@@ -129,7 +99,8 @@ class DatasetGenerator:
         )
 
         try:
-            data = _parse_json_response(raw)
+            raw_json = extract_json_block(raw)
+            data = json.loads(raw_json)
             assert isinstance(data, list), "not a JSON array"
             return data
         except Exception as exc:
@@ -186,7 +157,7 @@ class DatasetGenerator:
             )
 
             try:
-                chunk_data = _parse_json_response(raw)
+                chunk_data = json.loads(extract_json_block(raw))
                 assert isinstance(chunk_data, list)
                 dataset.extend(chunk_data)
             except Exception as exc:

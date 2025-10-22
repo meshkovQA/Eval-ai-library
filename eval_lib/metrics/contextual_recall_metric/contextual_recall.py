@@ -1,4 +1,10 @@
 # contextual_recall.py
+'''
+Contextual Recall Metric: Evaluates how well the retrieved context supports
+the factual claims made in the reference answer.
+Score calculation: Proportion of reference claims supported by context
+'''
+
 from typing import List, Dict, Tuple, Any
 import json
 import re
@@ -6,32 +12,11 @@ from math import exp
 from eval_lib.testcases_schema import EvalTestCase
 from eval_lib.metric_pattern import MetricPattern
 from eval_lib.llm_client import chat_complete
-
-
-def extract_json_block(text: str) -> str:
-    """
-    Extracts the first JSON block from Markdown-like fenced code blocks.
-    """
-    match = re.search(r"```json\s*(.*?)```", text, re.DOTALL)
-    if match:
-        return match.group(1).strip()
-
-    try:
-        obj = json.loads(text)
-        return json.dumps(obj, ensure_ascii=False)
-    except Exception:
-        pass
-
-    json_match = re.search(r"({.*?})", text, re.DOTALL)
-    if json_match:
-        return json_match.group(1).strip()
-
-    return text.strip()
+from eval_lib.utils import extract_json_block
 
 
 class ContextualRecallMetric(MetricPattern):
     name = "contextualRecallMetric"
-    template_cls = None
 
     def __init__(self, model: str, threshold: float = 0.7):
         super().__init__(model=model, threshold=threshold)

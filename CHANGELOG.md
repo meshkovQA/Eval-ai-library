@@ -46,10 +46,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Planned
-- Integration with popular evaluation frameworks
 - Additional metrics for specific use cases
-- Performance optimizations
-- Enhanced documentation
 - Integration tests
 - CI/CD pipeline
 

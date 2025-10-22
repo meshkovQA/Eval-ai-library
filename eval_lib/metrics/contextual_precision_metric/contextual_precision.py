@@ -1,4 +1,10 @@
 # context_precision_metric.py
+'''
+Context Precision Metric: Measures the precision of retrieved context chunks
+in relation to a reference answer.
+
+Score calculation: Weighted average of precision@k across relevant chunks
+'''
 from typing import List, Dict, Tuple, Any
 import json
 import re
@@ -6,36 +12,11 @@ from math import exp
 from eval_lib.testcases_schema import EvalTestCase
 from eval_lib.metric_pattern import MetricPattern
 from eval_lib.llm_client import chat_complete
-
-# ---------- helpers --------------------------------------------------------
-
-
-def extract_json_block(text: str) -> str:
-    """
-    Extracts the first JSON block from Markdown-like fenced code blocks.
-    """
-    match = re.search(r"```json\s*(.*?)```", text, re.DOTALL)
-    if match:
-        return match.group(1).strip()
-
-    try:
-        obj = json.loads(text)
-        return json.dumps(obj, ensure_ascii=False)
-    except Exception:
-        pass
-
-    json_match = re.search(r"({.*?})", text, re.DOTALL)
-    if json_match:
-        return json_match.group(1).strip()
-
-    return text.strip()
-
-# ---------- metric ---------------------------------------------------------
+from eval_lib.utils import extract_json_block
 
 
 class ContextualPrecisionMetric(MetricPattern):
     name = "contextPrecisionMetric"
-    template_cls = None  # we build prompts ad-hoc
 
     def __init__(self, model: str, threshold: float = 0.7, top_k: int | None = None, ):
         super().__init__(model=model, threshold=threshold)

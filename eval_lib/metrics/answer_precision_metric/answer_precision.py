@@ -1,3 +1,17 @@
+'''
+Answer Precision Metric: Evaluates how precisely a model's answer matches the expected answer 
+using multiple text similarity components and weighted aggregation.
+
+Score Components:
+- Exact Match: 1.0 if actual == expected else 0.0
+- Normalized Match: 1.0 if normalized(actual) == normalized(expected) else 0.0
+- Character Similarity: Ratio of matching characters after normalization.   
+- Token Precision: Proportion of expected tokens present in actual answer.
+- Numeric Agreement: Proportion of expected numeric values correctly represented in actual answer.
+
+
+'''
+
 from __future__ import annotations
 
 import math
@@ -163,7 +177,6 @@ class PrecisionConfig:
 
 class AnswerPrecisionMetric(MetricPattern):
     name = "answerPrecisionMetric"
-    template_cls = None
 
     def __init__(self, model: str, threshold: float = 0.8, config: Optional[PrecisionConfig] = None):
         super().__init__(model=model, threshold=threshold)

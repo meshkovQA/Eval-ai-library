@@ -1,4 +1,11 @@
 # answer_relevancy.py
+'''
+AnswerRelevancyMetric: Evaluates how well a chatbot's answer addresses the user's intent by extracting 
+factual statements from the answer and assessing their relevance to the inferred intent using an LLM.
+
+Score is based on the proportion of relevant statements, with detailed verdicts and reasoning provided.
+'''
+
 from typing import List, Dict, Any, Tuple
 import numpy as np
 import json
@@ -7,6 +14,7 @@ from math import exp
 from eval_lib.testcases_schema import EvalTestCase
 from eval_lib.metric_pattern import MetricPattern
 from eval_lib.llm_client import chat_complete
+from eval_lib.utils import score_agg, extract_json_block
 
 # Constants for verdict weights
 VERDICT_WEIGHTS = {
@@ -18,53 +26,17 @@ VERDICT_WEIGHTS = {
 }
 
 
-def extract_json_block(text: str) -> str:
-    """
-    Extracts the first JSON block from Markdown-like fenced code blocks.
-    """
-    match = re.search(r"```json\s*(.*?)```", text, re.DOTALL)
-    if match:
-        return match.group(1).strip()
-
-    try:
-        obj = json.loads(text)
-        return json.dumps(obj, ensure_ascii=False)
-    except Exception:
-        pass
-
-    json_match = re.search(r"({.*?})", text, re.DOTALL)
-    if json_match:
-        return json_match.group(1).strip()
-
-    return text.strip()
-
-
-def softmax_agg(scores: List[float], temperature: float = 0.5) -> float:
-    """
-    Computes a softmax aggregation of scores with temperature scaling.
-    This function applies the softmax formula to the input scores, allowing
-    for a temperature parameter to control the sharpness of the distribution.
-    If the scores list is empty, it returns 1.0 as a default score.
-    The temperature parameter can be adjusted to make the distribution more or
-    less sensitive to the differences in scores.
-    """
-    if not scores:
-        return 1.0
-    exp_scores = [exp(s / temperature) for s in scores]
-    total = sum(exp_scores)
-    return sum(s * e / total for s, e in zip(scores, exp_scores))
-
-
 class AnswerRelevancyMetric(MetricPattern):
     name = "answerRelevancyMetric"
-    template_cls = None  # not used, LLM + embeddings logic are combined
 
     def __init__(
         self,
         model: str,
         threshold: float = 0.6,
+        temperature: float = 0.5,
     ):
         super().__init__(model=model, threshold=threshold)
+        self.temperature = temperature
 
     async def _infer_user_intent(self, question: str) -> str:
         prompt = (
@@ -182,7 +154,8 @@ class AnswerRelevancyMetric(MetricPattern):
         llm_cost += cost
 
         weights = [VERDICT_WEIGHTS[v["verdict"]] for v in verdicts]
-        verdict_score = round(softmax_agg(weights, temperature=0.5), 4)
+        verdict_score = round(
+            score_agg(weights, temperature=self.temperature), 4)
 
         # Step 4: Summarize the verdict reasons
         summary_reason, cost = await self._summarize_reasons_via_llm(verdicts)

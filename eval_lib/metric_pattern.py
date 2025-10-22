@@ -12,15 +12,10 @@ class MetricPattern:
     This class is designed to be subclassed for specific metrics.
     """
     name: str               # name of the metric
-    template_cls: Type      # used to generate the prompt
 
     def __init__(self, model: str, threshold: float):
         self.model = model  # OpenAI model name
         self.threshold = threshold
-        if self.template_cls:  # if a template class is provided
-            self.template = self.template_cls()
-        else:
-            self.template = None  # instance of the template class
 
     async def evaluate(
         self,

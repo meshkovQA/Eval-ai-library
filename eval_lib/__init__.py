@@ -10,6 +10,7 @@ __author__ = "Aleksandr Meskov"
 
 # Core evaluation functions
 from eval_lib.evaluate import evaluate, evaluate_conversations
+from eval_lib.utils import score_agg, softmax_agg
 
 # Test case schemas
 from eval_lib.testcases_schema import (
@@ -114,4 +115,8 @@ __all__ = [
     # Data Generation
     "DataGenerator",
     "DocumentLoader",
+
+    # Utils
+    "score_agg",
+    "extract_json_block",
 ]

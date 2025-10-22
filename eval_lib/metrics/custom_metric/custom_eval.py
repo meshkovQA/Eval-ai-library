@@ -1,91 +1,306 @@
 # custom_eval.py
-from typing import Dict, Any, Tuple
+"""
+Custom Evaluation Metric with Chain-of-Thought and Probability-Weighted Scoring
+Uses advanced techniques from G-Eval for improved accuracy
+"""
 import json
 import re
+from typing import Dict, Any, List, Tuple
+from collections import Counter
 from eval_lib.metric_pattern import MetricPattern
 from eval_lib.testcases_schema import EvalTestCase
 from eval_lib.llm_client import chat_complete
-
-
-def extract_json_block(text: str) -> str:
-    """
-    Extracts the first JSON block from Markdown-like fenced code blocks.
-    """
-    match = re.search(r"```json\s*(.*?)```", text, re.DOTALL)
-    if match:
-        return match.group(1).strip()
-
-    try:
-        obj = json.loads(text)
-        return json.dumps(obj, ensure_ascii=False)
-    except Exception:
-        pass
-
-    json_match = re.search(r"({.*?})", text, re.DOTALL)
-    if json_match:
-        return json_match.group(1).strip()
-
-    return text.strip()
+from eval_lib.utils import extract_json_block
 
 
 class CustomEvalMetric(MetricPattern):
-    template_cls = None
+    name = "customEval"
 
     def __init__(self, model: str, threshold: float, name: str, criteria: str):
         super().__init__(model=model, threshold=threshold)
         self.custom_name = name
         self.criteria = criteria
 
-    async def _run_eval_prompt(self, test_case: EvalTestCase) -> Tuple[float, str, float]:
-        prompt = (
-            "You are a strict evaluator. Use the following evaluation criteria to judge the quality of the model's answer.\n\n"
-            f"Criteria:\n{self.criteria}\n\n"
-            f"User Input:\n{test_case.input}\n\n"
-            f"Model Output:\n{test_case.actual_output}\n\n"
-            f"Expected Output (optional):\n{test_case.expected_output or 'N/A'}\n\n"
-            f"Context (optional):\n{test_case.retrieval_context or 'N/A'}\n\n"
-            "Respond ONLY with JSON like this:\n"
-            '{ "score": 0–10, "reason": "<explanation>" }'
-        )
-        text, cost = await chat_complete(self.model, [{"role": "user", "content": prompt}], temperature=0.0)
+    # ==================== PROMPTS ====================
+
+    @staticmethod
+    def _prompt_generate_steps(criteria: str) -> str:
+        """Generate evaluation steps from criteria (Chain-of-Thought)"""
+        return f"""Given the evaluation criteria below, generate 3-5 detailed evaluation steps.
+
+Evaluation Criteria:
+{criteria}
+
+Generate steps that are:
+1. Specific and actionable
+2. Logically ordered
+3. Lead to assigning a score from 0 to 100
+
+**
+Return ONLY JSON:
+{{
+  "steps": ["Step 1: ...", "Step 2: ...", "Step 3: ..."]
+}}
+**
+
+JSON:"""
+
+    @staticmethod
+    def _prompt_evaluate(criteria: str, evaluation_steps: List[str], test_case: EvalTestCase) -> str:
+        """Generate evaluation prompt with CoT steps"""
+        steps_text = "\n".join(
+            [f"{i+1}. {step}" for i, step in enumerate(evaluation_steps)])
+
+        parts = [
+            f"User Input:\n{test_case.input}",
+            f"Model Output:\n{test_case.actual_output}"
+        ]
+
+        if test_case.expected_output:
+            parts.append(f"Expected Output:\n{test_case.expected_output}")
+
+        if test_case.retrieval_context:
+            parts.append(f"Context:\n" +
+                         "\n".join(test_case.retrieval_context))
+
+        input_block = "\n\n".join(parts)
+
+        return f"""You are a strict evaluator. Use the criteria and evaluation steps below.
+
+Evaluation Criteria:
+{criteria}
+
+Evaluation Steps:
+{steps_text}
+
+{input_block}
+
+Based on the evaluation steps, assign a score from 0 to 100.
+
+**
+Return ONLY JSON:
+{{
+  "score": <number 0-100>
+}}
+**
+
+JSON:"""
+
+    @staticmethod
+    def _prompt_reason(
+        criteria: str,
+        evaluation_steps: List[str],
+        test_case: EvalTestCase,
+        score: float
+    ) -> str:
+        """Generate explanation for the score"""
+        steps_text = "\n".join(
+            [f"{i+1}. {step}" for i, step in enumerate(evaluation_steps)])
+
+        parts = [
+            f"User Input:\n{test_case.input}",
+            f"Model Output:\n{test_case.actual_output}"
+        ]
+
+        if test_case.expected_output:
+            parts.append(f"Expected Output:\n{test_case.expected_output}")
+
+        if test_case.retrieval_context:
+            parts.append(f"Context:\n" +
+                         "\n".join(test_case.retrieval_context))
+
+        input_block = "\n\n".join(parts)
+
+        return f"""You assigned a score of {score:.1f}/100 for this evaluation.
+
+Evaluation Criteria:
+{criteria}
+
+Evaluation Steps:
+{steps_text}
+
+{input_block}
+
+Final Score: {score:.1f}/100
+
+Explain why this score was assigned, referencing specific aspects from the evaluation steps.
+
+**
+Return ONLY JSON:
+{{
+  "reason": "Your explanation..."
+}}
+**
+
+JSON:"""
+
+    # ==================== HELPER METHODS ====================
+
+    def _extract_score_from_response(self, text: str) -> int:
+        """Extract integer score from LLM response"""
+        text = text.strip()
+
+        # Try JSON parsing first
         try:
-            parsed = json.loads(extract_json_block(text))
-            score = float(parsed.get("score", 0)) / 10  # normalize 0–1
-            reason = parsed.get("reason", "")
-            return score, reason, cost or 0.0
-        except Exception as e:
+            data = json.loads(extract_json_block(text))
+            if "score" in data:
+                score = int(data["score"])
+                if 0 <= score <= 100:
+                    return score
+        except:
+            pass
+
+        # Try regex patterns
+        patterns = [
+            r'"score"\s*:\s*(\d+)',
+            r'score[:\s]+(\d+)',
+            r'^\s*(\d+)\s*$',
+        ]
+
+        for pattern in patterns:
+            match = re.search(pattern, text, re.IGNORECASE | re.MULTILINE)
+            if match:
+                score = int(match.group(1))
+                if 0 <= score <= 100:
+                    return score
+
+        raise RuntimeError(f"Failed to extract score from response: {text}")
+
+    # ==================== CORE ALGORITHM ====================
+
+    async def _probability_weighted_scoring(
+        self,
+        prompt: str,
+        n_samples: int = 20,
+        temperature: float = 2.0
+    ) -> Tuple[float, List[int], float]:
+        """
+        Probability-weighted scoring: score = Σ p(si) × si
+        Samples multiple times to estimate probability distribution
+
+        Returns:
+            (final_score, sampled_scores, total_cost)
+        """
+        total_cost = 0.0
+        scores = []
+
+        # Sample n times with high temperature
+        for _ in range(n_samples):
+            text, cost = await chat_complete(
+                self.model,
+                messages=[{"role": "user", "content": prompt}],
+                temperature=temperature
+            )
+            total_cost += cost or 0.0
+
+            try:
+                score = self._extract_score_from_response(text)
+                scores.append(score)
+            except:
+                continue
+
+        if not scores:
             raise RuntimeError(
-                f"Failed to parse custom metric response: {e}\n{text}")
+                f"Failed to extract any valid scores from {n_samples} samples")
+
+        # Calculate probability-weighted score: Σ p(si) × si
+        score_counts = Counter(scores)
+
+        weighted_score = 0.0
+        for score_value in range(0, 101):
+            count = score_counts.get(score_value, 0)
+            probability = count / len(scores)  # p(si)
+            weighted_score += probability * score_value  # p(si) × si
+
+        return weighted_score, scores, total_cost
 
     async def evaluate(self, test_case: EvalTestCase) -> Dict[str, Any]:
-        llm_cost = 0.0
+        """
+        Evaluate using Chain-of-Thought and Probability-Weighted Scoring.
 
-        score, reason, cost = await self._run_eval_prompt(test_case)
-        llm_cost += cost
+        Algorithm:
+        1. Auto-generate evaluation steps from criteria (CoT)
+        2. Apply probability-weighted scoring (20 samples, temp=2.0)
+        3. Generate detailed explanation
+        4. Build comprehensive evaluation_log
+        """
+        total_cost = 0.0
 
-        success = score >= self.threshold
+        # Step 1: Auto-generate evaluation steps (Chain-of-Thought from G-Eval)
+        steps_prompt = self._prompt_generate_steps(self.criteria)
+        steps_text, step_cost = await chat_complete(
+            self.model,
+            messages=[{"role": "user", "content": steps_prompt}],
+            temperature=0.0
+        )
+        total_cost += step_cost or 0.0
 
+        try:
+            parsed_steps = json.loads(extract_json_block(steps_text))
+            evaluation_steps = parsed_steps["steps"]
+        except Exception as e:
+            raise RuntimeError(
+                f"Failed to parse evaluation steps: {e}\n{steps_text}")
+
+        # Step 2: Generate evaluation prompt with CoT
+        eval_prompt = self._prompt_evaluate(
+            self.criteria, evaluation_steps, test_case)
+
+        # Step 3: Probability-weighted scoring (20 samples from G-Eval)
+        final_score, sampled_scores, scoring_cost = await self._probability_weighted_scoring(
+            eval_prompt,
+            n_samples=20,
+            temperature=2.0
+        )
+        total_cost += scoring_cost
+
+        # Step 4: Generate explanation
+        reason_prompt = self._prompt_reason(
+            self.criteria, evaluation_steps, test_case, final_score)
+        reason_text, reason_cost = await chat_complete(
+            self.model,
+            messages=[{"role": "user", "content": reason_prompt}],
+            temperature=0.0
+        )
+        total_cost += reason_cost or 0.0
+
+        # Parse reason
+        try:
+            reason_data = json.loads(extract_json_block(reason_text))
+            reason = reason_data.get("reason", reason_text)
+        except:
+            reason = reason_text.strip()
+
+        success = final_score >= self.threshold
+
+        # Step 5: Build comprehensive evaluation_log
         evaluation_log = {
             "input_question": test_case.input,
             "actual_output": test_case.actual_output,
             "expected_output": test_case.expected_output,
             "retrieval_context": test_case.retrieval_context,
             "criteria": self.criteria,
-            "comment_criteria": "Custom rules for evaluation.",
-            "final_score": score,
-            "comment_final_score": "Score from LLM based on custom criteria.",
+            "comment_criteria": "Custom evaluation criteria provided by user.",
+            "evaluation_steps": evaluation_steps,
+            "comment_evaluation_steps": "Auto-generated evaluation steps using Chain-of-Thought (CoT) technique from G-Eval.",
+            "sampled_scores": sampled_scores,
+            "comment_sampled_scores": f"Individual scores from {len(sampled_scores)} samples with temperature=2.0.",
+            "score_distribution": dict(Counter(sampled_scores)),
+            "comment_score_distribution": "Frequency distribution of sampled scores for probability-weighted calculation.",
+            "final_score": round(final_score, 2),
+            "comment_final_score": "Probability-weighted score calculated as: Σ p(si) × si (G-Eval technique).",
             "threshold": self.threshold,
             "success": success,
-            "comment_success": "Whether the score passes the custom threshold.",
+            "comment_success": "Whether the final score passes the custom threshold.",
             "final_reason": reason,
-            "comment_reasoning": "LLM explanation based on custom evaluation."
+            "comment_reasoning": "LLM-generated explanation based on evaluation steps and criteria."
         }
 
         return {
-            "score": score,
+            "score": round(final_score, 2),
             "success": success,
             "reason": reason,
-            "evaluation_cost": round(llm_cost, 6),
+            "evaluation_cost": round(total_cost, 6),
             "evaluation_log": evaluation_log,
         }
 

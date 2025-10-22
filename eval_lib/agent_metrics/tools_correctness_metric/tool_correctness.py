@@ -1,3 +1,9 @@
+'''
+Tool Correctness Metric: Evaluates whether the correct tools were called
+during the execution of an AI agent.
+Score calculation: Proportion of expected tools correctly called
+'''
+
 from typing import Dict, Any, List
 from eval_lib.metric_pattern import MetricPattern
 from eval_lib.testcases_schema import EvalTestCase
@@ -5,7 +11,6 @@ from eval_lib.testcases_schema import EvalTestCase
 
 class ToolCorrectnessMetric(MetricPattern):
     name = "toolCorrectnessMetric"
-    template_cls = None  # не используется
 
     def __init__(
         self,
@@ -30,7 +35,7 @@ class ToolCorrectnessMetric(MetricPattern):
             "score": score,
             "success": score >= self.threshold,
             "reason": reason,
-            "evaluation_cost": 0.0  # потому что LLM не используется
+            "evaluation_cost": 0.0  # No LLM cost for this metric
         }
 
     def generate_reason(self) -> str:

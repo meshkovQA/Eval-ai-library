@@ -14,11 +14,6 @@ import json
 async def retry_async(fn, *args, retries=4, base_delay=0.6, max_delay=6.0,
                       retriable_statuses=(429, 500, 502, 503, 504),
                       **kwargs):
-    """
-    fn — корутина, которая может бросить исключение вида:
-    - HTTPException-like с .status_code
-    - Exception с текстом, где встречается 'Service Unavailable' и т.п.
-    """
     attempt = 0
     while True:
         try:
@@ -34,7 +29,6 @@ async def retry_async(fn, *args, retries=4, base_delay=0.6, max_delay=6.0,
             if attempt > retries or not retriable:
                 raise
 
-            # экспоненциальный бэкофф + джиттер
             delay = min(max_delay, base_delay * (2 ** (attempt - 1)))
             delay += random.uniform(0, 0.4)
             await asyncio.sleep(delay)

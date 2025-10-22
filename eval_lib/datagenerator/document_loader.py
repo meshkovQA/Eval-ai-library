@@ -13,6 +13,23 @@ from langchain_community.document_loaders import TextLoader
 
 import html2text
 import markdown
+from pptx import Presentation
+from striprtf.striprtf import rtf_to_text
+from pypdf import PdfReader
+import fitz
+import zipfile
+from xml.etree import ElementTree as ET
+import pandas as pd
+import yaml
+import pytesseract
+from PIL import Image
+import io as _io
+import pytesseract
+from PIL import Image
+import io as _io
+import docx  # python-docx
+import mammoth
+import textract
 
 import io
 import json
@@ -33,7 +50,7 @@ def _read_bytes(p: Path) -> bytes:
 
 def _csv_tsv_to_text(p: Path) -> str:
     try:
-        import pandas as pd
+
         sep = "," if p.suffix.lower() == ".csv" else "\t"
         df = pd.read_csv(str(p), dtype=str, sep=sep,
                          encoding="utf-8", engine="python")
@@ -50,7 +67,6 @@ def _csv_tsv_to_text(p: Path) -> str:
 
 def _xlsx_to_text(p: Path) -> str:
     try:
-        import pandas as pd
         df = pd.read_excel(str(p), dtype=str, engine="openpyxl")
         df = df.fillna("")
         buf = io.StringIO()
@@ -62,7 +78,6 @@ def _xlsx_to_text(p: Path) -> str:
 
 def _pptx_to_text(p: Path) -> str:
     try:
-        from pptx import Presentation
         prs = Presentation(str(p))
         texts = []
         for slide in prs.slides:
@@ -96,7 +111,6 @@ def _json_to_text(p: Path) -> str:
 
 def _yaml_to_text(p: Path) -> str:
     try:
-        import yaml
         data = yaml.safe_load(_read_text(p))
         return json.dumps(data, ensure_ascii=False, indent=2)
     except Exception:
@@ -105,7 +119,6 @@ def _yaml_to_text(p: Path) -> str:
 
 def _xml_to_text(p: Path) -> str:
     try:
-        from xml.etree import ElementTree as ET
         tree = ET.parse(str(p))
         root = tree.getroot()
         lines = []
@@ -125,7 +138,7 @@ def _xml_to_text(p: Path) -> str:
 
 def _rtf_to_text(p: Path) -> str:
     try:
-        from striprtf.striprtf import rtf_to_text
+
         return rtf_to_text(_read_text(p))
     except Exception:
         return ""
@@ -153,7 +166,6 @@ def _odt_to_text(p: Path) -> str:
 
 def _pdf_text_pypdf(p: Path) -> str:
     try:
-        from pypdf import PdfReader  # <- именно pypdf
         reader = PdfReader(str(p))
         texts = []
         for page in reader.pages:
@@ -167,7 +179,6 @@ def _pdf_text_pypdf(p: Path) -> str:
 
 def _pdf_text_pymupdf(p: Path) -> str:
     try:
-        import fitz  # PyMuPDF
         text_parts = []
         with fitz.open(str(p)) as doc:
             for page in doc:
@@ -182,11 +193,6 @@ def _pdf_text_pymupdf(p: Path) -> str:
 def _pdf_ocr_via_pymupdf(p: Path) -> str:
     """Render pages via PyMuPDF and OCR pytesseract. Will work if pytesseract + tesseract are installed."""
     try:
-        import fitz  # PyMuPDF
-        import pytesseract
-        from PIL import Image
-        import io as _io
-
         texts = []
         zoom = 2.0
         mat = fitz.Matrix(zoom, zoom)
@@ -208,9 +214,6 @@ def _pdf_ocr_via_pymupdf(p: Path) -> str:
 
 def _ocr_image_bytes(img_bytes: bytes) -> str:
     try:
-        import pytesseract
-        from PIL import Image
-        import io as _io
         img = Image.open(_io.BytesIO(img_bytes))
         return pytesseract.image_to_string(img) or ""
     except Exception:
@@ -223,7 +226,6 @@ def _ocr_image_bytes(img_bytes: bytes) -> str:
 
 def _docx_to_text_python_docx(p: Path) -> str:
     try:
-        import docx  # python-docx
         d = docx.Document(str(p))
         parts = []
         for para in d.paragraphs:
@@ -242,7 +244,6 @@ def _docx_to_text_python_docx(p: Path) -> str:
 
 def _docx_to_text_mammoth(p: Path) -> str:
     try:
-        import mammoth
         with open(str(p), "rb") as f:
             result = mammoth.extract_raw_text(f)
             return (result.value or "").strip()
@@ -253,11 +254,9 @@ def _docx_to_text_mammoth(p: Path) -> str:
 def _docx_to_text_zipxml(p: Path) -> str:
     """Без зависимостей: читаем word/document.xml и вытаскиваем все w:t."""
     try:
-        import zipfile
-        from xml.etree import ElementTree as ET
+
         texts = []
         with zipfile.ZipFile(str(p)) as z:
-            # основной документ
             if "word/document.xml" in z.namelist():
                 with z.open("word/document.xml") as f:
                     root = ET.parse(f).getroot()
@@ -289,7 +288,6 @@ def _docx_to_text_zipxml(p: Path) -> str:
 def _doc_to_text_textract(p: Path) -> str:
     """Для старого .doc. Работает, если установлен textract и системные бинарники (antiword/catdoc)."""
     try:
-        import textract
         return textract.process(str(p)).decode("utf-8", errors="ignore")
     except Exception:
         return ""

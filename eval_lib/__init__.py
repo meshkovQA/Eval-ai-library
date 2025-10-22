@@ -1,3 +1,5 @@
+# eval_lib/__init__.py
+
 """
 Eval AI Library - Comprehensive AI Model Evaluation Framework
 
@@ -5,7 +7,7 @@ A powerful library for evaluating AI models with support for multiple LLM provid
 and a wide range of evaluation metrics for RAG systems and AI agents.
 """
 
-__version__ = "0.2.4"
+__version__ = "0.2.5"
 __author__ = "Aleksandr Meshkov"
 
 # Core evaluation functions
@@ -63,9 +65,20 @@ from eval_lib.agent_metrics import (
     KnowledgeRetentionMetric
 )
 
-# Data generator
-from eval_lib.datagenerator.datagenerator import DataGenerator
-from eval_lib.datagenerator.document_loader import DocumentLoader
+
+def __getattr__(name):
+    """
+    Ленивый импорт для модулей с тяжёлыми зависимостями.
+    DataGenerator импортируется только когда реально используется.
+    """
+    if name == "DataGenerator":
+        from eval_lib.datagenerator.datagenerator import DataGenerator
+        return DataGenerator
+    if name == "DocumentLoader":
+        from eval_lib.datagenerator.document_loader import DocumentLoader
+        return DocumentLoader
+    raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
+
 
 __all__ = [
     # Version

@@ -1,0 +1,121 @@
+# context_precision_metric.py
+from typing import List, Dict, Tuple, Any
+import json
+import re
+from math import exp
+from eval_lib.testcases_schema import EvalTestCase
+from eval_lib.metric_pattern import MetricPattern
+from eval_lib.llm_client import chat_complete
+
+# ---------- helpers --------------------------------------------------------
+
+
+def extract_json_block(text: str) -> str:
+    """
+    Extracts the first JSON block from Markdown-like fenced code blocks.
+    """
+    match = re.search(r"```json\s*(.*?)```", text, re.DOTALL)
+    if match:
+        return match.group(1).strip()
+
+    try:
+        obj = json.loads(text)
+        return json.dumps(obj, ensure_ascii=False)
+    except Exception:
+        pass
+
+    json_match = re.search(r"({.*?})", text, re.DOTALL)
+    if json_match:
+        return json_match.group(1).strip()
+
+    return text.strip()
+
+# ---------- metric ---------------------------------------------------------
+
+
+class ContextualPrecisionMetric(MetricPattern):
+    name = "contextPrecisionMetric"
+    template_cls = None  # we build prompts ad-hoc
+
+    def __init__(self, model: str, threshold: float = 0.7, top_k: int | None = None, ):
+        super().__init__(model=model, threshold=threshold)
+        self.top_k = top_k            # limit of chunks inspected (None = all)
+
+    # ------------------------------------------------------------------ #
+    async def _is_chunk_relevant(                       # judgement = 0 / 1
+        self, reference: str, chunk: str
+    ) -> Tuple[int, float]:
+        prompt = (
+            "Determine whether the following CONTEXT CHUNK contains information "
+            "that also appears in the REFERENCE ANSWER (even if wording differs).\n\n"
+            f"REFERENCE ANSWER:\n{reference}\n\n"
+            f"CONTEXT CHUNK:\n{chunk}\n\n"
+            "Reply ONLY with JSON: {\"relevant\": 1 | 0}"
+        )
+        text, cost = await chat_complete(
+            self.model, [{"role": "user", "content": prompt}], temperature=0.0
+        )
+        try:
+            rel = int(json.loads(extract_json_block(text))["relevant"])
+            return rel, cost or 0.0
+        except Exception as e:
+            raise RuntimeError(f"Bad LLM relevance JSON: {e}\n{text}")
+
+    # ------------------------------------------------------------------ #
+    async def evaluate(self, tc: EvalTestCase) -> Dict[str, Any]:
+        """Compute Context Precision@K as mean(precision@k * v_k) / (#relevant)."""
+        reference = tc.actual_output   # fallback if no reference
+        chunks: List[str] = (tc.retrieval_context or [])[
+            : self.top_k] if self.top_k else tc.retrieval_context or []
+
+        llm_cost: float = 0.0
+        tp, fp = 0, 0
+        precisions: List[float] = []
+        indicators: List[int] = []
+        verdicts: List[Dict[str, Any]] = []
+
+        for rank, chunk in enumerate(chunks, 1):
+            rel, cost = await self._is_chunk_relevant(reference, chunk)
+            llm_cost += cost
+            indicators.append(rel)
+
+            tp += rel
+            fp += 1 - rel
+            prec_k = tp / max(1, tp + fp)
+            precisions.append(prec_k)
+
+            verdicts.append({"rank": rank, "relevant": bool(
+                rel), "precision@k": round(prec_k, 4)})
+
+        if sum(indicators):
+            ctx_precision = round(
+                sum(p * v for p, v in zip(precisions, indicators)) /
+                sum(indicators),
+                4,
+            )
+        else:
+            ctx_precision = 0.0
+
+        success = ctx_precision >= self.threshold
+
+        evaluation_log = {
+            # --- required fields --------------------------------------
+            "input_question": tc.input,
+            "retrieval_context": chunks,
+            "llm_answer": reference,
+            "verdicts": verdicts,
+            # --- meta -------------------------------------------------
+            "final_score": ctx_precision,
+            "comment_final_score": "Context Precision@K.",
+            "threshold": self.threshold,
+            "success": success,
+            "comment_success": "Whether precision meets threshold."
+        }
+
+        return {
+            "score": ctx_precision,
+            "success": success,
+            "reason": f"Average precision across top-{len(chunks)} context chunks.",
+            "evaluation_cost": round(llm_cost, 6),
+            "evaluation_log": evaluation_log,
+        }

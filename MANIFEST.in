@@ -1,0 +1,8 @@
+include README.md
+include LICENSE
+include pyproject.toml
+recursive-include eval_lib *.py
+recursive-exclude eval_lib __pycache__
+recursive-exclude eval_lib *.pyc
+recursive-exclude eval_lib *.pyo
+recursive-exclude eval_lib .DS_Store

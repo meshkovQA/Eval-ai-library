@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "eval-ai-library"
-version = "0.2.2"
+version = "0.2.4"
 description = "Comprehensive AI Model Evaluation Framework with support for multiple LLM providers"
 readme = "README.md"
 authors = [
@@ -32,6 +32,14 @@ dependencies = [
     "google-genai>=0.2.0",
     "pydantic>=2.0.0",
     "numpy>=1.24.0",
+    "langchain>=0.1.0",
+    "langchain-community>=0.0.10",
+    "langchain-core>=0.1.0",
+    "pypdf2>=3.0.0",
+    "python-docx>=0.8.11",
+    "openpyxl>=3.1.0",
+    "pillow>=10.0.0",
+    "pytesseract>=0.3.10",
 ]
 
 [project.optional-dependencies]
@@ -46,34 +54,6 @@ dev = [
 docs = [
     "sphinx>=6.0.0",
     "sphinx-rtd-theme>=1.2.0",
-]
-data-generation = [
-    "langchain>=0.1.0",
-    "langchain-community>=0.0.10",
-    "langchain-core>=0.1.0",
-    "pypdf2>=3.0.0",
-    "python-docx>=0.8.11",
-    "openpyxl>=3.1.0",
-    "pillow>=10.0.0",
-    "pytesseract>=0.3.10",
-]
-all = [
-    "pytest>=7.0.0",
-    "pytest-asyncio>=0.21.0",
-    "black>=23.0.0",
-    "flake8>=6.0.0",
-    "mypy>=1.0.0",
-    "isort>=5.12.0",
-    "sphinx>=6.0.0",
-    "sphinx-rtd-theme>=1.2.0",
-    "langchain>=0.1.0",
-    "langchain-community>=0.0.10",
-    "langchain-core>=0.1.0",
-    "pypdf2>=3.0.0",
-    "python-docx>=0.8.11",
-    "openpyxl>=3.1.0",
-    "pillow>=10.0.0",
-    "pytesseract>=0.3.10",
 ]
 
 [project.urls]

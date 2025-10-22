@@ -34,7 +34,7 @@ Evaluation Criteria:
 Generate steps that are:
 1. Specific and actionable
 2. Logically ordered
-3. Lead to assigning a score from 0 to 100
+3. Lead to assigning a score from 0.0 to 1.0
 
 **
 Return ONLY JSON:
@@ -75,12 +75,12 @@ Evaluation Steps:
 
 {input_block}
 
-Based on the evaluation steps, assign a score from 0 to 100.
+Based on the evaluation steps, assign a score from 0.0 to 1.0 (where 0.0 is worst and 1.0 is best).
 
 **
 Return ONLY JSON:
 {{
-  "score": <number 0-100>
+  "score": <float between 0.0 and 1.0>
 }}
 **
 
@@ -111,7 +111,7 @@ JSON:"""
 
         input_block = "\n\n".join(parts)
 
-        return f"""You assigned a score of {score:.1f}/100 for this evaluation.
+        return f"""You assigned a score of {score:.2f} (out of 1.0) for this evaluation.
 
 Evaluation Criteria:
 {criteria}
@@ -121,7 +121,7 @@ Evaluation Steps:
 
 {input_block}
 
-Final Score: {score:.1f}/100
+Final Score: {score:.2f}/1.0
 
 Explain why this score was assigned, referencing specific aspects from the evaluation steps.
 
@@ -136,32 +136,32 @@ JSON:"""
 
     # ==================== HELPER METHODS ====================
 
-    def _extract_score_from_response(self, text: str) -> int:
-        """Extract integer score from LLM response"""
+    def _extract_score_from_response(self, text: str) -> float:
+        """Extract float score from LLM response (0.0-1.0 range)"""
         text = text.strip()
 
         # Try JSON parsing first
         try:
             data = json.loads(extract_json_block(text))
             if "score" in data:
-                score = int(data["score"])
-                if 0 <= score <= 100:
+                score = float(data["score"])
+                if 0.0 <= score <= 1.0:
                     return score
         except:
             pass
 
         # Try regex patterns
         patterns = [
-            r'"score"\s*:\s*(\d+)',
-            r'score[:\s]+(\d+)',
-            r'^\s*(\d+)\s*$',
+            r'"score"\s*:\s*(\d+\.?\d*)',
+            r'score[:\s]+(\d+\.?\d*)',
+            r'^\s*(\d+\.?\d*)\s*$',
         ]
 
         for pattern in patterns:
             match = re.search(pattern, text, re.IGNORECASE | re.MULTILINE)
             if match:
-                score = int(match.group(1))
-                if 0 <= score <= 100:
+                score = float(match.group(1))
+                if 0.0 <= score <= 1.0:
                     return score
 
         raise RuntimeError(f"Failed to extract score from response: {text}")
@@ -173,7 +173,7 @@ JSON:"""
         prompt: str,
         n_samples: int = 20,
         temperature: float = 2.0
-    ) -> Tuple[float, List[int], float]:
+    ) -> Tuple[float, List[float], float]:
         """
         Probability-weighted scoring: score = Σ p(si) × si
         Samples multiple times to estimate probability distribution
@@ -203,14 +203,8 @@ JSON:"""
             raise RuntimeError(
                 f"Failed to extract any valid scores from {n_samples} samples")
 
-        # Calculate probability-weighted score: Σ p(si) × si
-        score_counts = Counter(scores)
-
-        weighted_score = 0.0
-        for score_value in range(0, 101):
-            count = score_counts.get(score_value, 0)
-            probability = count / len(scores)  # p(si)
-            weighted_score += probability * score_value  # p(si) × si
+        # Calculate probability-weighted score as mean
+        weighted_score = sum(scores) / len(scores)
 
         return weighted_score, scores, total_cost
 
@@ -285,10 +279,10 @@ JSON:"""
             "comment_evaluation_steps": "Auto-generated evaluation steps using Chain-of-Thought (CoT) technique from G-Eval.",
             "sampled_scores": sampled_scores,
             "comment_sampled_scores": f"Individual scores from {len(sampled_scores)} samples with temperature=2.0.",
-            "score_distribution": dict(Counter(sampled_scores)),
+            "score_distribution": {f"{s:.2f}": sampled_scores.count(s) for s in set(sampled_scores)},
             "comment_score_distribution": "Frequency distribution of sampled scores for probability-weighted calculation.",
-            "final_score": round(final_score, 2),
-            "comment_final_score": "Probability-weighted score calculated as: Σ p(si) × si (G-Eval technique).",
+            "final_score": round(final_score, 4),
+            "comment_final_score": "Probability-weighted score calculated as mean of sampled scores (G-Eval technique).",
             "threshold": self.threshold,
             "success": success,
             "comment_success": "Whether the final score passes the custom threshold.",
@@ -297,7 +291,7 @@ JSON:"""
         }
 
         return {
-            "score": round(final_score, 2),
+            "score": round(final_score, 4),
             "success": success,
             "reason": reason,
             "evaluation_cost": round(total_cost, 6),

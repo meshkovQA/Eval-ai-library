@@ -103,7 +103,7 @@ async def evaluate_with_geval():
     # G-Eval with auto chain-of-thought
     metric = GEval(
         model="gpt-4o",  # Works best with GPT-4
-        threshold=70.0,  # Score range: 0-100
+        threshold=0.7,  # Score range: 0-100
         name="Clarity & Simplicity",
         criteria="Evaluate how clear and age-appropriate the explanation is for a 10-year-old child",
         # evaluation_steps is auto-generated from criteria if not provided
@@ -137,7 +137,7 @@ async def custom_evaluation():
     
     metric = CustomEvalMetric(
         model="gpt-4o",
-        threshold=75.0,
+        threshold=0.7,
         name="HelpfulnessScore",
         criteria="Evaluate if the response provides clear, actionable steps that directly answer the user's question"
         # Auto-generates evaluation steps using CoT
@@ -306,7 +306,7 @@ Detects bias and prejudice in AI-generated output. Score range: 0 (strong bias) 
 ```python
 metric = BiasMetric(
     model="gpt-4o-mini",
-    threshold=70.0  # Score range: 0-100
+    threshold=0.7  # Score range: 0-100
 )
 ```
 
@@ -315,7 +315,7 @@ Identifies toxic content in responses. Score range: 0 (highly toxic) to 100 (no 
 ```python
 metric = ToxicityMetric(
     model="gpt-4o-mini",
-    threshold=80.0  # Score range: 0-100
+    threshold=0.7  # Score range: 0-100
 )
 ```
 
@@ -390,7 +390,7 @@ State-of-the-art evaluation using probability-weighted scoring from the [G-Eval 
 ```python
 metric = GEval(
     model="gpt-4o",  # Best with GPT-4 for probability estimation
-    threshold=75.0,
+    threshold=0.7,
     name="Coherence",
     criteria="Evaluate logical flow and structure of the response",
     evaluation_steps=None,  # Auto-generated if not provided
@@ -404,7 +404,7 @@ Enhanced custom evaluation with CoT and probability-weighted scoring:
 ```python
 metric = CustomEvalMetric(
     model="gpt-4o",
-    threshold=75.0,
+    threshold=0.7,
     name="QualityScore",
     criteria="Your custom evaluation criteria"
     # Automatically uses:
@@ -418,46 +418,9 @@ metric = CustomEvalMetric(
 ### Score Ranges
 
 - **RAG Metrics** (Answer Relevancy, Faithfulness, etc.): 0.0 - 1.0
-- **Safety Metrics** (Bias, Toxicity): 0 - 100
-- **G-Eval & Custom Metrics**: 0 - 100
+- **Safety Metrics** (Bias, Toxicity): 0.0 - 1.0
+- **G-Eval & Custom Metrics**: 0.0 - 1.0
 - **Agent Metrics** (Task Success, Role Adherence, etc.): 0.0 - 1.0
-
-### Evaluation Log
-
-All metrics provide detailed `evaluation_log` for transparency:
-```python
-result = await metric.evaluate(test_case)
-
-log = result['evaluation_log']
-
-# Common fields across all metrics:
-print(log['input_question'])          # Original input
-print(log['actual_output'])           # AI's response
-print(log['final_score'])             # Numeric score
-print(log['success'])                 # Boolean: score >= threshold
-print(log['final_reason'])            # Explanation
-print(log['threshold'])               # Threshold used
-
-# Metric-specific fields:
-# For G-Eval:
-print(log['evaluation_steps'])        # Auto-generated CoT steps
-print(log['sampled_scores'])          # All 20 samples
-print(log['score_distribution'])      # Frequency of each score
-
-# For Faithfulness:
-print(log['statements'])              # Extracted claims
-print(log['verdicts'])                # Per-statement verdicts
-
-# For Answer Relevancy:
-print(log['user_intent'])             # Inferred intent
-print(log['statements'])              # Extracted statements
-print(log['verdicts'])                # Relevance verdicts
-
-# For Agent Metrics:
-print(log['dialogue'])                # Full conversation
-print(log['verdicts'])                # Per-turn evaluations
-print(log['verdict_weights'])         # Numeric weights
-```
 
 ## Temperature Parameter
 

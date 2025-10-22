@@ -49,10 +49,10 @@ docs = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/yourusername/eval-ai-library"
-Documentation = "https://github.com/yourusername/eval-ai-library#readme"
-Repository = "https://github.com/yourusername/eval-ai-library"
-"Bug Tracker" = "https://github.com/yourusername/eval-ai-library/issues"
+Homepage = "https://github.com/meshkovQA/Eval-ai-library"
+Documentation = "https://github.com/meshkovQA/Eval-ai-library#readme"
+Repository = "https://github.com/meshkovQA/Eval-ai-library"
+"Bug Tracker" = "https://github.com/meshkovQA/Eval-ai-library/issues"
 
 [tool.setuptools]
 packages = ["eval_lib", "eval_lib.metrics", "eval_lib.agent_metrics", "eval_lib.datagenerator"]

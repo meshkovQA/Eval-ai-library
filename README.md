@@ -430,7 +430,7 @@ dataset = await generator.generate_from_scratch()
 5. **Chunk Size Matters**: Larger chunks (1024-2048) for technical docs, smaller for FAQs
 6. **Review Generated Data**: Always review and refine generated test cases
 7. **Cost Awareness**: Larger documents and more test cases = higher API costs
-```
+
 
 ## Advanced Usage
 
@@ -501,15 +501,15 @@ If you use this library in your research, please cite:
   author = {Meshkov, Aleksandr},
   title = {Eval AI Library: Comprehensive AI Model Evaluation Framework},
   year = {2025},
-  url = {https://github.com/yourusername/eval-ai-library}
+  url = {https://github.com/meshkovQA/Eval-ai-library.git}
 }
 ```
 
 ## Support
 
 - 📧 Email: alekslynx90@gmail.com
-- 🐛 Issues: [GitHub Issues](https://github.com/yourusername/eval-ai-library/issues)
-- 📖 Documentation: [Full Documentation](https://github.com/yourusername/eval-ai-library#readme)
+- 🐛 Issues: [GitHub Issues](https://github.com/meshkovQA/Eval-ai-library.git/issues)
+- 📖 Documentation: [Full Documentation](https://github.com/meshkovQA/Eval-ai-library.git#readme)
 
 ## Acknowledgments
 

@@ -290,13 +290,18 @@ JSON:"""
             "comment_reasoning": "LLM-generated explanation based on evaluation steps and criteria."
         }
 
-        return {
+        result = {
+            "name": self.name,
             "score": round(final_score, 4),
             "success": success,
             "reason": reason,
             "evaluation_cost": round(total_cost, 6),
             "evaluation_log": evaluation_log,
         }
+
+        print(result)
+
+        return result
 
     @property
     def name(self):

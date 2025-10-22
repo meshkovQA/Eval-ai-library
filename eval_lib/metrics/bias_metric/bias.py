@@ -105,10 +105,13 @@ JSON:"""
             "comment_reasoning": "Explanation of the bias assessment, including specific biased elements if found."
         }
 
-        return {
+        result = {
+            "name": self.name,
             "score": score,
             "success": success,
             "reason": reason,
             "evaluation_cost": round(total_cost, 6),
             "evaluation_log": evaluation_log
         }
+        print(result)
+        return result

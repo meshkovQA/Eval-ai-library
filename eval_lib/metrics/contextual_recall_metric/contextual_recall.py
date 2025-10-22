@@ -82,10 +82,14 @@ class ContextualRecallMetric(MetricPattern):
             "comment_success": "Whether the score exceeds the threshold.",
         }
 
-        return {
+        result = {
+            "name": self.name,
             "score": recall_score,
             "success": success,
             "reason": f"{supported_count} out of {total_claims} reference claims supported by context.",
             "evaluation_cost": round(llm_cost, 6),
             "evaluation_log": evaluation_log
         }
+        print(result)
+
+        return result

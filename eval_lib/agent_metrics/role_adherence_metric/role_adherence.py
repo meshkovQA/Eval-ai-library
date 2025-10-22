@@ -242,10 +242,15 @@ Return JSON array:
             "comment_reasoning": "Concise explanation of how well the assistant maintained its assigned role."
         }
 
-        return {
+        result = {
+            "name": self.name,
             "score": final_score,
             "success": success,
             "reason": summary,
             "evaluation_cost": round(total_cost, 6),
             "evaluation_log": evaluation_log
         }
+
+        print(result)
+
+        return result

@@ -222,10 +222,14 @@ Verdicts:
             "comment_reasoning": "Concise explanation of the assistant's knowledge retention performance."
         }
 
-        return {
+        result = {
+            "name": self.name,
             "score": final_score,
             "success": success,
             "reason": summary,
             "evaluation_cost": round(total_cost, 6),
             "evaluation_log": evaluation_log
         }
+        print(result)
+
+        return result

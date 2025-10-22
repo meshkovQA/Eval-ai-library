@@ -93,10 +93,15 @@ class ContextualPrecisionMetric(MetricPattern):
             "comment_success": "Whether precision meets threshold."
         }
 
-        return {
+        result = {
+            "name": self.name,
             "score": ctx_precision,
             "success": success,
             "reason": f"Average precision across top-{len(chunks)} context chunks.",
             "evaluation_cost": round(llm_cost, 6),
             "evaluation_log": evaluation_log,
         }
+
+        print(result)
+
+        return result

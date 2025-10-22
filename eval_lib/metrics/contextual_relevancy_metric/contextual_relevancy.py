@@ -160,10 +160,15 @@ class ContextualRelevancyMetric(MetricPattern):
             "comment_reasoning": "LLM-generated explanation based on verdict rationales."
         }
 
-        return {
+        result = {
+            "name": self.name,
             "score": score,
             "success": success,
             "reason": summary,
             "evaluation_cost": round(llm_cost, 6),
             "evaluation_log": evaluation_log
         }
+
+        print(result)
+
+        return result

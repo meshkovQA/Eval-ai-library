@@ -131,10 +131,14 @@ class FaithfulnessMetric(MetricPattern):
             "comment_reasoning": "Summary explanation based on all verdicts."
         }
 
-        return {
+        result = {
+            "name": self.name,
             "score": verdict_score,
             "success": success,
             "reason": summary_reason,
             "evaluation_cost": round(llm_cost, 6),
             "evaluation_log": evaluation_log
         }
+        print(result)
+
+        return result

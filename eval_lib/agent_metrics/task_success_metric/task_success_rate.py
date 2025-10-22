@@ -337,10 +337,14 @@ Criteria: [
             "comment_reasoning": "Concise explanation of the overall task completion assessment."
         }
 
-        return {
+        result = {
+            "name": self.name,
             "score": final_score,
             "success": success,
             "reason": summary,
             "evaluation_cost": round(total_cost, 6),
             "evaluation_log": evaluation_log
         }
+        print(result)
+
+        return result

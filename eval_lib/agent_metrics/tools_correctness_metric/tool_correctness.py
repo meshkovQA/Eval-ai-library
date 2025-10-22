@@ -31,12 +31,17 @@ class ToolCorrectnessMetric(MetricPattern):
         score = self.calculate_score()
         reason = self.generate_reason()
 
-        return {
+        result = {
+            "name": self.name,
             "score": score,
             "success": score >= self.threshold,
             "reason": reason,
             "evaluation_cost": 0.0  # No LLM cost for this metric
         }
+
+        print(result)
+
+        return result
 
     def generate_reason(self) -> str:
         called_names = self.tools_called

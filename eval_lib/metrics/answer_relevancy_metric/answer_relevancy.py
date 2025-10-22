@@ -186,10 +186,14 @@ class AnswerRelevancyMetric(MetricPattern):
             "comment_reasoning": "Compressed explanation of the key verdict rationales."
         }
 
-        return {
+        result = {
+            "name": self.name,
             "score": final_score,
             "success": success,
             "reason": summary_reason,
             "evaluation_cost": round(llm_cost, 6),
             "evaluation_log": evaluation_log
         }
+        print(result)
+
+        return result

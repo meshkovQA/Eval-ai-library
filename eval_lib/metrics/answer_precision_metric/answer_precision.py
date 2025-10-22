@@ -395,7 +395,8 @@ class AnswerPrecisionMetric(MetricPattern):
             },
         }
 
-        return {
+        result = {
+            "name": self.name,
             "score": round(final_score, 4),
             "success": success,
             "reason": reason,
@@ -403,3 +404,7 @@ class AnswerPrecisionMetric(MetricPattern):
             "evaluation_cost": 0.0,
             "evaluation_log": evaluation_log,
         }
+
+        print(result)
+
+        return result

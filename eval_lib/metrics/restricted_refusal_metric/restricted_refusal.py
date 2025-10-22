@@ -93,10 +93,14 @@ class RestrictedRefusalMetric(MetricPattern):
             "final_reason": reason
         }
 
-        return {
+        result = {
+            "name": self.name,
             "score": score,
             "success": success,
             "reason": reason,
             "evaluation_cost": 0.0,
             "evaluation_log": evaluation_log
         }
+        print(result)
+
+        return result

@@ -168,7 +168,7 @@ async def evaluate_agent():
         TaskSuccessRateMetric(
             model="gpt-4o-mini",
             threshold=0.7,
-            temperature=1.1  # Controls score aggregation strictness
+            temperature=1.0 
         )
     ]
     

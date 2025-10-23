@@ -57,6 +57,28 @@ class MetricPattern:
             print(result)
             return
 
+        import shutil
+        import textwrap
+        import re
+        import json
+
+        # Получаем ширину терминала и делим пополам
+        terminal_width = shutil.get_terminal_size().columns
+        WIDTH = terminal_width // 2
+        WIDTH = max(WIDTH, 60)  # Минимум 60 символов
+
+        # Функция для переноса длинного текста
+        def wrap_text(text, width, indent=0):
+            """Переносит текст на несколько строк с отступом"""
+            wrapper = textwrap.TextWrapper(
+                width=width - indent,
+                initial_indent=' ' * indent,
+                subsequent_indent=' ' * indent,
+                break_long_words=True,
+                break_on_hyphens=False
+            )
+            return wrapper.fill(text)
+
         success = result.get('success', False)
         score = result.get('score', 0.0)
         reason = result.get('reason', 'N/A')
@@ -67,74 +89,69 @@ class MetricPattern:
         status_color = Colors.GREEN if success else Colors.RED
         status_text = "PASSED" if success else "FAILED"
 
-        bar_length = 40
+        bar_length = min(30, WIDTH - 30)  # Адаптивная длина прогресс-бара
         filled = int(bar_length * score)
         bar = '█' * filled + '░' * (bar_length - filled)
 
-        # Вычисляем ширину динамически
         metric_name = result.get('name', self.name)
-
-        # Собираем все строки для вычисления максимальной ширины
-        lines = [
-            f"Status:     {status_icon} {status_text}",
-            f"Score:      {score:.2f} [{bar}] {score*100:.0f}%",
-            f"Cost:       💰 ${cost:.6f}",
-            f"Reason:     {reason}"
-        ]
-
-        # Находим максимальную длину (без учета цветовых кодов)
-        max_content_width = max(len(line) for line in lines)
-        header_width = len(f"📊 {metric_name}")
-
-        # WIDTH = максимум из контента и заголовка, минимум 80
-        WIDTH = max(max_content_width, header_width, 80)
+        formatted_name = f"📊 {metric_name}"
 
         # Центрируем заголовок
-        formatted_name = f"📊 {metric_name}"
-        padding = max(0, WIDTH - len(formatted_name))
-        left_pad = padding // 2
-        right_pad = padding - left_pad
-        centered_name = " " * left_pad + formatted_name + " " * right_pad
+        name_len = len(formatted_name)
+        if name_len > WIDTH:
+            formatted_name = formatted_name[:WIDTH-3] + "..."
+            centered_name = formatted_name
+        else:
+            padding = WIDTH - name_len
+            left_pad = padding // 2
+            right_pad = padding - left_pad
+            centered_name = " " * left_pad + formatted_name + " " * right_pad
 
         # Рамка заголовка
         border = "═" * WIDTH
 
-        print(f"""
-    {Colors.BOLD}{Colors.CYAN}╔{border}╗{Colors.ENDC}
-    {Colors.BOLD}{Colors.CYAN}║{Colors.ENDC}{centered_name}{Colors.BOLD}{Colors.CYAN}║{Colors.ENDC}
-    {Colors.BOLD}{Colors.CYAN}╚{border}╝{Colors.ENDC}
+        print(f"\n{Colors.BOLD}{Colors.CYAN}╔{border}╗{Colors.ENDC}")
+        print(f"{Colors.BOLD}{Colors.CYAN}║{Colors.ENDC}{centered_name}{Colors.BOLD}{Colors.CYAN}║{Colors.ENDC}")
+        print(f"{Colors.BOLD}{Colors.CYAN}╚{border}╝{Colors.ENDC}\n")
 
-    {Colors.BOLD}Status:{Colors.ENDC}     {status_icon} {status_color}{Colors.BOLD}{status_text}{Colors.ENDC}
+        print(f"{Colors.BOLD}Status:{Colors.ENDC} {status_icon} {status_color}{Colors.BOLD}{status_text}{Colors.ENDC}")
+        print(
+            f"{Colors.BOLD}Score:{Colors.ENDC}  {Colors.YELLOW}{score:.2f}{Colors.ENDC} [{bar}] {score*100:.0f}%")
+        print(
+            f"{Colors.BOLD}Cost:{Colors.ENDC}   {Colors.BLUE}💰 ${cost:.6f}{Colors.ENDC}")
 
-    {Colors.BOLD}Score:{Colors.ENDC}      {Colors.YELLOW}{score:.2f}{Colors.ENDC} [{bar}] {score*100:.0f}%
-
-    {Colors.BOLD}Cost:{Colors.ENDC}       {Colors.BLUE}💰 ${cost:.6f}{Colors.ENDC}
-
-    {Colors.BOLD}Reason:{Colors.ENDC}     {Colors.DIM}{reason}{Colors.ENDC}
-    """)
+        # Переносим Reason на несколько строк если нужно
+        print(f"{Colors.BOLD}Reason:{Colors.ENDC}")
+        wrapped_reason = wrap_text(reason, WIDTH, indent=2)
+        print(f"{Colors.DIM}{wrapped_reason}{Colors.ENDC}\n")
 
         if evaluation_log:
-            import json
-            log_json = json.dumps(evaluation_log, indent=4, ensure_ascii=False)
+            log_json = json.dumps(evaluation_log, indent=2, ensure_ascii=False)
             log_lines = log_json.split('\n')
 
-            # Ширина лога = максимальная длина строки + 4 (отступы)
-            log_width = max(len(line) for line in log_lines) + 4
-            log_width = max(log_width, WIDTH)  # Минимум = ширина заголовка
-
             print(f"{Colors.BOLD}Evaluation Log:{Colors.ENDC}")
-            log_border = "─" * log_width
+            log_border = "─" * WIDTH
             print(f"{Colors.DIM}╭{log_border}╮{Colors.ENDC}")
 
             for line in log_lines:
-                # Добавляем padding справа чтобы выровнять рамку
-                padded_line = line + " " * (log_width - len(line))
-                print(
-                    f"{Colors.DIM}│{Colors.ENDC} {padded_line} {Colors.DIM}│{Colors.ENDC}")
+                # Если строка длиннее WIDTH, переносим
+                if len(line) > WIDTH - 4:
+                    # Разбиваем длинную строку
+                    wrapped_lines = textwrap.wrap(line, width=WIDTH - 4,
+                                                  break_long_words=True,
+                                                  break_on_hyphens=False)
+                    for wrapped_line in wrapped_lines:
+                        spaces_needed = WIDTH - len(wrapped_line) - 2
+                        print(
+                            f"{Colors.DIM}│{Colors.ENDC} {wrapped_line}{' ' * spaces_needed}{Colors.DIM}│{Colors.ENDC}")
+                else:
+                    spaces_needed = WIDTH - len(line) - 2
+                    print(
+                        f"{Colors.DIM}│{Colors.ENDC} {line}{' ' * spaces_needed}{Colors.DIM}│{Colors.ENDC}")
 
             print(f"{Colors.DIM}╰{log_border}╯{Colors.ENDC}")
 
-        print(f"\n{Colors.DIM}{'─'*WIDTH}{Colors.ENDC}\n")
+        print(f"{Colors.DIM}{'─' * WIDTH}{Colors.ENDC}\n")
 
 
 class ConversationalMetricPattern:
@@ -171,6 +188,28 @@ class ConversationalMetricPattern:
             print(result)
             return
 
+        import shutil
+        import textwrap
+        import re
+        import json
+
+        # Получаем ширину терминала и делим пополам
+        terminal_width = shutil.get_terminal_size().columns
+        WIDTH = terminal_width // 2
+        WIDTH = max(WIDTH, 60)  # Минимум 60 символов
+
+        # Функция для переноса длинного текста
+        def wrap_text(text, width, indent=0):
+            """Переносит текст на несколько строк с отступом"""
+            wrapper = textwrap.TextWrapper(
+                width=width - indent,
+                initial_indent=' ' * indent,
+                subsequent_indent=' ' * indent,
+                break_long_words=True,
+                break_on_hyphens=False
+            )
+            return wrapper.fill(text)
+
         success = result.get('success', False)
         score = result.get('score', 0.0)
         reason = result.get('reason', 'N/A')
@@ -181,71 +220,66 @@ class ConversationalMetricPattern:
         status_color = Colors.GREEN if success else Colors.RED
         status_text = "PASSED" if success else "FAILED"
 
-        bar_length = 40
+        bar_length = min(30, WIDTH - 30)  # Адаптивная длина прогресс-бара
         filled = int(bar_length * score)
         bar = '█' * filled + '░' * (bar_length - filled)
 
-        # Вычисляем ширину динамически
         metric_name = result.get('name', self.name)
-
-        # Собираем все строки для вычисления максимальной ширины
-        lines = [
-            f"Status:     {status_icon} {status_text}",
-            f"Score:      {score:.2f} [{bar}] {score*100:.0f}%",
-            f"Cost:       💰 ${cost:.6f}",
-            f"Reason:     {reason}"
-        ]
-
-        # Находим максимальную длину (без учета цветовых кодов)
-        max_content_width = max(len(line) for line in lines)
-        header_width = len(f"📊 {metric_name}")
-
-        # WIDTH = максимум из контента и заголовка, минимум 80
-        WIDTH = max(max_content_width, header_width, 80)
+        formatted_name = f"📊 {metric_name}"
 
         # Центрируем заголовок
-        formatted_name = f"📊 {metric_name}"
-        padding = max(0, WIDTH - len(formatted_name))
-        left_pad = padding // 2
-        right_pad = padding - left_pad
-        centered_name = " " * left_pad + formatted_name + " " * right_pad
+        name_len = len(formatted_name)
+        if name_len > WIDTH:
+            formatted_name = formatted_name[:WIDTH-3] + "..."
+            centered_name = formatted_name
+        else:
+            padding = WIDTH - name_len
+            left_pad = padding // 2
+            right_pad = padding - left_pad
+            centered_name = " " * left_pad + formatted_name + " " * right_pad
 
         # Рамка заголовка
         border = "═" * WIDTH
 
-        print(f"""
-    {Colors.BOLD}{Colors.CYAN}╔{border}╗{Colors.ENDC}
-    {Colors.BOLD}{Colors.CYAN}║{Colors.ENDC}{centered_name}{Colors.BOLD}{Colors.CYAN}║{Colors.ENDC}
-    {Colors.BOLD}{Colors.CYAN}╚{border}╝{Colors.ENDC}
+        print(f"\n{Colors.BOLD}{Colors.CYAN}╔{border}╗{Colors.ENDC}")
+        print(f"{Colors.BOLD}{Colors.CYAN}║{Colors.ENDC}{centered_name}{Colors.BOLD}{Colors.CYAN}║{Colors.ENDC}")
+        print(f"{Colors.BOLD}{Colors.CYAN}╚{border}╝{Colors.ENDC}\n")
 
-    {Colors.BOLD}Status:{Colors.ENDC}     {status_icon} {status_color}{Colors.BOLD}{status_text}{Colors.ENDC}
+        print(f"{Colors.BOLD}Status:{Colors.ENDC} {status_icon} {status_color}{Colors.BOLD}{status_text}{Colors.ENDC}")
+        print(
+            f"{Colors.BOLD}Score:{Colors.ENDC}  {Colors.YELLOW}{score:.2f}{Colors.ENDC} [{bar}] {score*100:.0f}%")
+        print(
+            f"{Colors.BOLD}Cost:{Colors.ENDC}   {Colors.BLUE}💰 ${cost:.6f}{Colors.ENDC}")
 
-    {Colors.BOLD}Score:{Colors.ENDC}      {Colors.YELLOW}{score:.2f}{Colors.ENDC} [{bar}] {score*100:.0f}%
-
-    {Colors.BOLD}Cost:{Colors.ENDC}       {Colors.BLUE}💰 ${cost:.6f}{Colors.ENDC}
-
-    {Colors.BOLD}Reason:{Colors.ENDC}     {Colors.DIM}{reason}{Colors.ENDC}
-    """)
+        # Переносим Reason на несколько строк если нужно
+        print(f"{Colors.BOLD}Reason:{Colors.ENDC}")
+        wrapped_reason = wrap_text(reason, WIDTH, indent=2)
+        print(f"{Colors.DIM}{wrapped_reason}{Colors.ENDC}\n")
 
         if evaluation_log:
-            import json
-            log_json = json.dumps(evaluation_log, indent=4, ensure_ascii=False)
+            log_json = json.dumps(evaluation_log, indent=2, ensure_ascii=False)
             log_lines = log_json.split('\n')
 
-            # Ширина лога = максимальная длина строки + 4 (отступы)
-            log_width = max(len(line) for line in log_lines) + 4
-            log_width = max(log_width, WIDTH)  # Минимум = ширина заголовка
-
             print(f"{Colors.BOLD}Evaluation Log:{Colors.ENDC}")
-            log_border = "─" * log_width
+            log_border = "─" * WIDTH
             print(f"{Colors.DIM}╭{log_border}╮{Colors.ENDC}")
 
             for line in log_lines:
-                # Добавляем padding справа чтобы выровнять рамку
-                padded_line = line + " " * (log_width - len(line))
-                print(
-                    f"{Colors.DIM}│{Colors.ENDC} {padded_line} {Colors.DIM}│{Colors.ENDC}")
+                # Если строка длиннее WIDTH, переносим
+                if len(line) > WIDTH - 4:
+                    # Разбиваем длинную строку
+                    wrapped_lines = textwrap.wrap(line, width=WIDTH - 4,
+                                                  break_long_words=True,
+                                                  break_on_hyphens=False)
+                    for wrapped_line in wrapped_lines:
+                        spaces_needed = WIDTH - len(wrapped_line) - 2
+                        print(
+                            f"{Colors.DIM}│{Colors.ENDC} {wrapped_line}{' ' * spaces_needed}{Colors.DIM}│{Colors.ENDC}")
+                else:
+                    spaces_needed = WIDTH - len(line) - 2
+                    print(
+                        f"{Colors.DIM}│{Colors.ENDC} {line}{' ' * spaces_needed}{Colors.DIM}│{Colors.ENDC}")
 
             print(f"{Colors.DIM}╰{log_border}╯{Colors.ENDC}")
 
-        print(f"\n{Colors.DIM}{'─'*WIDTH}{Colors.ENDC}\n")
+        print(f"{Colors.DIM}{'─' * WIDTH}{Colors.ENDC}\n")

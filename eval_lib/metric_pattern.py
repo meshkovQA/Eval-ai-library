@@ -57,6 +57,8 @@ class MetricPattern:
             print(result)
             return
 
+        WIDTH = 220
+
         success = result.get('success', False)
         score = result.get('score', 0.0)
         reason = result.get('reason', 'N/A')
@@ -71,40 +73,45 @@ class MetricPattern:
         filled = int(bar_length * score)
         bar = '█' * filled + '░' * (bar_length - filled)
 
+        # Центрирование названия метрики
         metric_name = result.get('name', self.name)
         formatted_name = f"📊 {metric_name}"
-        padding = max(0, 62 - len(formatted_name))
+        padding = max(0, WIDTH - len(formatted_name))
         left_pad = padding // 2
         right_pad = padding - left_pad
         centered_name = " " * left_pad + formatted_name + " " * right_pad
 
+        # Рамка заголовка (WIDTH + 2 для границ)
+        border = "═" * WIDTH
+
         print(f"""
-    {Colors.BOLD}{Colors.CYAN}╔════════════════════════════════════════════════════════════════════╗{Colors.ENDC}
-    {Colors.BOLD}{Colors.CYAN}║{Colors.ENDC} {centered_name} {Colors.BOLD}{Colors.CYAN}║{Colors.ENDC}
-    {Colors.BOLD}{Colors.CYAN}╚════════════════════════════════════════════════════════════════════╝{Colors.ENDC}
+    {Colors.BOLD}{Colors.CYAN}╔{border}╗{Colors.ENDC}
+    {Colors.BOLD}{Colors.CYAN}║{Colors.ENDC}{centered_name}{Colors.BOLD}{Colors.CYAN}║{Colors.ENDC}
+    {Colors.BOLD}{Colors.CYAN}╚{border}╝{Colors.ENDC}
 
     {Colors.BOLD}Status:{Colors.ENDC}     {status_icon} {status_color}{Colors.BOLD}{status_text}{Colors.ENDC}
-    
+
     {Colors.BOLD}Score:{Colors.ENDC}      {Colors.YELLOW}{score:.2f}{Colors.ENDC} [{bar}] {score*100:.0f}%
-    
+
     {Colors.BOLD}Cost:{Colors.ENDC}       {Colors.BLUE}💰 ${cost:.6f}{Colors.ENDC}
-    
-    {Colors.BOLD}Reason:{Colors.ENDC}     {Colors.DIM}{reason[:60]}{'...' if len(reason) > 60 else ''}{Colors.ENDC}
+
+    {Colors.BOLD}Reason:{Colors.ENDC}     {Colors.DIM}{reason}{Colors.ENDC}
     """)
 
         if evaluation_log:
             import json
-            print(f"{Colors.BOLD}  Evaluation Log:{Colors.ENDC}")
-            print(f"{Colors.DIM}  ╭{'─'*66}╮{Colors.ENDC}")
+            print(f"{Colors.BOLD}Evaluation Log:{Colors.ENDC}")
+            log_border = "─" * WIDTH
+            print(f"{Colors.DIM}╭{log_border}╮{Colors.ENDC}")
 
             log_json = json.dumps(evaluation_log, indent=4, ensure_ascii=False)
 
             for line in log_json.split('\n'):
-                print(f"{Colors.DIM}  │{Colors.ENDC} {line[:64]}")
+                print(f"{Colors.DIM}│{Colors.ENDC} {line}")
 
-            print(f"{Colors.DIM}  ╰{'─'*66}╯{Colors.ENDC}")
+            print(f"{Colors.DIM}╰{log_border}╯{Colors.ENDC}")
 
-        print(f"\n{Colors.DIM}{'─'*70}{Colors.ENDC}\n")
+        print(f"\n{Colors.DIM}{'─'*WIDTH}{Colors.ENDC}\n")
 
 
 class ConversationalMetricPattern:
@@ -141,6 +148,8 @@ class ConversationalMetricPattern:
             print(result)
             return
 
+        WIDTH = 220
+
         success = result.get('success', False)
         score = result.get('score', 0.0)
         reason = result.get('reason', 'N/A')
@@ -155,37 +164,42 @@ class ConversationalMetricPattern:
         filled = int(bar_length * score)
         bar = '█' * filled + '░' * (bar_length - filled)
 
+        # Центрирование названия метрики
         metric_name = result.get('name', self.name)
         formatted_name = f"📊 {metric_name}"
-        padding = max(0, 62 - len(formatted_name))
+        padding = max(0, WIDTH - len(formatted_name))
         left_pad = padding // 2
         right_pad = padding - left_pad
         centered_name = " " * left_pad + formatted_name + " " * right_pad
 
-        print(f"""
-        {Colors.BOLD}{Colors.CYAN}╔════════════════════════════════════════════════════════════════════╗{Colors.ENDC}
-        {Colors.BOLD}{Colors.CYAN}║{Colors.ENDC} {centered_name} {Colors.BOLD}{Colors.CYAN}║{Colors.ENDC}
-        {Colors.BOLD}{Colors.CYAN}╚════════════════════════════════════════════════════════════════════╝{Colors.ENDC}
+        # Рамка заголовка (WIDTH + 2 для границ)
+        border = "═" * WIDTH
 
-        {Colors.BOLD}Status:{Colors.ENDC}     {status_icon} {status_color}{Colors.BOLD}{status_text}{Colors.ENDC}
-        
-        {Colors.BOLD}Score:{Colors.ENDC}      {Colors.YELLOW}{score:.2f}{Colors.ENDC} [{bar}] {score*100:.0f}%
-        
-        {Colors.BOLD}Cost:{Colors.ENDC}       {Colors.BLUE}💰 ${cost:.6f}{Colors.ENDC}
-        
-        {Colors.BOLD}Reason:{Colors.ENDC}     {Colors.DIM}{reason[:60]}{'...' if len(reason) > 60 else ''}{Colors.ENDC}
-        """)
+        print(f"""
+    {Colors.BOLD}{Colors.CYAN}╔{border}╗{Colors.ENDC}
+    {Colors.BOLD}{Colors.CYAN}║{Colors.ENDC}{centered_name}{Colors.BOLD}{Colors.CYAN}║{Colors.ENDC}
+    {Colors.BOLD}{Colors.CYAN}╚{border}╝{Colors.ENDC}
+
+    {Colors.BOLD}Status:{Colors.ENDC}     {status_icon} {status_color}{Colors.BOLD}{status_text}{Colors.ENDC}
+
+    {Colors.BOLD}Score:{Colors.ENDC}      {Colors.YELLOW}{score:.2f}{Colors.ENDC} [{bar}] {score*100:.0f}%
+
+    {Colors.BOLD}Cost:{Colors.ENDC}       {Colors.BLUE}💰 ${cost:.6f}{Colors.ENDC}
+
+    {Colors.BOLD}Reason:{Colors.ENDC}     {Colors.DIM}{reason}{Colors.ENDC}
+    """)
 
         if evaluation_log:
             import json
-            print(f"{Colors.BOLD}  Evaluation Log:{Colors.ENDC}")
-            print(f"{Colors.DIM}  ╭{'─'*66}╮{Colors.ENDC}")
+            print(f"{Colors.BOLD}Evaluation Log:{Colors.ENDC}")
+            log_border = "─" * WIDTH
+            print(f"{Colors.DIM}╭{log_border}╮{Colors.ENDC}")
 
             log_json = json.dumps(evaluation_log, indent=4, ensure_ascii=False)
 
             for line in log_json.split('\n'):
-                print(f"{Colors.DIM}  │{Colors.ENDC} {line[:64]}")
+                print(f"{Colors.DIM}│{Colors.ENDC} {line}")
 
-            print(f"{Colors.DIM}  ╰{'─'*66}╯{Colors.ENDC}")
+            print(f"{Colors.DIM}╰{log_border}╯{Colors.ENDC}")
 
-        print(f"\n{Colors.DIM}{'─'*70}{Colors.ENDC}\n")
+        print(f"\n{Colors.DIM}{'─'*WIDTH}{Colors.ENDC}\n")

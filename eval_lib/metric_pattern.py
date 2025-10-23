@@ -57,8 +57,6 @@ class MetricPattern:
             print(result)
             return
 
-        WIDTH = 220
-
         success = result.get('success', False)
         score = result.get('score', 0.0)
         reason = result.get('reason', 'N/A')
@@ -73,15 +71,32 @@ class MetricPattern:
         filled = int(bar_length * score)
         bar = '█' * filled + '░' * (bar_length - filled)
 
-        # Центрирование названия метрики
+        # Вычисляем ширину динамически
         metric_name = result.get('name', self.name)
+
+        # Собираем все строки для вычисления максимальной ширины
+        lines = [
+            f"Status:     {status_icon} {status_text}",
+            f"Score:      {score:.2f} [{bar}] {score*100:.0f}%",
+            f"Cost:       💰 ${cost:.6f}",
+            f"Reason:     {reason}"
+        ]
+
+        # Находим максимальную длину (без учета цветовых кодов)
+        max_content_width = max(len(line) for line in lines)
+        header_width = len(f"📊 {metric_name}")
+
+        # WIDTH = максимум из контента и заголовка, минимум 80
+        WIDTH = max(max_content_width, header_width, 80)
+
+        # Центрируем заголовок
         formatted_name = f"📊 {metric_name}"
         padding = max(0, WIDTH - len(formatted_name))
         left_pad = padding // 2
         right_pad = padding - left_pad
         centered_name = " " * left_pad + formatted_name + " " * right_pad
 
-        # Рамка заголовка (WIDTH + 2 для границ)
+        # Рамка заголовка
         border = "═" * WIDTH
 
         print(f"""
@@ -100,14 +115,22 @@ class MetricPattern:
 
         if evaluation_log:
             import json
+            log_json = json.dumps(evaluation_log, indent=4, ensure_ascii=False)
+            log_lines = log_json.split('\n')
+
+            # Ширина лога = максимальная длина строки + 4 (отступы)
+            log_width = max(len(line) for line in log_lines) + 4
+            log_width = max(log_width, WIDTH)  # Минимум = ширина заголовка
+
             print(f"{Colors.BOLD}Evaluation Log:{Colors.ENDC}")
-            log_border = "─" * WIDTH
+            log_border = "─" * log_width
             print(f"{Colors.DIM}╭{log_border}╮{Colors.ENDC}")
 
-            log_json = json.dumps(evaluation_log, indent=4, ensure_ascii=False)
-
-            for line in log_json.split('\n'):
-                print(f"{Colors.DIM}│{Colors.ENDC} {line}")
+            for line in log_lines:
+                # Добавляем padding справа чтобы выровнять рамку
+                padded_line = line + " " * (log_width - len(line))
+                print(
+                    f"{Colors.DIM}│{Colors.ENDC} {padded_line} {Colors.DIM}│{Colors.ENDC}")
 
             print(f"{Colors.DIM}╰{log_border}╯{Colors.ENDC}")
 
@@ -148,8 +171,6 @@ class ConversationalMetricPattern:
             print(result)
             return
 
-        WIDTH = 120
-
         success = result.get('success', False)
         score = result.get('score', 0.0)
         reason = result.get('reason', 'N/A')
@@ -164,15 +185,32 @@ class ConversationalMetricPattern:
         filled = int(bar_length * score)
         bar = '█' * filled + '░' * (bar_length - filled)
 
-        # Центрирование названия метрики
+        # Вычисляем ширину динамически
         metric_name = result.get('name', self.name)
+
+        # Собираем все строки для вычисления максимальной ширины
+        lines = [
+            f"Status:     {status_icon} {status_text}",
+            f"Score:      {score:.2f} [{bar}] {score*100:.0f}%",
+            f"Cost:       💰 ${cost:.6f}",
+            f"Reason:     {reason}"
+        ]
+
+        # Находим максимальную длину (без учета цветовых кодов)
+        max_content_width = max(len(line) for line in lines)
+        header_width = len(f"📊 {metric_name}")
+
+        # WIDTH = максимум из контента и заголовка, минимум 80
+        WIDTH = max(max_content_width, header_width, 80)
+
+        # Центрируем заголовок
         formatted_name = f"📊 {metric_name}"
         padding = max(0, WIDTH - len(formatted_name))
         left_pad = padding // 2
         right_pad = padding - left_pad
         centered_name = " " * left_pad + formatted_name + " " * right_pad
 
-        # Рамка заголовка (WIDTH + 2 для границ)
+        # Рамка заголовка
         border = "═" * WIDTH
 
         print(f"""
@@ -191,14 +229,22 @@ class ConversationalMetricPattern:
 
         if evaluation_log:
             import json
+            log_json = json.dumps(evaluation_log, indent=4, ensure_ascii=False)
+            log_lines = log_json.split('\n')
+
+            # Ширина лога = максимальная длина строки + 4 (отступы)
+            log_width = max(len(line) for line in log_lines) + 4
+            log_width = max(log_width, WIDTH)  # Минимум = ширина заголовка
+
             print(f"{Colors.BOLD}Evaluation Log:{Colors.ENDC}")
-            log_border = "─" * WIDTH
+            log_border = "─" * log_width
             print(f"{Colors.DIM}╭{log_border}╮{Colors.ENDC}")
 
-            log_json = json.dumps(evaluation_log, indent=4, ensure_ascii=False)
-
-            for line in log_json.split('\n'):
-                print(f"{Colors.DIM}│{Colors.ENDC} {line}")
+            for line in log_lines:
+                # Добавляем padding справа чтобы выровнять рамку
+                padded_line = line + " " * (log_width - len(line))
+                print(
+                    f"{Colors.DIM}│{Colors.ENDC} {padded_line} {Colors.DIM}│{Colors.ENDC}")
 
             print(f"{Colors.DIM}╰{log_border}╯{Colors.ENDC}")
 

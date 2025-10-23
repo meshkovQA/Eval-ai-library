@@ -774,7 +774,8 @@ generator = DatasetGenerator(
     question_length="mixed",  # "short", "long", or "mixed"
     question_openness="mixed",  # "open", "closed", or "mixed"
     trap_density=0.1,  # 10% trap questions
-    language="en"
+    language="en",
+    verbose=True  # Displays beautiful formatted progress, statistics and full dataset preview
 )
 
 dataset = await generator.generate_from_scratch()
@@ -791,7 +792,8 @@ generator = DatasetGenerator(
     max_rows=50,
     chunk_size=1024,
     chunk_overlap=100,
-    max_chunks=30
+    max_chunks=30,
+    verbose=True
 )
 
 file_paths = ["docs/user_guide.pdf", "docs/faq.md"]

@@ -269,7 +269,8 @@ class DatasetGenerator:
         docs = load_documents(file_paths)
 
         if self.verbose:
-            self._log(f"  ✅ Loaded {len(docs)} documents", Colors.GREEN)
+            self._log(
+                f"  ✅ Loaded {len(file_paths)} file(s) → {len(docs)} page(s)/document(s)", Colors.GREEN)
 
         self._log_step("Chunking documents", 2)
         doc_chunks = chunk_documents(docs,

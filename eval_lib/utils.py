@@ -35,21 +35,6 @@ def score_agg(
     Returns:
         Aggregated score between 0.0 and 1.0
 
-    Examples:
-        >>> # Verdicts: [fully, minor, minor] = [1.0, 0.3, 0.3]
-        >>> scores = [1.0, 0.3, 0.3]
-
-        >>> score_agg(scores, temperature=0.5)  # STRICT
-        0.53  # All scores matter equally
-
-        >>> score_agg(scores, temperature=1.0)  # BALANCED (arithmetic mean)
-        0.53  # Simple average: (1.0 + 0.3 + 0.3) / 3
-
-        >>> score_agg(scores, temperature=2.0)  # LENIENT
-        0.92  # 1.0^2=1.0, 0.3^2=0.09 → heavily suppresses "minor"
-
-        >>> score_agg(scores, temperature=3.0)  # VERY LENIENT
-        0.98  # 1.0^3=1.0, 0.3^3=0.027 → almost ignores "minor"
     """
     if not scores:
         return 0.0
@@ -58,7 +43,7 @@ def score_agg(
     # - temperature < 1.0: Favors low scores (strict)
     # - temperature = 1.0: Arithmetic mean (balanced)
     # - temperature > 1.0: Suppresses low scores (lenient)
-    weighted_scores = [s ** temperature for s in scores]
+    weighted_scores = [s ** (1/temperature) for s in scores]
     weighted_score = sum(weighted_scores) / len(weighted_scores)
 
     # Apply penalty ONLY for "none" verdicts (0.0)

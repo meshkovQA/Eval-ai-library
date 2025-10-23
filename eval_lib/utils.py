@@ -17,11 +17,16 @@ def _map_temperature_to_p(
     t_min: float = 0.1,
     t_max: float = 1.0,
     p_min: float = -8.0,
-    p_max: float = 8.0
+    p_max: float = 12.25,  # chosen so that t=0.5 -> p=1
 ) -> float:
-    """Map temperature value to power exponent (p) for the generalized mean."""
+    """
+    Map temperature in [t_min, t_max] linearly to power exponent p, with:
+      t=0.1 -> p=-8 (very strict)
+      t=0.5 -> p=+1 (arithmetic mean)
+      t=1.0 -> p=+12.25 (very lenient)
+    """
     t = max(t_min, min(t_max, temperature))
-    alpha = (t - t_min) / (t_max - t_min)
+    alpha = (t - t_min) / (t_max - t_min)  # in [0,1]
     return p_min + alpha * (p_max - p_min)
 
 
@@ -32,47 +37,33 @@ def score_agg(
     eps_for_neg_p: float = 1e-9
 ) -> float:
     """
-    Aggregate verdict scores with temperature-controlled strictness.
+    Aggregate verdict scores with temperature-controlled strictness via power mean.
 
-    Uses the **power mean (generalized mean)** model:
-      - Low temperature (≈0.1): very strict → closer to min
-      - Medium temperature (≈0.5): balanced → arithmetic mean
-      - High temperature (≈1.0): lenient → closer to max
+    - Low temperature (~0.1): strict (p negative) -> close to min
+    - Medium temperature (=0.5): balanced (p=1) -> arithmetic mean
+    - High temperature (=1.0): lenient (large positive p) -> close to max
 
-    Additionally applies a penalty for "none" verdicts (0.0 scores).
-
-    Args:
-        scores: List of scores (values between 0.0 and 1.0)
-        temperature: Strictness control (0.1 = strict, 1.0 = lenient)
-        penalty: Penalty factor for "none" verdicts (default: 0.1)
-        eps_for_neg_p: Small epsilon to avoid division by zero when p < 0
-
-    Returns:
-        Aggregated score between 0.0 and 1.0
+    Applies a penalty for "none" verdicts (0.0) only.
     """
     if not scores:
         return 0.0
 
-    # Map temperature to power exponent p
     p = _map_temperature_to_p(temperature)
 
-    # Handle zero scores for negative powers to avoid infinity
-    if p < 0:
-        base = [(s if s > 0.0 else eps_for_neg_p) for s in scores]
-    else:
-        base = scores
+    # For negative p, clamp zeros to a small epsilon to avoid 0**p blowing up
+    base = [(s if s > 0.0 else eps_for_neg_p)
+            for s in scores] if p < 0 else scores
 
-    # Compute power mean: M_p = ((Σ s_i^p) / n)^(1/p)
+    # Power mean: M_p = ( (Σ s_i^p) / n )^(1/p)
     if abs(p) < 1e-12:
-        # Limit as p → 0 → geometric mean
+        # Limit p -> 0 is geometric mean
         logs = [math.log(s if s > 0 else eps_for_neg_p) for s in base]
         agg = math.exp(sum(logs) / len(logs))
     else:
-        s_pow = [s ** p for s in base]
-        mean_pow = sum(s_pow) / len(s_pow)
+        mean_pow = sum(s ** p for s in base) / len(base)
         agg = mean_pow ** (1.0 / p)
 
-    # Apply penalty for "none" verdicts
+    # Apply penalty for "none" verdicts only
     none_count = sum(1 for s in scores if s == 0.0)
     penalty_factor = max(0.0, 1 - penalty * none_count)
 

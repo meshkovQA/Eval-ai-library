@@ -30,7 +30,7 @@ VERDICT_WEIGHTS = {
 }
 
 # Configuration constants
-MAX_CRITERIA = 3
+MAX_CRITERIA = 2
 LINK_CRITERION = "The user got the link to the requested resource."
 
 

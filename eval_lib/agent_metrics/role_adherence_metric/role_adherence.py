@@ -37,7 +37,7 @@ class RoleAdherenceMetric(ConversationalMetricPattern):
         threshold: float = 0.7,
         temperature: float = 0.5,
         verbose: bool = False,
-        role_description: str = ""
+        chatbot_role: str = ""
     ):
         """
         Initialize Role Adherence metric.
@@ -49,7 +49,7 @@ class RoleAdherenceMetric(ConversationalMetricPattern):
         """
         super().__init__(model=model, threshold=threshold, verbose=verbose)
         self.temperature = temperature
-        self.role_description = role_description
+        self.role_description = chatbot_role
 
     # ==================== HELPER METHODS ====================
 
@@ -95,6 +95,7 @@ Verdicts:
 
     async def _generate_verdicts(
         self,
+        role_description: str,
         dialogue_text: str
     ) -> Tuple[List[Dict[str, str]], float, float]:
         """
@@ -114,7 +115,7 @@ Verdicts:
 Now evaluate the following conversation.
 
 ASSIGNED ROLE:
-{self.role_description}
+{role_description}
 
 DIALOGUE:
 {dialogue_text}
@@ -203,7 +204,7 @@ Return JSON array:
         total_cost = 0.0
 
         # Step 1: Extract role
-        role_description = test_case.chatbot_role or "No role specified"
+        role_description = test_case.chatbot_role or self.chatbot_role or "No role specified"
 
         # Step 2: Format dialogue
         dialogue_text = self._render_dialogue(test_case.turns)

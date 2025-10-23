@@ -73,16 +73,17 @@ async def main():
     )
     
     # Print results with detailed logs
-    for _, test_results in results:
+    for test_case, test_results in results:
         for result in test_results:
-            print(f"Success: {result.success}")
-            for metric in result.metrics_data:
-                print(f"{metric.name}: {metric.score:.2f}")
-                print(f"Reason: {metric.reason}")
-                print(f"Cost: ${metric.evaluation_cost:.6f}")
-                # Access detailed evaluation log
-                if hasattr(metric, 'evaluation_log'):
-                    print(f"Log: {metric.evaluation_log}")
+            print(f"✅ Success: {result.success}")
+            print(f"📊 Overall Score: {result.score:.2f}")
+            
+            # Access individual metric results
+            for metric_result in result.metrics_data:
+                print(f"\n{metric_result.name}:")
+                print(f"  Score: {metric_result.score:.2f}")
+                print(f"  Reason: {metric_result.reason}")
+                print(f"  Cost: ${metric_result.evaluation_cost:.6f}")
 
 asyncio.run(main())
 ```
@@ -102,7 +103,7 @@ async def evaluate_with_geval():
     # G-Eval with auto chain-of-thought
     metric = GEval(
         model="gpt-4o",  # Works best with GPT-4
-        threshold=0.7,  # Score range: 0-100
+        threshold=0.7,  # Score range: 0.0-1.0
         name="Clarity & Simplicity",
         criteria="Evaluate how clear and age-appropriate the explanation is for a 10-year-old child",
 
@@ -126,45 +127,34 @@ async def evaluate_with_geval():
     
     result = await metric.evaluate(test_case)
     
-    print(f"Score: {result['score']:.2f}/100")  # Fine-grained score like 73.45
-    print(f"Success: {result['success']}")
-    print(f"Reason: {result['reason']}")
-    print(f"Sampled scores: {result['metadata']['sampled_scores']}")  # See all 20 samples
-    print(f"Score distribution: {result['evaluation_log']['score_distribution']}")
 
 asyncio.run(evaluate_with_geval())
 ```
 
-### Custom Evaluation with Advanced Features
+### Custom Evaluation with Verdict-Based Scoring
 
-The CustomEvalMetric now includes **Chain-of-Thought** and **Probability-Weighted Scoring** from G-Eval for maximum accuracy:
+CustomEvalMetric uses **verdict-based evaluation** with automatic criteria generation for transparent and detailed scoring:
 ```python
 from eval_lib import CustomEvalMetric
 
 async def custom_evaluation():
     test_case = EvalTestCase(
-        input="How do I reset my password?",
-        actual_output="To reset your password, click 'Forgot Password' on the login page, enter your email, and follow the link sent to your inbox.",
-        expected_output="Clear step-by-step instructions"
+        input="Explain photosynthesis",
+        actual_output="Photosynthesis is the process where plants use sunlight, water, and carbon dioxide to create oxygen and energy in the form of sugar.",
     )
     
+    # Verdict-based custom evaluation
     metric = CustomEvalMetric(
-        model="gpt-4o",
-        threshold=0.7,
-        name="HelpfulnessScore",
-        criteria="Evaluate if the response provides clear, actionable steps that directly answer the user's question"
-        # Auto-generates evaluation steps using CoT
-        # Auto-applies probability-weighted scoring (20 samples)
+        model="gpt-4o-mini",
+        threshold=0.8,
+        name="Scientific Accuracy",
+        criteria="Evaluate if the explanation is scientifically accurate and complete",
+        evaluation_steps=None,  # Auto-generated if not provided
+        temperature=0.8,  # Controls verdict aggregation
+        verbose=True
     )
     
     result = await metric.evaluate(test_case)
-    
-    # Access detailed evaluation log
-    log = result['evaluation_log']
-    print(f"Auto-generated steps: {log['evaluation_steps']}")
-    print(f"Sampled scores: {log['sampled_scores']}")
-    print(f"Score distribution: {log['score_distribution']}")
-    print(f"Final score: {log['final_score']:.2f}")
 
 asyncio.run(custom_evaluation())
 ```
@@ -317,20 +307,20 @@ metric = ContextualRecallMetric(
 ```
 
 #### BiasMetric
-Detects bias and prejudice in AI-generated output. Score range: 0 (strong bias) to 100 (no bias).
+Detects bias and prejudice in AI-generated output. Score range: 0 (strong bias) and 100 (no bias).
 ```python
 metric = BiasMetric(
     model="gpt-4o-mini",
-    threshold=0.7  # Score range: 0-100
+    threshold=1.0  # Score range: 0 or 100
 )
 ```
 
 #### ToxicityMetric
-Identifies toxic content in responses. Score range: 0 (highly toxic) to 100 (no toxicity).
+Identifies toxic content in responses. Score range: 0 (highly toxic) and 100 (no toxicity).
 ```python
 metric = ToxicityMetric(
     model="gpt-4o-mini",
-    threshold=0.7  # Score range: 0-100
+    threshold=1.0  # Score range: 0 or 100
 )
 ```
 
@@ -355,6 +345,9 @@ metric = ToolCorrectnessMetric(
 ```
 
 #### TaskSuccessRateMetric
+````
+**Note:** The metric automatically detects if the conversation contains links/URLs and adds "The user got the link to the requested resource" as an evaluation criterion only when links are present in the dialogue.
+````
 Measures task completion success across conversation:
 1. Infers user's goal
 2. Generates success criteria
@@ -364,7 +357,7 @@ Measures task completion success across conversation:
 metric = TaskSuccessRateMetric(
     model="gpt-4o-mini",
     threshold=0.7,
-    temperature=1.1  # Higher = more lenient aggregation
+    temperature=1.0  # Higher = more lenient aggregation
 )
 ```
 
@@ -378,9 +371,9 @@ metric = RoleAdherenceMetric(
     model="gpt-4o-mini",
     threshold=0.8,
     temperature=0.5,
-    chatbot_role="You are helpfull assistant"
+    chatbot_role="You are helpfull assistant" # Set role here directly
 )
-# Don't forget to set: metric.chatbot_role = "Your role description"
+
 ```
 
 #### KnowledgeRetentionMetric
@@ -416,27 +409,210 @@ metric = GEval(
 ```
 
 #### CustomEvalMetric
-Enhanced custom evaluation with CoT and probability-weighted scoring:
+Verdict-based custom evaluation with automatic criteria generation.
+Automatically:
+- Generates 3-5 specific sub-criteria from main criteria (1 LLM call)
+- Evaluates each criterion with verdicts (fully/mostly/partial/minor/none)
+- Aggregates using softmax (temperature-controlled)
+Total: 1-2 LLM calls
+
+Usage:
 ```python
 metric = CustomEvalMetric(
-    model="gpt-4o",
-    threshold=0.7,
-    name="QualityScore",
-    criteria="Your custom evaluation criteria"
-    # Automatically uses:
-    # - Chain-of-Thought (generates evaluation steps)
-    # - Probability-Weighted Scoring (20 samples, temp=2.0)
+    model="gpt-4o-mini",
+    threshold=0.8,
+    name="Code Quality",
+    criteria="Evaluate code readability, efficiency, and best practices",
+    evaluation_steps=None,  # Auto-generated if not provided
+    temperature=0.8,  # Controls verdict aggregation (0.1=strict, 1.0=lenient)
+    verbose=True
 )
+
+```
+
+**Example with manual criteria:**
+```python
+metric = CustomEvalMetric(
+    model="gpt-4o-mini",
+    threshold=0.8,
+    name="Child-Friendly Explanation",
+    criteria="Evaluate if explanation is appropriate for a 10-year-old",
+    evaluation_steps=[  # Manual criteria for precise control
+        "Uses simple vocabulary appropriate for 10-year-olds",
+        "Includes relatable analogies or comparisons",
+        "Avoids complex technical jargon",
+        "Explanation is engaging and interesting",
+        "Concept is broken down into understandable parts"
+    ],
+    temperature=0.8,
+    verbose=True
+)
+
+result = await metric.evaluate(test_case)
 ```
 
 ## Understanding Evaluation Results
 
 ### Score Ranges
 
-- **RAG Metrics** (Answer Relevancy, Faithfulness, etc.): 0.0 - 1.0
-- **Safety Metrics** (Bias, Toxicity): 0.0 - 1.0
-- **G-Eval & Custom Metrics**: 0.0 - 1.0
-- **Agent Metrics** (Task Success, Role Adherence, etc.): 0.0 - 1.0
+All metrics use a normalized score range of **0.0 to 1.0**:
+- **0.0**: Complete failure / Does not meet criteria
+- **0.5**: Partial satisfaction / Mixed results
+- **1.0**: Perfect / Fully meets criteria
+
+**Score Interpretation:**
+- **0.8 - 1.0**: Excellent
+- **0.7 - 0.8**: Good (typical threshold)
+- **0.5 - 0.7**: Acceptable with issues
+- **0.0 - 0.5**: Poor / Needs improvement
+
+## Verbose Mode
+
+All metrics support a `verbose` parameter that controls output formatting:
+
+### verbose=False (Default) - JSON Output
+Returns simple dictionary with results:
+```python
+metric = AnswerRelevancyMetric(
+    model="gpt-4o-mini",
+    threshold=0.7,
+    verbose=False  # Default
+)
+
+result = await metric.evaluate(test_case)
+print(result)
+# Output: Simple dictionary
+# {
+#   'name': 'answerRelevancyMetric',
+#   'score': 0.85,
+#   'success': True,
+#   'reason': 'Answer is highly relevant...',
+#   'evaluation_cost': 0.000234,
+#   'evaluation_log': {...}
+# }
+```
+
+### verbose=True - Beautiful Console Output
+Displays formatted results with colors, progress bars, and detailed logs:
+```python
+metric = CustomEvalMetric(
+    model="gpt-4o-mini",
+    threshold=0.9,
+    name="Factual Accuracy",
+    criteria="Evaluate the factual accuracy of the response",
+    verbose=True  # Enable beautiful output
+)
+
+result = await metric.evaluate(test_case)
+# Output: Beautiful formatted display (see image below)
+```
+
+**Console Output with verbose=True:**
+
+**Console Output with verbose=True:**
+```
+╔════════════════════════════════════════════════════════════════╗
+║                    📊answerRelevancyMetric                     ║
+╚════════════════════════════════════════════════════════════════╝
+
+Status: ✅ PASSED
+Score:  0.91 [███████████████████████████░░░] 91%
+Cost:   💰 $0.000178
+Reason:
+  The answer correctly identifies Paris as the capital of France, demonstrating a clear understanding of the
+  user's request. However, it fails to provide a direct and explicit response, which diminishes its overall
+  effectiveness.
+
+Evaluation Log:
+╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ {                                                                                                             │
+│   "input_question": "What is the capital of France?",                                                         │
+│   "answer": "The capital of France is Paris and it is a beautiful city and known for its art and culture.",   │
+│   "user_intent": "The user is seeking information about the capital city of France.",                         │
+│   "comment_user_intent": "Inferred goal of the question.",                                                    │
+│   "statements": [                                                                                             │
+│     "The capital of France is Paris.",                                                                        │
+│     "Paris is a beautiful city.",                                                                             │
+│     "Paris is known for its art and culture."                                                                 │
+│   ],                                                                                                          │
+│   "comment_statements": "Atomic facts extracted from the answer.",                                            │
+│   "verdicts": [                                                                                               │
+│     {                                                                                                         │
+│       "verdict": "fully",                                                                                     │
+│       "reason": "The statement explicitly answers the user's question about the capital of France."           │
+│     },                                                                                                        │
+│     {                                                                                                         │
+│       "verdict": "minor",                                                                                     │
+│       "reason": "While it mentions Paris, it does not directly answer the user's question."                   │
+│     },                                                                                                        │
+│     {                                                                                                         │
+│       "verdict": "minor",                                                                                     │
+│       "reason": "This statement is related to Paris but does not address the user's question about the        │
+│ capital."                                                                                                     │
+│     }                                                                                                         │
+│   ],                                                                                                          │
+│   "comment_verdicts": "Each verdict explains whether a statement is relevant to the question.",               │
+│   "verdict_score": 0.9142,                                                                                    │
+│   "comment_verdict_score": "Proportion of relevant statements in the answer.",                                │
+│   "final_score": 0.9142,                                                                                      │
+│   "comment_final_score": "Score based on the proportion of relevant statements.",                             │
+│   "threshold": 0.7,                                                                                           │
+│   "success": true,                                                                                            │
+│   "comment_success": "Whether the score exceeds the pass threshold.",                                         │
+│   "final_reason": "The answer correctly identifies Paris as the capital of France, demonstrating a clear      │
+│ understanding of the user's request. However, it fails to provide a direct and explicit response, which       │
+│ diminishes its overall effectiveness.",                                                                       │
+│   "comment_reasoning": "Compressed explanation of the key verdict rationales."                                │
+│ }                                                                                                             │
+╰───────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+```
+
+Features:
+- ✅ Color-coded status (✅ PASSED / ❌ FAILED)
+- 📊 Visual progress bar for scores
+- 💰 Cost tracking display
+- 📝 Formatted reason with word wrapping
+- 📋 Pretty-printed evaluation log in bordered box
+
+**When to use verbose=True:**
+- Interactive development and testing
+- Debugging evaluation issues
+- Presentations and demonstrations
+- Manual review of results
+
+**When to use verbose=False:**
+- Production environments
+- Batch processing
+- Automated testing
+- When storing results in databases
+
+---
+
+## Работа с результатами (Working with Results)
+
+Results are returned as simple dictionaries. Access fields directly:
+```python
+# Run evaluation
+result = await metric.evaluate(test_case)
+
+# Access result fields
+score = result['score']              # 0.0-1.0
+success = result['success']          # True/False
+reason = result['reason']            # String explanation
+cost = result['evaluation_cost']     # USD amount
+log = result['evaluation_log']       # Detailed breakdown
+
+# Example: Check success and print score
+if result['success']:
+    print(f"✅ Passed with score: {result['score']:.2f}")
+else:
+    print(f"❌ Failed: {result['reason']}")
+    
+# Access detailed verdicts (for verdict-based metrics)
+if 'verdicts' in result['evaluation_log']:
+    for verdict in result['evaluation_log']['verdicts']:
+        print(f"- {verdict['verdict']}: {verdict['reason']}")
+```
 
 ## Temperature Parameter
 
@@ -595,8 +771,8 @@ test_cases = [
 ### 2. Set Appropriate Thresholds
 ```python
 # Safety metrics - high bar
-BiasMetric(threshold=80.0)
-ToxicityMetric(threshold=85.0)
+BiasMetric(threshold=0.8)
+ToxicityMetric(threshold=0.85)
 
 # Quality metrics - moderate bar
 AnswerRelevancyMetric(threshold=0.7)
@@ -648,16 +824,23 @@ task_success = TaskSuccessRateMetric(
 
 ### 4. Leverage Evaluation Logs
 ```python
-result = await metric.evaluate(test_case)
+# Enable verbose mode for automatic detailed display
+metric = AnswerRelevancyMetric(
+    model="gpt-4o-mini",
+    threshold=0.7,
+    verbose=True  # Automatic formatted output with full logs
+)
 
-# Always check the log for insights
+# Or access logs programmatically
+result = await metric.evaluate(test_case)
 log = result['evaluation_log']
 
-# For debugging failures:
+# Debugging failures
 if not result['success']:
-    print(f"Failed because: {log['final_reason']}")
-    print(f"Verdicts: {log.get('verdicts', [])}")
-    print(f"Steps taken: {log.get('evaluation_steps', [])}")
+    # All details available in log
+    reason = result['reason']
+    verdicts = log.get('verdicts', [])
+    steps = log.get('evaluation_steps', [])
 ```
 
 ### 5. Batch Evaluation for Efficiency
@@ -686,23 +869,6 @@ print(f"Total cost: ${total_cost:.4f}")
 print(f"Success rate: {success_rate:.2%}")
 ```
 
-## Cost Tracking
-
-All evaluations automatically track API costs:
-```python
-results = await evaluate(test_cases, metrics)
-
-for _, test_results in results:
-    for result in test_results:
-        for metric in result.metrics_data:
-            print(f"{metric.name}: ${metric.evaluation_cost:.6f}")
-```
-
-**Cost Estimates** (as of 2025):
-- **G-Eval with GPT-4**: ~$0.10-0.15 per evaluation (20 samples)
-- **Custom Eval with GPT-4**: ~$0.10-0.15 per evaluation (20 samples + CoT)
-- **Standard metrics with GPT-4o-mini**: ~$0.001-0.005 per evaluation
-- **Faithfulness/Answer Relevancy**: ~$0.003-0.010 per evaluation (multiple LLM calls)
 
 ## Environment Variables
 

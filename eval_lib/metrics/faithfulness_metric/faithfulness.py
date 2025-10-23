@@ -31,8 +31,9 @@ class FaithfulnessMetric(MetricPattern):
             model: str,
             threshold: float = 0.7,
             temperature: float = 0.5,
+            verbose: bool = False
     ):
-        super().__init__(model=model, threshold=threshold)
+        super().__init__(model=model, threshold=threshold, verbose=verbose)
         self.temperature = temperature
 
     async def _generate_statements(self, answer: str) -> Tuple[List[str], float]:
@@ -139,6 +140,6 @@ class FaithfulnessMetric(MetricPattern):
             "evaluation_cost": round(llm_cost, 6),
             "evaluation_log": evaluation_log
         }
-        print(result)
+        self.print_result(result)
 
         return result

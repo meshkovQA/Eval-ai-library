@@ -34,8 +34,9 @@ class AnswerRelevancyMetric(MetricPattern):
         model: str,
         threshold: float = 0.6,
         temperature: float = 0.5,
+        verbose: bool = False
     ):
-        super().__init__(model=model, threshold=threshold)
+        super().__init__(model=model, threshold=threshold, verbose=verbose)
         self.temperature = temperature
 
     async def _infer_user_intent(self, question: str) -> str:
@@ -194,6 +195,6 @@ class AnswerRelevancyMetric(MetricPattern):
             "evaluation_cost": round(llm_cost, 6),
             "evaluation_log": evaluation_log
         }
-        print(result)
+        self.print_result(result)
 
         return result

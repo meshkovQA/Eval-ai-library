@@ -36,6 +36,7 @@ class KnowledgeRetentionMetric(ConversationalMetricPattern):
         model: str,
         threshold: float = 0.7,
         temperature: float = 0.5,
+        verbose: bool = False
     ):
         """
         Initialize Knowledge Retention metric.
@@ -45,7 +46,7 @@ class KnowledgeRetentionMetric(ConversationalMetricPattern):
             threshold: Success threshold (0.0-1.0)
             temperature: Score aggregation temperature for softmax
         """
-        super().__init__(model=model, threshold=threshold)
+        super().__init__(model=model, threshold=threshold, verbose=verbose)
         self.temperature = temperature
 
     # ==================== HELPER METHODS ====================
@@ -230,6 +231,6 @@ Verdicts:
             "evaluation_cost": round(total_cost, 6),
             "evaluation_log": evaluation_log
         }
-        print(result)
+        self.print_result(result)
 
         return result

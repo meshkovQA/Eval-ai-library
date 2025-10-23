@@ -18,8 +18,8 @@ from eval_lib.utils import extract_json_block
 class ContextualRecallMetric(MetricPattern):
     name = "contextualRecallMetric"
 
-    def __init__(self, model: str, threshold: float = 0.7):
-        super().__init__(model=model, threshold=threshold)
+    def __init__(self, model: str, threshold: float = 0.7, verbose: bool = False):
+        super().__init__(model=model, threshold=threshold, verbose=verbose)
 
     async def _extract_claims(self, reference: str) -> Tuple[List[str], float]:
         prompt = (
@@ -90,6 +90,6 @@ class ContextualRecallMetric(MetricPattern):
             "evaluation_cost": round(llm_cost, 6),
             "evaluation_log": evaluation_log
         }
-        print(result)
+        self.print_result(result)
 
         return result

@@ -22,7 +22,7 @@ from difflib import SequenceMatcher
 from typing import Any, Dict, List, Optional, Set, Tuple
 
 from eval_lib.testcases_schema import EvalTestCase
-from eval_lib.metric_pattern import MetricPattern
+from eval_lib.metric_pattern import MetricPattern, print_metric_result
 
 
 # -------------------------------
@@ -178,8 +178,8 @@ class PrecisionConfig:
 class AnswerPrecisionMetric(MetricPattern):
     name = "answerPrecisionMetric"
 
-    def __init__(self, model: str, threshold: float = 0.8, config: Optional[PrecisionConfig] = None):
-        super().__init__(model=model, threshold=threshold)
+    def __init__(self, model: str, threshold: float = 0.8, verbose: bool = False, config: Optional[PrecisionConfig] = None):
+        super().__init__(model=model, threshold=threshold, verbose=verbose)
         self.config = config or PrecisionConfig()
 
     # --- core similarity components ---
@@ -405,6 +405,6 @@ class AnswerPrecisionMetric(MetricPattern):
             "evaluation_log": evaluation_log,
         }
 
-        print(result)
+        self.print_result(result)
 
         return result

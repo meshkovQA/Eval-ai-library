@@ -40,6 +40,7 @@ class TaskSuccessRateMetric(ConversationalMetricPattern):
         model: str,
         threshold: float = 0.7,
         temperature: float = 1.1,
+        verbose: bool = False
     ):
         """
         Initialize Task Success Rate metric.
@@ -49,7 +50,7 @@ class TaskSuccessRateMetric(ConversationalMetricPattern):
             threshold: Success threshold (0.0-1.0)
             temperature: Score aggregation temperature for softmax
         """
-        super().__init__(model=model, threshold=threshold)
+        super().__init__(model=model, threshold=threshold, verbose=verbose)
         self.temperature = temperature
 
     # ==================== HELPER METHODS ====================
@@ -345,6 +346,6 @@ Criteria: [
             "evaluation_cost": round(total_cost, 6),
             "evaluation_log": evaluation_log
         }
-        print(result)
+        self.print_result(result)
 
         return result

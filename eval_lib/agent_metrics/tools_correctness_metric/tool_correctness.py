@@ -15,11 +15,12 @@ class ToolCorrectnessMetric(MetricPattern):
     def __init__(
         self,
         threshold: float = 0.5,
+        verbose: bool = False,
         evaluation_params: List[str] = [],
         should_exact_match: bool = False,
         should_consider_ordering: bool = False
     ):
-        super().__init__(model=None, threshold=threshold)
+        super().__init__(model=None, threshold=threshold, verbose=verbose)
         self.evaluation_params = evaluation_params
         self.should_exact_match = should_exact_match
         self.should_consider_ordering = should_consider_ordering
@@ -39,7 +40,7 @@ class ToolCorrectnessMetric(MetricPattern):
             "evaluation_cost": 0.0  # No LLM cost for this metric
         }
 
-        print(result)
+        self.print_result(result)
 
         return result
 

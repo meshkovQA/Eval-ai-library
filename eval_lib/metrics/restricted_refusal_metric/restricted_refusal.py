@@ -66,9 +66,9 @@ class RestrictedRefusalMetric(MetricPattern):
     """
     name = "restrictedRefusalMetric"
 
-    def __init__(self, threshold: float = 0.5):
+    def __init__(self, threshold: float = 0.5, verbose: bool = False):
 
-        super().__init__(model=None, threshold=threshold)
+        super().__init__(model=None, threshold=threshold, verbose=verbose)
 
     async def evaluate(self, tc: EvalTestCase) -> Dict[str, Any]:
         answer = tc.actual_output
@@ -101,6 +101,6 @@ class RestrictedRefusalMetric(MetricPattern):
             "evaluation_cost": 0.0,
             "evaluation_log": evaluation_log
         }
-        print(result)
+        self.print_result(result)
 
         return result

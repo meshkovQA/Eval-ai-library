@@ -18,9 +18,9 @@ from eval_lib.utils import extract_json_block
 class ContextualPrecisionMetric(MetricPattern):
     name = "contextPrecisionMetric"
 
-    def __init__(self, model: str, threshold: float = 0.7, top_k: int | None = None, ):
-        super().__init__(model=model, threshold=threshold)
-        self.top_k = top_k            # limit of chunks inspected (None = all)
+    def __init__(self, model: str, threshold: float = 0.7, top_k: int | None = None, verbose: bool = False):
+        super().__init__(model=model, threshold=threshold, verbose=verbose)
+        self.top_k = top_k
 
     # ------------------------------------------------------------------ #
     async def _is_chunk_relevant(                       # judgement = 0 / 1
@@ -102,6 +102,6 @@ class ContextualPrecisionMetric(MetricPattern):
             "evaluation_log": evaluation_log,
         }
 
-        print(result)
+        self.print_result(result)
 
         return result

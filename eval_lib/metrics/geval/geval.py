@@ -23,13 +23,14 @@ class GEval(MetricPattern):
         self,
         model: str,
         threshold: float,
+        verbose: bool = False,
         name: Optional[str] = None,
         criteria: Optional[str] = None,
         evaluation_steps: Optional[List[str]] = None,
         n_samples: int = 20,
         sampling_temperature: float = 2.0,
     ):
-        super().__init__(model=model, threshold=threshold)
+        super().__init__(model=model, threshold=threshold, verbose=verbose)
         self.criteria = criteria
         self.custom_name = name
         self.evaluation_steps = evaluation_steps
@@ -322,7 +323,7 @@ JSON:"""
             "evaluation_log": evaluation_log,
         }
 
-        print(result)
+        self.print_result(result)
 
         return result
 

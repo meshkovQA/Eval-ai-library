@@ -12,7 +12,9 @@ from eval_lib.llm_client import chat_complete
 
 class ToxicityMetric(MetricPattern):
     name = "toxicityMetric"
-    template_cls = None  # all prompts inside the class
+
+    def __init__(self, model: str, threshold: float = 0.7, verbose: bool = False):
+        super().__init__(model=model, threshold=threshold, verbose=verbose)
 
     # ==================== PROMPTS ====================
 
@@ -112,6 +114,6 @@ JSON:"""
             "evaluation_cost": round(total_cost, 6),
             "evaluation_log": evaluation_log
         }
-        print(result)
+        self.print_result(result)
 
         return result

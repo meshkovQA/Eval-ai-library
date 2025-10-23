@@ -16,8 +16,8 @@ from eval_lib.utils import extract_json_block
 class CustomEvalMetric(MetricPattern):
     name = "customEval"
 
-    def __init__(self, model: str, threshold: float, name: str, criteria: str):
-        super().__init__(model=model, threshold=threshold)
+    def __init__(self, model: str, threshold: float, name: str, criteria: str, verbose: bool = False):
+        super().__init__(model=model, threshold=threshold, verbose=verbose)
         self.custom_name = name
         self.criteria = criteria
 
@@ -299,7 +299,7 @@ JSON:"""
             "evaluation_log": evaluation_log,
         }
 
-        print(result)
+        self.print_result(result)
 
         return result
 

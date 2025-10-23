@@ -36,6 +36,8 @@ class RoleAdherenceMetric(ConversationalMetricPattern):
         model: str,
         threshold: float = 0.7,
         temperature: float = 0.5,
+        verbose: bool = False,
+        role_description: str = ""
     ):
         """
         Initialize Role Adherence metric.
@@ -45,8 +47,9 @@ class RoleAdherenceMetric(ConversationalMetricPattern):
             threshold: Success threshold (0.0-1.0)
             temperature: Score aggregation temperature for softmax
         """
-        super().__init__(model=model, threshold=threshold)
+        super().__init__(model=model, threshold=threshold, verbose=verbose)
         self.temperature = temperature
+        self.role_description = role_description
 
     # ==================== HELPER METHODS ====================
 
@@ -92,7 +95,6 @@ Verdicts:
 
     async def _generate_verdicts(
         self,
-        role_description: str,
         dialogue_text: str
     ) -> Tuple[List[Dict[str, str]], float, float]:
         """
@@ -112,7 +114,7 @@ Verdicts:
 Now evaluate the following conversation.
 
 ASSIGNED ROLE:
-{role_description}
+{self.role_description}
 
 DIALOGUE:
 {dialogue_text}
@@ -251,6 +253,6 @@ Return JSON array:
             "evaluation_log": evaluation_log
         }
 
-        print(result)
+        self.print_result(result)
 
         return result

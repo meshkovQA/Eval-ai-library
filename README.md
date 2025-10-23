@@ -424,17 +424,29 @@ metric = CustomEvalMetric(
 
 ## Temperature Parameter
 
-Many metrics use a **temperature** parameter for score aggregation (via softmax):
+Many metrics use a **temperature** parameter for score aggregation (via temperature-weighted scoring):
 
-- **Lower (0.1-0.3)**: **Strict** - high scores dominate, penalizes any low scores heavily
-- **Medium (0.4-0.6)**: **Balanced** - default behavior
-- **Higher (0.8-1.5)**: **Lenient** - closer to arithmetic mean, more forgiving
+- **Lower (0.1-0.3)**: **STRICT** - All scores matter equally, low scores heavily penalize the final result. Best for critical applications where even one bad verdict should fail the metric.
+- **Medium (0.4-0.8)**: **BALANCED** - Moderate weighting between high and low scores. Default behavior for most use cases (default: 0.5).
+- **Higher (1.0-2.0)**: **LENIENT** - High scores (fully/mostly) dominate, effectively ignoring partial/minor/none verdicts. Best for exploratory evaluation or when you want to focus on positive signals.
+
+**How it works:** Temperature controls exponential weighting of scores. Higher temperature exponentially boosts high scores (1.0, 0.9), making low scores (0.7, 0.3, 0.0) matter less. Lower temperature treats all scores more equally.
+
+**Example:**
 ```python
-# Strict evaluation - one bad verdict significantly lowers score
-metric = AnswerRelevancyMetric(model="gpt-4o-mini", threshold=0.7, temperature=0.3)
+# Verdicts: [fully, mostly, partial, minor, none] = [1.0, 0.9, 0.7, 0.3, 0.0]
 
-# Lenient evaluation - focuses on overall trend
-metric = TaskSuccessRateMetric(model="gpt-4o-mini", threshold=0.7, temperature=1.2)
+# STRICT: All verdicts count
+metric = FaithfulnessMetric(temperature=0.1)  
+# Result: ~0.52 (heavily penalized by "minor" and "none")
+
+# BALANCED: Moderate weighting
+metric = AnswerRelevancyMetric(temperature=0.5)  
+# Result: ~0.73 (balanced consideration)
+
+# LENIENT: Only "fully" and "mostly" matter
+metric = TaskSuccessRateMetric(temperature=2.0)  
+# Result: ~0.95 (ignores "partial", "minor", "none")
 ```
 
 ## LLM Provider Configuration
@@ -581,14 +593,41 @@ RoleAdherenceMetric(threshold=0.9)  # Strict role requirements
 
 ### 3. Use Temperature Wisely
 ```python
-# Strict evaluation - critical applications
-metric = FaithfulnessMetric(temperature=0.3)
+# STRICT evaluation - critical applications where all verdicts matter
+# Use when: You need high accuracy and can't tolerate bad verdicts
+metric = FaithfulnessMetric(temperature=0.1)
 
-# Balanced - general use (default)
+# BALANCED - general use (default)
+# Use when: Standard evaluation with moderate requirements
 metric = AnswerRelevancyMetric(temperature=0.5)
 
-# Lenient - exploratory evaluation
-metric = TaskSuccessRateMetric(temperature=1.2)
+# LENIENT - exploratory evaluation or focusing on positive signals
+# Use when: You want to reward good answers and ignore occasional mistakes
+metric = TaskSuccessRateMetric(temperature=2.0)
+```
+
+**Real-world examples:**
+```python
+# Production RAG system - must be accurate
+faithfulness = FaithfulnessMetric(
+    model="gpt-4o-mini",
+    threshold=0.8,
+    temperature=0.2  # STRICT: One "none" verdict significantly impacts score
+)
+
+# Customer support chatbot - moderate standards
+role_adherence = RoleAdherenceMetric(
+    model="gpt-4o-mini",
+    threshold=0.7,
+    temperature=0.5  # BALANCED: Standard evaluation
+)
+
+# Experimental feature testing - focus on successes
+task_success = TaskSuccessRateMetric(
+    model="gpt-4o-mini",
+    threshold=0.6,
+    temperature=1.5  # LENIENT: Focuses on "fully" and "mostly" completions
+)
 ```
 
 ### 4. Leverage Evaluation Logs

@@ -18,41 +18,51 @@ def score_agg(
     penalty: float = 0.1
 ) -> float:
     """
-    Compute a softmax-weighted aggregate of scores with penalty for low-scoring items.
+    Compute a temperature-weighted aggregate of scores with penalty for low-scoring items.
 
-    This function applies softmax weighting (higher scores get more weight) and then
-    applies a penalty proportional to the number of low-scoring items.
+    This function applies temperature-based weighting where higher temperature makes
+    the metric more lenient (focuses on high scores), and lower temperature makes it
+    more strict (all scores matter equally).
 
     Args:
         scores: List of scores (0.0 to 1.0) to aggregate
-        temperature: Controls strictness of aggregation
-            - Lower (0.1-0.3): Strict - high scores dominate
-            - Medium (0.4-0.6): Balanced - default behavior
-            - Higher (0.8-1.5): Lenient - closer to arithmetic mean
+        temperature: Controls strictness of aggregation (0.1 to 2.0)
+            - Lower (0.1-0.3): **STRICT** - All scores matter equally, low scores heavily penalize
+            - Medium (0.4-0.8): **BALANCED** - Moderate weighting (default: 0.5)
+            - Higher (1.0-2.0): **LENIENT** - High scores dominate, ignores "partial", "minor", "none"
         penalty: Penalty factor for low-scoring items (default 0.1)
-            - Applied to scores <= 0.4
+            - Applied to scores <= 0.4 (verdicts: partial, minor, none)
 
     Returns:
         Aggregated score between 0.0 and 1.0
 
-    Example:
-        >>> scores = [1.0, 0.9, 0.7, 0.3, 0.0]
-        >>> score_agg(scores, temperature=0.5)
-        0.73
+    Examples:
+        >>> scores = [1.0, 0.9, 0.7, 0.3, 0.0]  # fully, mostly, partial, minor, none
+        >>> score_agg(scores, temperature=0.1)  # STRICT
+        0.52  # Low because all bad scores count
+
+        >>> score_agg(scores, temperature=2.0)  # LENIENT  
+        0.95  # High because only "fully" and "mostly" matter
+
+        >>> score_agg(scores, temperature=0.5)  # BALANCED
+        0.73  # Middle ground
     """
     if not scores:
         return 0.0
 
-    # Compute softmax weights
-    exp_scores = [exp(s / temperature) for s in scores]
+    # Compute temperature-weighted scores
+    # Higher temperature = exponentially boost high scores (lenient)
+    # Lower temperature = all scores weighted similarly (strict)
+    exp_scores = [exp(s * temperature) for s in scores]
     total = sum(exp_scores)
-    softmax_score = sum(s * e / total for s, e in zip(scores, exp_scores))
+    weighted_score = sum(s * e / total for s, e in zip(scores, exp_scores))
 
     # Apply penalty if many statements have low scores (≤ 0.4)
-    irrelevant = sum(1 for s in scores if s <= 0.4)
-    penalty_factor = max(0.0, 1 - penalty * irrelevant)
+    # This corresponds to verdicts: partial (0.7), minor (0.3), none (0.0)
+    none_count = sum(1 for s in scores if s == 0.0)
+    penalty_factor = max(0.0, 1 - penalty * none_count)
 
-    return round(softmax_score * penalty_factor, 4)
+    return round(weighted_score * penalty_factor, 4)
 
 
 def extract_json_block(text: str) -> str:

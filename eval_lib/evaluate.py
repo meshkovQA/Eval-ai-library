@@ -183,18 +183,6 @@ async def evaluate(
         _print_summary(results, total_cost, total_time,
                        total_passed, total_tests)
 
-    # Print detailed results if requested
-    if verbose:
-        print(f"{Colors.BOLD}Detailed Results:{Colors.ENDC}")
-        for idx, (meta, tc_list) in enumerate(results, 1):
-            print(f"\n{Colors.DIM}{'─'*70}{Colors.ENDC}")
-            print(f"{Colors.BOLD}Test Case {idx}:{Colors.ENDC}")
-            for tc in tc_list:
-                tc_dict = asdict(tc)
-                # Pretty print with indentation
-                print(json.dumps(tc_dict, indent=2, ensure_ascii=False))
-        print(f"{Colors.DIM}{'─'*70}{Colors.ENDC}\n")
-
     return results
 
 
@@ -321,15 +309,5 @@ async def evaluate_conversations(
     if verbose:
         _print_summary(results, total_cost, total_time,
                        total_passed, total_conversations)
-
-    # Print detailed results if requested
-    if verbose:
-        print(f"{Colors.BOLD}Detailed Results:{Colors.ENDC}")
-        for idx, (_, conv_list) in enumerate(results, 1):
-            print(f"\n{Colors.DIM}{'─'*70}{Colors.ENDC}")
-            print(f"{Colors.BOLD}Conversation {idx}:{Colors.ENDC}")
-            for conv in conv_list:
-                print(json.dumps(asdict(conv), indent=2, ensure_ascii=False))
-        print(f"{Colors.DIM}{'─'*70}{Colors.ENDC}\n")
 
     return results

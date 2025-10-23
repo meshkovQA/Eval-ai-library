@@ -69,7 +69,8 @@ async def main():
     # Evaluate
     results = await evaluate(
         test_cases=[test_case],
-        metrics=metrics
+        metrics=metrics,
+        verbose=True
     )
 
 asyncio.run(main())
@@ -172,7 +173,7 @@ async def evaluate_agent():
         )
     ]
     
-    results = await evaluate([test_case], metrics)
+    results = await evaluate([test_case], metrics, verbose=True)
     return results
 
 asyncio.run(evaluate_agent())
@@ -218,7 +219,7 @@ async def evaluate_conversation():
         )
     ]
     
-    results = await evaluate_conversations([conversation], metrics)
+    results = await evaluate_conversations([conversation], metrics, verbose=True)
     
     return results
 

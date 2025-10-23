@@ -99,12 +99,8 @@ class MetricPattern:
 
             log_json = json.dumps(evaluation_log, indent=4, ensure_ascii=False)
 
-            for line in log_json.split('\n')[:20]:
+            for line in log_json.split('\n'):
                 print(f"{Colors.DIM}  │{Colors.ENDC} {line[:64]}")
-
-            if len(log_json.split('\n')) > 20:
-                print(
-                    f"{Colors.DIM}  │ ... ({len(log_json.split('\n')) - 20} more lines){Colors.ENDC}")
 
             print(f"{Colors.DIM}  ╰{'─'*66}╯{Colors.ENDC}")
 
@@ -187,12 +183,8 @@ class ConversationalMetricPattern:
 
             log_json = json.dumps(evaluation_log, indent=4, ensure_ascii=False)
 
-            for line in log_json.split('\n')[:20]:
+            for line in log_json.split('\n'):
                 print(f"{Colors.DIM}  │{Colors.ENDC} {line[:64]}")
-
-            if len(log_json.split('\n')) > 20:
-                print(
-                    f"{Colors.DIM}  │ ... ({len(log_json.split('\n')) - 20} more lines){Colors.ENDC}")
 
             print(f"{Colors.DIM}  ╰{'─'*66}╯{Colors.ENDC}")
 

@@ -11,6 +11,13 @@ from eval_lib.testcases_schema import ConversationalEvalTestCase
 from eval_lib.metric_pattern import ConversationalMetricPattern
 from eval_lib.llm_client import chat_complete
 from eval_lib.utils import score_agg, extract_json_block
+import re
+
+
+def _contains_links(dialogue: str) -> bool:
+    """Check if dialogue contains any URLs/links"""
+    url_pattern = r'https?://[^\s]+|www\.[^\s]+|\[.*?\]\(.*?\)'
+    return bool(re.search(url_pattern, dialogue))
 
 
 # Verdict weights for task completion levels
@@ -118,23 +125,20 @@ Criteria: [
 
         return text.strip(), cost or 0.0
 
-    async def _generate_success_criteria(self, goal: str) -> Tuple[List[str], float]:
+    async def _generate_success_criteria(self, goal: str, dialogue: str) -> Tuple[List[str], float]:
         """
         Generate concrete success criteria for the user's goal.
 
         Args:
             goal: The inferred user goal
-
-        Returns:
-            Tuple of (criteria_list, llm_cost)
+            dialogue: Full conversation text (needed to check for links)
         """
         prompt = (
             f"{self._prompt_criteria_few_shot()}\n\n"
             f"Now do the same for the next case.\n\n"
             f"User goal: {goal}\n\n"
-            f"List up to {MAX_CRITERIA} ESSENTIAL SUCCESS CRITERIA that are DIRECTLY RELATED to the user's goal. "
-            f"Focus ONLY on the core requirements needed to complete the task successfully. "
-            f"Exclude nice-to-have features, optional steps, or generic criteria like 'got a link'.\n\n"
+            f"List up to {MAX_CRITERIA} concrete SUCCESS CRITERIA that could realistically be satisfied "
+            f"within a brief chat of 2–5 turns.\n\n"
             "Each criterion must be a short, observable statement.\n"
             "Return only a JSON array of strings."
         )
@@ -152,16 +156,9 @@ Criteria: [
             if not isinstance(criteria, list):
                 raise ValueError("Expected JSON array of criteria")
 
-            # Ensure LINK_CRITERION is included
-            if LINK_CRITERION not in criteria:
+            # Add LINK_CRITERION only if dialogue contains links
+            if _contains_links(dialogue) and LINK_CRITERION not in criteria:
                 criteria.append(LINK_CRITERION)
-
-            # Keep LINK_CRITERION first and limit to MAX_CRITERIA
-            if len(criteria) > MAX_CRITERIA:
-                criteria = (
-                    [LINK_CRITERION] +
-                    [c for c in criteria if c != LINK_CRITERION][:MAX_CRITERIA - 1]
-                )
 
             # Truncate to MAX_CRITERIA
             criteria = criteria[:MAX_CRITERIA]
@@ -295,7 +292,7 @@ Criteria: [
         total_cost += cost
 
         # Step 3: Generate success criteria
-        success_criteria, cost = await self._generate_success_criteria(user_goal)
+        success_criteria, cost = await self._generate_success_criteria(user_goal, dialogue_text)
         total_cost += cost
 
         # Step 4: Generate verdicts for each criterion

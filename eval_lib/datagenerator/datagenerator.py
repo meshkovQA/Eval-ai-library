@@ -133,13 +133,14 @@ class DatasetGenerator:
             print(f"{Colors.BOLD}{Colors.CYAN}╚{border}╝{Colors.ENDC}\n")
 
     def _print_summary(self, dataset: List[dict], elapsed_time: float, total_cost: float = 0.0):
-        """Print generation summary with full dataset preview"""
+        """Print generation summary with full dataset in readable format"""
         if not self.verbose:
             return
 
         import shutil
+        import textwrap
         terminal_width = shutil.get_terminal_size().columns
-        WIDTH = terminal_width - 10  # Больше места для датасета
+        WIDTH = terminal_width - 10
         WIDTH = max(WIDTH, 80)
 
         print(
@@ -158,35 +159,46 @@ class DatasetGenerator:
             print(f"\n{Colors.BOLD}Generated Dataset:{Colors.ENDC}\n")
 
             for idx, row in enumerate(dataset, 1):
-                border = "─" * WIDTH
-
-                # Header for each row
+                # Header
+                print(f"{Colors.CYAN}{'─' * WIDTH}{Colors.ENDC}")
                 print(
                     f"{Colors.CYAN}{Colors.BOLD}Row {idx}/{len(dataset)}:{Colors.ENDC}")
-                print(f"{Colors.DIM}╭{border}╮{Colors.ENDC}")
+                print(f"{Colors.CYAN}{'─' * WIDTH}{Colors.ENDC}")
 
-                # Print each field
+                # Fields
                 for key, value in row.items():
                     value_str = str(value)
 
-                    # Word wrap for long values
-                    if len(value_str) > WIDTH - 10:
-                        import textwrap
-                        wrapped_lines = textwrap.wrap(
-                            value_str, width=WIDTH - 4)
-                        print(
-                            f"{Colors.DIM}│{Colors.ENDC} {Colors.BOLD}{key}:{Colors.ENDC} {wrapped_lines[0]}")
-                        for line in wrapped_lines[1:]:
-                            print(f"{Colors.DIM}│{Colors.ENDC}   {line}")
+                    # Key with proper formatting
+                    print(f"{Colors.BOLD}{key}:{Colors.ENDC}", end=" ")
+
+                    # Wrap long text to fit terminal width
+                    # Calculate available width (WIDTH - key length - 2 for ": ")
+                    available_width = WIDTH - len(key) - 2
+
+                    if len(value_str) <= available_width:
+                        # Short value - print on same line
+                        print(value_str)
                     else:
-                        print(
-                            f"{Colors.DIM}│{Colors.ENDC} {Colors.BOLD}{key}:{Colors.ENDC} {value_str}")
+                        # Long value - wrap to multiple lines with proper indentation
+                        print()  # New line after key
+                        wrapped = textwrap.fill(
+                            value_str,
+                            width=WIDTH - 2,
+                            initial_indent="  ",
+                            subsequent_indent="  ",
+                            break_long_words=False,
+                            break_on_hyphens=False
+                        )
+                        print(f"{Colors.DIM}{wrapped}{Colors.ENDC}")
 
-                print(f"{Colors.DIM}╰{border}╯{Colors.ENDC}")
+                print()  # Spacing after row
 
-                # Add spacing between rows
-                if idx < len(dataset):
-                    print()
+            print(f"{Colors.CYAN}{'─' * WIDTH}{Colors.ENDC}\n")
+
+            # Add spacing between rows
+            if idx < len(dataset):
+                print()
 
     async def generate_from_scratch(self) -> List[dict]:
 

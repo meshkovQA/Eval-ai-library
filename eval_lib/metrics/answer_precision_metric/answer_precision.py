@@ -22,7 +22,7 @@ from difflib import SequenceMatcher
 from typing import Any, Dict, List, Optional, Set, Tuple
 
 from eval_lib.testcases_schema import EvalTestCase
-from eval_lib.metric_pattern import MetricPattern, print_metric_result
+from eval_lib.metric_pattern import MetricPattern
 
 
 # -------------------------------

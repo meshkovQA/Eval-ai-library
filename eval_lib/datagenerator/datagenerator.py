@@ -133,41 +133,60 @@ class DatasetGenerator:
             print(f"{Colors.BOLD}{Colors.CYAN}╚{border}╝{Colors.ENDC}\n")
 
     def _print_summary(self, dataset: List[dict], elapsed_time: float, total_cost: float = 0.0):
-        """Print generation summary"""
-        if self.verbose:
-            import shutil
-            terminal_width = shutil.get_terminal_size().columns
-            WIDTH = terminal_width // 2
-            WIDTH = max(WIDTH, 60)
+        """Print generation summary with full dataset preview"""
+        if not self.verbose:
+            return
 
-            print(
-                f"\n{Colors.BOLD}{Colors.GREEN}✅ Dataset Generation Complete{Colors.ENDC}\n")
-            print(f"{Colors.BOLD}Summary:{Colors.ENDC}")
-            print(
-                f"  📊 Total rows generated: {Colors.YELLOW}{len(dataset)}{Colors.ENDC}")
-            print(
-                f"  ⏱️  Time elapsed: {Colors.YELLOW}{elapsed_time:.2f}s{Colors.ENDC}")
-            if total_cost > 0:
-                print(
-                    f"  💰 Total cost: {Colors.BLUE}${total_cost:.6f}{Colors.ENDC}")
+        import shutil
+        terminal_width = shutil.get_terminal_size().columns
+        WIDTH = terminal_width - 10  # Больше места для датасета
+        WIDTH = max(WIDTH, 80)
 
-            # Sample preview
-            if dataset:
-                print(f"\n{Colors.BOLD}Sample (first row):{Colors.ENDC}")
+        print(
+            f"\n{Colors.BOLD}{Colors.GREEN}✅ Dataset Generation Complete{Colors.ENDC}\n")
+        print(f"{Colors.BOLD}Summary:{Colors.ENDC}")
+        print(
+            f"  📊 Total rows generated: {Colors.YELLOW}{len(dataset)}{Colors.ENDC}")
+        print(
+            f"  ⏱️  Time elapsed: {Colors.YELLOW}{elapsed_time:.2f}s{Colors.ENDC}")
+        if total_cost > 0:
+            print(
+                f"  💰 Total cost: {Colors.BLUE}${total_cost:.6f}{Colors.ENDC}")
+
+        # Show full dataset
+        if dataset:
+            print(f"\n{Colors.BOLD}Generated Dataset:{Colors.ENDC}\n")
+
+            for idx, row in enumerate(dataset, 1):
                 border = "─" * WIDTH
+
+                # Header for each row
+                print(
+                    f"{Colors.CYAN}{Colors.BOLD}Row {idx}/{len(dataset)}:{Colors.ENDC}")
                 print(f"{Colors.DIM}╭{border}╮{Colors.ENDC}")
 
-                first_row = dataset[0]
-                for key, value in first_row.items():
-                    # Truncate long values
+                # Print each field
+                for key, value in row.items():
                     value_str = str(value)
+
+                    # Word wrap for long values
                     if len(value_str) > WIDTH - 10:
-                        value_str = value_str[:WIDTH - 13] + "..."
+                        import textwrap
+                        wrapped_lines = textwrap.wrap(
+                            value_str, width=WIDTH - 4)
+                        print(
+                            f"{Colors.DIM}│{Colors.ENDC} {Colors.BOLD}{key}:{Colors.ENDC} {wrapped_lines[0]}")
+                        for line in wrapped_lines[1:]:
+                            print(f"{Colors.DIM}│{Colors.ENDC}   {line}")
+                    else:
+                        print(
+                            f"{Colors.DIM}│{Colors.ENDC} {Colors.BOLD}{key}:{Colors.ENDC} {value_str}")
 
-                    print(
-                        f"{Colors.DIM}│{Colors.ENDC} {Colors.BOLD}{key}:{Colors.ENDC} {value_str}")
+                print(f"{Colors.DIM}╰{border}╯{Colors.ENDC}")
 
-                print(f"{Colors.DIM}╰{border}╯{Colors.ENDC}\n")
+                # Add spacing between rows
+                if idx < len(dataset):
+                    print()
 
     async def generate_from_scratch(self) -> List[dict]:
 

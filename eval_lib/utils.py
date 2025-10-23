@@ -15,7 +15,7 @@ Utility functions for metrics evaluation
 def _map_temperature_to_p(
     temperature: float,
     t_min: float = 0.1,
-    t_max: float = 2.0,
+    t_max: float = 1.0,
     p_min: float = -8.0,
     p_max: float = 8.0
 ) -> float:
@@ -27,7 +27,7 @@ def _map_temperature_to_p(
 
 def score_agg(
     scores: List[float],
-    temperature: float = 1.0,
+    temperature: float = 0.5,
     penalty: float = 0.1,
     eps_for_neg_p: float = 1e-9
 ) -> float:
@@ -35,14 +35,15 @@ def score_agg(
     Aggregate verdict scores with temperature-controlled strictness.
 
     Uses the **power mean (generalized mean)** model:
-      - Low temperature → strict (negative power → closer to min)
-      - High temperature → lenient (positive power → closer to max)
+      - Low temperature (≈0.1): very strict → closer to min
+      - Medium temperature (≈0.5): balanced → arithmetic mean
+      - High temperature (≈1.0): lenient → closer to max
 
-    Additionally, applies a penalty for "none" verdicts (0.0 scores).
+    Additionally applies a penalty for "none" verdicts (0.0 scores).
 
     Args:
         scores: List of scores (values between 0.0 and 1.0)
-        temperature: Strictness control (0.1 = very strict, 2.0 = very lenient)
+        temperature: Strictness control (0.1 = strict, 1.0 = lenient)
         penalty: Penalty factor for "none" verdicts (default: 0.1)
         eps_for_neg_p: Small epsilon to avoid division by zero when p < 0
 
@@ -52,7 +53,7 @@ def score_agg(
     if not scores:
         return 0.0
 
-    # Map temperature to the power exponent p
+    # Map temperature to power exponent p
     p = _map_temperature_to_p(temperature)
 
     # Handle zero scores for negative powers to avoid infinity
@@ -61,8 +62,7 @@ def score_agg(
     else:
         base = scores
 
-    # Compute power mean:
-    # M_p = ( (1/n) * Σ(s_i^p) )^(1/p)
+    # Compute power mean: M_p = ((Σ s_i^p) / n)^(1/p)
     if abs(p) < 1e-12:
         # Limit as p → 0 → geometric mean
         logs = [math.log(s if s > 0 else eps_for_neg_p) for s in base]

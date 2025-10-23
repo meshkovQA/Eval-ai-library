@@ -18,37 +18,42 @@ def score_agg(
     penalty: float = 0.1
 ) -> float:
     """
-    Compute a temperature-weighted aggregate of scores with penalty for low-scoring items.
+    Compute a temperature-weighted aggregate of scores with penalty for "none" verdicts.
 
-    This function applies temperature-based weighting where higher temperature makes
-    the metric more lenient (focuses on high scores), and lower temperature makes it
-    more strict (all scores matter equally).
+    This function applies temperature-based weighting using power function (score^temperature)
+    where higher temperature makes the metric more lenient by exponentially suppressing low scores.
 
     Args:
         scores: List of scores (0.0 to 1.0) to aggregate
-        temperature: Controls strictness of aggregation (0.1 to 2.0)
-            - Lower (0.1-0.3): **STRICT** - All scores matter equally, low scores heavily penalize
-            - Medium (0.4-0.8): **BALANCED** - Moderate weighting (default: 0.5)
-            - Higher (1.0-2.0): **LENIENT** - High scores dominate, ignores "partial", "minor", "none"
-        penalty: Penalty factor for low-scoring items (default 0.1)
-            - Applied to scores <= 0.4 (verdicts: partial, minor, none)
+        temperature: Controls strictness of aggregation (0.1 to 3.0)
+            - Lower (0.1-0.5): **STRICT** - All scores matter, low scores heavily penalize
+            - Medium (0.6-1.2): **BALANCED** - Moderate weighting (default: 1.0 = arithmetic mean)
+            - Higher (1.5-3.0): **LENIENT** - High scores dominate, aggressively ignores low scores
+        penalty: Penalty factor for "none" verdicts (default 0.1)
+            - Applied only to scores == 0.0 (verdict: "none")
 
     Returns:
         Aggregated score between 0.0 and 1.0
 
     Examples:
-        >>> scores = [1.0, 0.9, 0.7, 0.3, 0.0]  # fully, mostly, partial, minor, none
-        >>> score_agg(scores, temperature=0.1)  # STRICT
-        0.52  # Low because all bad scores count
+        >>> # Verdicts: [fully, minor, minor] = [1.0, 0.3, 0.3]
+        >>> scores = [1.0, 0.3, 0.3]
 
-        >>> score_agg(scores, temperature=2.0)  # LENIENT  
-        0.95  # High because only "fully" and "mostly" matter
+        >>> score_agg(scores, temperature=0.5)  # STRICT
+        0.53  # All scores matter equally
 
-        >>> score_agg(scores, temperature=0.5)  # BALANCED
-        0.73  # Middle ground
+        >>> score_agg(scores, temperature=1.0)  # BALANCED (arithmetic mean)
+        0.53  # Simple average: (1.0 + 0.3 + 0.3) / 3
+
+        >>> score_agg(scores, temperature=2.0)  # LENIENT
+        0.92  # 1.0^2=1.0, 0.3^2=0.09 → heavily suppresses "minor"
+
+        >>> score_agg(scores, temperature=3.0)  # VERY LENIENT
+        0.98  # 1.0^3=1.0, 0.3^3=0.027 → almost ignores "minor"
     """
     if not scores:
         return 0.0
+
     # Temperature-based weighting using power function: score^temperature
     # - temperature < 1.0: Favors low scores (strict)
     # - temperature = 1.0: Arithmetic mean (balanced)

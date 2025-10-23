@@ -23,7 +23,7 @@ VERDICT_WEIGHTS = {
 }
 
 # Configuration constants
-MAX_CRITERIA = 10
+MAX_CRITERIA = 3
 LINK_CRITERION = "The user got the link to the requested resource."
 
 
@@ -39,7 +39,7 @@ class TaskSuccessRateMetric(ConversationalMetricPattern):
         self,
         model: str,
         threshold: float = 0.7,
-        temperature: float = 1.1,
+        temperature: float = 0.5,
         verbose: bool = False
     ):
         """
@@ -132,10 +132,9 @@ Criteria: [
             f"{self._prompt_criteria_few_shot()}\n\n"
             f"Now do the same for the next case.\n\n"
             f"User goal: {goal}\n\n"
-            f"List up to {MAX_CRITERIA} concrete SUCCESS CRITERIA that could realistically be satisfied "
-            f"within a brief chat of 2–5 turns. "
-            "Then **add** this exact sentence: "
-            f"\"{LINK_CRITERION}\"\n\n"
+            f"List up to {MAX_CRITERIA} ESSENTIAL SUCCESS CRITERIA that are DIRECTLY RELATED to the user's goal. "
+            f"Focus ONLY on the core requirements needed to complete the task successfully. "
+            f"Exclude nice-to-have features, optional steps, or generic criteria like 'got a link'.\n\n"
             "Each criterion must be a short, observable statement.\n"
             "Return only a JSON array of strings."
         )

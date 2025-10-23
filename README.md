@@ -97,7 +97,6 @@ async def evaluate_with_geval():
     test_case = EvalTestCase(
         input="Explain quantum computing to a 10-year-old",
         actual_output="Quantum computers are like super-powerful regular computers that use special tiny particles to solve really hard problems much faster.",
-        expected_output="A simple explanation using analogies suitable for children"
     )
     
     # G-Eval with auto chain-of-thought
@@ -106,7 +105,21 @@ async def evaluate_with_geval():
         threshold=0.7,  # Score range: 0-100
         name="Clarity & Simplicity",
         criteria="Evaluate how clear and age-appropriate the explanation is for a 10-year-old child",
-        # evaluation_steps is auto-generated from criteria if not provided
+        
+        # Evaluation_steps is auto-generated from criteria if not provided
+        evaluation_steps=[
+        "Step 1: Check if the language is appropriate for a 10-year-old. Avoid complex technical terms, jargon, or abstract concepts that children cannot relate to. The vocabulary should be simple and conversational.",
+        
+        "Step 2: Evaluate the use of analogies and examples. Look for comparisons to everyday objects, activities, or experiences familiar to children (toys, games, school, animals, family activities). Good analogies make abstract concepts concrete.",
+        
+        "Step 3: Assess the structure and flow. The explanation should have a clear beginning, middle, and end. Ideas should build logically, starting with familiar concepts before introducing new ones. Sentences should be short and easy to follow.",
+        
+        "Step 4: Check for engagement elements. Look for questions, storytelling, humor, or interactive elements that capture a child's attention. The tone should be friendly and encouraging, not boring or too formal.",
+        
+        "Step 5: Verify completeness without overwhelming. The explanation should cover the main idea adequately but not overload with too many details. It should answer the question without confusing the child with unnecessary complexity.",
+        
+        "Step 6: Assign a score from 0.0 to 1.0, where 0.0 means completely inappropriate or unclear for a child, and 1.0 means perfectly clear, engaging, and age-appropriate."
+        ],
         n_samples=20,  # Number of samples for probability estimation (default: 20)
         sampling_temperature=2.0  # High temperature for diverse sampling (default: 2.0)
     )
@@ -427,8 +440,8 @@ metric = CustomEvalMetric(
 Many metrics use a **temperature** parameter for score aggregation (via temperature-weighted scoring):
 
 - **Lower (0.1-0.3)**: **STRICT** - All scores matter equally, low scores heavily penalize the final result. Best for critical applications where even one bad verdict should fail the metric.
-- **Medium (0.4-0.8)**: **BALANCED** - Moderate weighting between high and low scores. Default behavior for most use cases (default: 0.5).
-- **Higher (1.0-2.0)**: **LENIENT** - High scores (fully/mostly) dominate, effectively ignoring partial/minor/none verdicts. Best for exploratory evaluation or when you want to focus on positive signals.
+- **Medium (0.4-0.6)**: **BALANCED** - Moderate weighting between high and low scores. Default behavior for most use cases (default: 0.5).
+- **Higher (0.7-1.0)**: **LENIENT** - High scores (fully/mostly) dominate, effectively ignoring partial/minor/none verdicts. Best for exploratory evaluation or when you want to focus on positive signals.
 
 **How it works:** Temperature controls exponential weighting of scores. Higher temperature exponentially boosts high scores (1.0, 0.9), making low scores (0.7, 0.3, 0.0) matter less. Lower temperature treats all scores more equally.
 
@@ -445,7 +458,7 @@ metric = AnswerRelevancyMetric(temperature=0.5)
 # Result: ~0.73 (balanced consideration)
 
 # LENIENT: Only "fully" and "mostly" matter
-metric = TaskSuccessRateMetric(temperature=2.0)  
+metric = TaskSuccessRateMetric(temperature=1.0)  
 # Result: ~0.95 (ignores "partial", "minor", "none")
 ```
 
@@ -603,7 +616,7 @@ metric = AnswerRelevancyMetric(temperature=0.5)
 
 # LENIENT - exploratory evaluation or focusing on positive signals
 # Use when: You want to reward good answers and ignore occasional mistakes
-metric = TaskSuccessRateMetric(temperature=2.0)
+metric = TaskSuccessRateMetric(temperature=1.0)
 ```
 
 **Real-world examples:**
@@ -612,7 +625,7 @@ metric = TaskSuccessRateMetric(temperature=2.0)
 faithfulness = FaithfulnessMetric(
     model="gpt-4o-mini",
     threshold=0.8,
-    temperature=0.2  # STRICT: One "none" verdict significantly impacts score
+    temperature=0.2  # STRICT: verdicts "none", "minor", "partially" significantly impact score
 )
 
 # Customer support chatbot - moderate standards
@@ -626,7 +639,7 @@ role_adherence = RoleAdherenceMetric(
 task_success = TaskSuccessRateMetric(
     model="gpt-4o-mini",
     threshold=0.6,
-    temperature=1.5  # LENIENT: Focuses on "fully" and "mostly" completions
+    temperature=1.0  # LENIENT: Focuses on "fully" and "mostly" completions
 )
 ```
 

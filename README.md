@@ -105,7 +105,7 @@ async def evaluate_with_geval():
         threshold=0.7,  # Score range: 0-100
         name="Clarity & Simplicity",
         criteria="Evaluate how clear and age-appropriate the explanation is for a 10-year-old child",
-        
+
         # Evaluation_steps is auto-generated from criteria if not provided
         evaluation_steps=[
         "Step 1: Check if the language is appropriate for a 10-year-old. Avoid complex technical terms, jargon, or abstract concepts that children cannot relate to. The vocabulary should be simple and conversational.",
@@ -230,7 +230,9 @@ async def evaluate_conversation():
         RoleAdherenceMetric(
             model="gpt-4o-mini",
             threshold=0.8,
-            temperature=0.5  # Softmax temperature for verdict aggregation
+            temperature=0.5,
+            chatbot_role=conversation.chatbot_role
+
         ),
         KnowledgeRetentionMetric(
             model="gpt-4o-mini",
@@ -375,7 +377,8 @@ Evaluates how well the agent maintains its assigned role:
 metric = RoleAdherenceMetric(
     model="gpt-4o-mini",
     threshold=0.8,
-    temperature=0.5
+    temperature=0.5,
+    chatbot_role="You are helpfull assistant"
 )
 # Don't forget to set: metric.chatbot_role = "Your role description"
 ```

@@ -215,7 +215,7 @@ Verdicts:
             "verdict_weights": {v["verdict"]: VERDICT_WEIGHTS.get(v["verdict"], 0.0) for v in verdicts},
             "comment_verdict_weights": "Numeric weights assigned to each verdict for score calculation.",
             "final_score": final_score,
-            "comment_final_score": f"Softmax aggregation of verdict weights (temperature={self.temperature}).",
+            "comment_final_score": f"Weighted average of verdict scores using softmax aggregation (temperature={self.temperature}).",
             "threshold": self.threshold,
             "success": success,
             "comment_success": "Whether the retention score meets the required threshold.",

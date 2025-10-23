@@ -1,302 +1,330 @@
 # custom_eval.py
 """
-Custom Evaluation Metric with Chain-of-Thought and Probability-Weighted Scoring
-Uses advanced techniques from G-Eval for improved accuracy
+Custom Evaluation Metric with Verdict-based Scoring
+Breaks down evaluation into multiple criteria with individual verdicts
 """
 import json
-import re
 from typing import Dict, Any, List, Tuple
-from collections import Counter
 from eval_lib.metric_pattern import MetricPattern
 from eval_lib.testcases_schema import EvalTestCase
 from eval_lib.llm_client import chat_complete
-from eval_lib.utils import extract_json_block
+from eval_lib.utils import score_agg, extract_json_block
+
+
+# Verdict weights for scoring
+VERDICT_WEIGHTS = {
+    "fully": 1.0,      # Criterion fully satisfied
+    "mostly": 0.9,     # Criterion largely satisfied with minor gaps
+    "partial": 0.7,    # Criterion partially satisfied
+    "minor": 0.3,      # Criterion minimally addressed
+    "none": 0.0        # Criterion not satisfied at all
+}
 
 
 class CustomEvalMetric(MetricPattern):
+    """
+    Custom evaluation metric with verdict-based scoring.
+    Allows defining custom criteria and evaluates each one separately.
+    """
+
     name = "customEval"
 
-    def __init__(self, model: str, threshold: float, name: str, criteria: str, verbose: bool = False):
+    def __init__(
+        self,
+        model: str,
+        threshold: float,
+        name: str,
+        criteria: str,
+        evaluation_steps: List[str] = None,
+        temperature: float = 0.8,
+        verbose: bool = False
+    ):
+        """
+        Initialize Custom Evaluation Metric.
+
+        Args:
+            model: LLM model name
+            threshold: Success threshold (0.0-1.0)
+            name: Custom metric name
+            criteria: High-level evaluation criteria description
+            evaluation_steps: List of specific criteria to evaluate (auto-generated if None)
+            temperature: Score aggregation temperature for softmax
+            verbose: Enable detailed logging
+        """
         super().__init__(model=model, threshold=threshold, verbose=verbose)
         self.custom_name = name
         self.criteria = criteria
+        self.evaluation_steps = evaluation_steps
+        self.temperature = temperature
 
     # ==================== PROMPTS ====================
 
     @staticmethod
-    def _prompt_generate_steps(criteria: str) -> str:
-        """Generate evaluation steps from criteria (Chain-of-Thought)"""
-        return f"""Given the evaluation criteria below, generate 3-5 detailed evaluation steps.
+    def _prompt_label_help() -> str:
+        """Explanation of verdict levels"""
+        return """Rate how well each criterion is satisfied (worst → best):
 
-Evaluation Criteria:
-{criteria}
+none    – criterion not satisfied at all
+minor   – criterion minimally addressed
+partial – criterion partially satisfied
+mostly  – criterion largely satisfied with minor gaps
+fully   – criterion fully satisfied"""
 
-Generate steps that are:
-1. Specific and actionable
-2. Logically ordered
-3. Lead to assigning a score from 0.0 to 1.0
+    @staticmethod
+    def _prompt_generate_criteria(main_criteria: str) -> str:
+        """Generate specific evaluation criteria from high-level description"""
+        return f"""Given the high-level evaluation criteria below, generate 3-5 specific, measurable sub-criteria.
+
+High-level Criteria:
+{main_criteria}
+
+Generate sub-criteria that are:
+1. Specific and observable
+2. Can be evaluated independently
+3. Together cover all aspects of the main criteria
 
 **
 Return ONLY JSON:
 {{
-  "steps": ["Step 1: ...", "Step 2: ...", "Step 3: ..."]
+  "criteria": ["Criterion 1: ...", "Criterion 2: ...", "Criterion 3: ..."]
 }}
 **
 
 JSON:"""
 
-    @staticmethod
-    def _prompt_evaluate(criteria: str, evaluation_steps: List[str], test_case: EvalTestCase) -> str:
-        """Generate evaluation prompt with CoT steps"""
-        steps_text = "\n".join(
-            [f"{i+1}. {step}" for i, step in enumerate(evaluation_steps)])
-
-        parts = [
-            f"User Input:\n{test_case.input}",
-            f"Model Output:\n{test_case.actual_output}"
-        ]
-
-        if test_case.expected_output:
-            parts.append(f"Expected Output:\n{test_case.expected_output}")
-
-        if test_case.retrieval_context:
-            parts.append(f"Context:\n" +
-                         "\n".join(test_case.retrieval_context))
-
-        input_block = "\n\n".join(parts)
-
-        return f"""You are a strict evaluator. Use the criteria and evaluation steps below.
-
-Evaluation Criteria:
-{criteria}
-
-Evaluation Steps:
-{steps_text}
-
-{input_block}
-
-Based on the evaluation steps, assign a score from 0.0 to 1.0 (where 0.0 is worst and 1.0 is best).
-
-**
-Return ONLY JSON:
-{{
-  "score": <float between 0.0 and 1.0>
-}}
-**
-
-JSON:"""
-
-    @staticmethod
-    def _prompt_reason(
-        criteria: str,
+    @classmethod
+    def _prompt_evaluate(
+        cls,
+        main_criteria: str,
         evaluation_steps: List[str],
-        test_case: EvalTestCase,
-        score: float
+        test_case: EvalTestCase
     ) -> str:
-        """Generate explanation for the score"""
-        steps_text = "\n".join(
-            [f"{i+1}. {step}" for i, step in enumerate(evaluation_steps)])
+        """Generate evaluation prompt with verdict scoring"""
 
-        parts = [
-            f"User Input:\n{test_case.input}",
-            f"Model Output:\n{test_case.actual_output}"
-        ]
+        # Build input block
+        parts = [f"User Input:\n{test_case.input}"]
+        parts.append(f"Model Output:\n{test_case.actual_output}")
 
         if test_case.expected_output:
             parts.append(f"Expected Output:\n{test_case.expected_output}")
 
         if test_case.retrieval_context:
-            parts.append(f"Context:\n" +
-                         "\n".join(test_case.retrieval_context))
+            context_text = "\n".join(test_case.retrieval_context)
+            parts.append(f"Context:\n{context_text}")
 
         input_block = "\n\n".join(parts)
 
-        return f"""You assigned a score of {score:.2f} (out of 1.0) for this evaluation.
+        # Format criteria
+        criteria_text = "\n".join(
+            [f"{i+1}. {criterion}" for i,
+                criterion in enumerate(evaluation_steps)]
+        )
 
-Evaluation Criteria:
-{criteria}
+        return f"""{cls._prompt_label_help()}
 
-Evaluation Steps:
-{steps_text}
+HIGH-LEVEL CRITERIA:
+{main_criteria}
+
+SPECIFIC CRITERIA TO EVALUATE:
+{criteria_text}
 
 {input_block}
 
-Final Score: {score:.2f}/1.0
-
-Explain why this score was assigned, referencing specific aspects from the evaluation steps.
+Task: For EACH criterion, decide how well it is satisfied in the Model Output.
+Use exactly one of: fully, mostly, partial, minor, none.
 
 **
-Return ONLY JSON:
-{{
-  "reason": "Your explanation..."
-}}
+Return JSON array with exactly {len(evaluation_steps)} verdicts:
+[
+  {{"verdict": "fully|mostly|partial|minor|none", "reason": "<one sentence>"}},
+  ...
+]
 **
 
 JSON:"""
 
-    # ==================== HELPER METHODS ====================
+    # ==================== CORE EVALUATION ====================
 
-    def _extract_score_from_response(self, text: str) -> float:
-        """Extract float score from LLM response (0.0-1.0 range)"""
-        text = text.strip()
-
-        # Try JSON parsing first
-        try:
-            data = json.loads(extract_json_block(text))
-            if "score" in data:
-                score = float(data["score"])
-                if 0.0 <= score <= 1.0:
-                    return score
-        except:
-            pass
-
-        # Try regex patterns
-        patterns = [
-            r'"score"\s*:\s*(\d+\.?\d*)',
-            r'score[:\s]+(\d+\.?\d*)',
-            r'^\s*(\d+\.?\d*)\s*$',
-        ]
-
-        for pattern in patterns:
-            match = re.search(pattern, text, re.IGNORECASE | re.MULTILINE)
-            if match:
-                score = float(match.group(1))
-                if 0.0 <= score <= 1.0:
-                    return score
-
-        raise RuntimeError(f"Failed to extract score from response: {text}")
-
-    # ==================== CORE ALGORITHM ====================
-
-    async def _probability_weighted_scoring(
-        self,
-        prompt: str,
-        n_samples: int = 20,
-        temperature: float = 2.0
-    ) -> Tuple[float, List[float], float]:
+    async def _generate_evaluation_steps(self, main_criteria: str) -> Tuple[List[str], float]:
         """
-        Probability-weighted scoring: score = Σ p(si) × si
-        Samples multiple times to estimate probability distribution
+        Auto-generate specific evaluation criteria from high-level description.
+
+        Args:
+            main_criteria: High-level evaluation criteria
 
         Returns:
-            (final_score, sampled_scores, total_cost)
+            Tuple of (criteria_list, llm_cost)
         """
-        total_cost = 0.0
-        scores = []
+        prompt = self._prompt_generate_criteria(main_criteria)
 
-        # Sample n times with high temperature
-        for _ in range(n_samples):
-            text, cost = await chat_complete(
-                self.model,
-                messages=[{"role": "user", "content": prompt}],
-                temperature=temperature
-            )
-            total_cost += cost or 0.0
+        text, cost = await chat_complete(
+            self.model,
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.0
+        )
 
-            try:
-                score = self._extract_score_from_response(text)
-                scores.append(score)
-            except:
-                continue
+        try:
+            raw_json = extract_json_block(text)
+            data = json.loads(raw_json)
+            criteria = data.get("criteria", [])
 
-        if not scores:
+            if not isinstance(criteria, list) or len(criteria) == 0:
+                raise ValueError("Expected non-empty list of criteria")
+
+            return criteria, cost or 0.0
+
+        except Exception as e:
             raise RuntimeError(
-                f"Failed to extract any valid scores from {n_samples} samples")
+                f"Failed to generate evaluation criteria: {e}\n{text}"
+            )
 
-        # Calculate probability-weighted score as mean
-        weighted_score = sum(scores) / len(scores)
+    async def _generate_verdicts(
+        self,
+        main_criteria: str,
+        evaluation_steps: List[str],
+        test_case: EvalTestCase
+    ) -> Tuple[List[Dict[str, str]], float, float]:
+        """
+        Generate verdicts for each evaluation criterion.
 
-        return weighted_score, scores, total_cost
+        Args:
+            main_criteria: High-level criteria description
+            evaluation_steps: List of specific criteria
+            test_case: Test case to evaluate
+
+        Returns:
+            Tuple of (verdicts_list, aggregated_score, llm_cost)
+        """
+        prompt = self._prompt_evaluate(
+            main_criteria, evaluation_steps, test_case)
+
+        text, cost = await chat_complete(
+            self.model,
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.0
+        )
+
+        try:
+            raw_json = extract_json_block(text)
+            verdicts = json.loads(raw_json)
+
+            if not isinstance(verdicts, list):
+                raise ValueError("Expected JSON array of verdicts")
+
+            # Ensure verdicts match criteria length
+            if len(verdicts) != len(evaluation_steps):
+                if len(verdicts) < len(evaluation_steps):
+                    # Pad with "none" verdicts
+                    verdicts.extend([
+                        {"verdict": "none", "reason": "Missing evaluation"}
+                    ] * (len(evaluation_steps) - len(verdicts)))
+                else:
+                    # Truncate
+                    verdicts = verdicts[:len(evaluation_steps)]
+
+            # Calculate aggregated score
+            weights = [
+                VERDICT_WEIGHTS.get(v.get("verdict", "none"), 0.0)
+                for v in verdicts
+            ]
+            score = round(score_agg(weights, temperature=self.temperature), 4)
+
+            return verdicts, score, cost or 0.0
+
+        except Exception as e:
+            raise RuntimeError(
+                f"Failed to parse verdicts: {e}\n{text}"
+            )
 
     async def evaluate(self, test_case: EvalTestCase) -> Dict[str, Any]:
         """
-        Evaluate using Chain-of-Thought and Probability-Weighted Scoring.
+        Evaluate using custom criteria with verdict-based scoring.
 
-        Algorithm:
-        1. Auto-generate evaluation steps from criteria (CoT)
-        2. Apply probability-weighted scoring (20 samples, temp=2.0)
-        3. Generate detailed explanation
-        4. Build comprehensive evaluation_log
+        Steps:
+        1. Auto-generate specific criteria if not provided (1 LLM call)
+        2. Generate verdicts for each criterion (1 LLM call)
+        3. Aggregate verdicts into final score using softmax
+        4. Build evaluation log
+
+        Args:
+            test_case: Test case to evaluate
+
+        Returns:
+            Evaluation results with score, success, reason, cost, and detailed log
         """
         total_cost = 0.0
 
-        # Step 1: Auto-generate evaluation steps (Chain-of-Thought from G-Eval)
-        steps_prompt = self._prompt_generate_steps(self.criteria)
-        steps_text, step_cost = await chat_complete(
-            self.model,
-            messages=[{"role": "user", "content": steps_prompt}],
-            temperature=0.0
+        # Step 1: Generate evaluation steps if not provided
+        if not self.evaluation_steps:
+            evaluation_steps, cost = await self._generate_evaluation_steps(
+                self.criteria
+            )
+            total_cost += cost
+            self.evaluation_steps = evaluation_steps
+        else:
+            evaluation_steps = self.evaluation_steps
+
+        # Step 2: Generate verdicts for each criterion
+        verdicts, final_score, cost = await self._generate_verdicts(
+            self.criteria,
+            evaluation_steps,
+            test_case
         )
-        total_cost += step_cost or 0.0
+        total_cost += cost
 
-        try:
-            parsed_steps = json.loads(extract_json_block(steps_text))
-            evaluation_steps = parsed_steps["steps"]
-        except Exception as e:
-            raise RuntimeError(
-                f"Failed to parse evaluation steps: {e}\n{steps_text}")
-
-        # Step 2: Generate evaluation prompt with CoT
-        eval_prompt = self._prompt_evaluate(
-            self.criteria, evaluation_steps, test_case)
-
-        # Step 3: Probability-weighted scoring (20 samples from G-Eval)
-        final_score, sampled_scores, scoring_cost = await self._probability_weighted_scoring(
-            eval_prompt,
-            n_samples=20,
-            temperature=2.0
-        )
-        total_cost += scoring_cost
-
-        # Step 4: Generate explanation
-        reason_prompt = self._prompt_reason(
-            self.criteria, evaluation_steps, test_case, final_score)
-        reason_text, reason_cost = await chat_complete(
-            self.model,
-            messages=[{"role": "user", "content": reason_prompt}],
-            temperature=0.0
-        )
-        total_cost += reason_cost or 0.0
-
-        # Parse reason
-        try:
-            reason_data = json.loads(extract_json_block(reason_text))
-            reason = reason_data.get("reason", reason_text)
-        except:
-            reason = reason_text.strip()
-
+        # Step 3: Determine success
         success = final_score >= self.threshold
 
-        # Step 5: Build comprehensive evaluation_log
+        # Step 4: Build summary reason from verdicts
+        positive_verdicts = [
+            v for v in verdicts
+            if v.get("verdict") in ["fully", "mostly"]
+        ]
+        negative_verdicts = [
+            v for v in verdicts
+            if v.get("verdict") in ["none", "minor", "partial"]
+        ]
+
+        if len(positive_verdicts) >= len(verdicts) * 0.7:
+            summary = f"Strong performance: {len(positive_verdicts)}/{len(verdicts)} criteria fully or mostly satisfied."
+        elif len(negative_verdicts) >= len(verdicts) * 0.7:
+            summary = f"Weak performance: {len(negative_verdicts)}/{len(verdicts)} criteria not satisfied or minimally addressed."
+        else:
+            summary = f"Mixed performance: {len(positive_verdicts)}/{len(verdicts)} criteria satisfied, with room for improvement."
+
+        # Step 5: Build evaluation log
         evaluation_log = {
             "input_question": test_case.input,
             "actual_output": test_case.actual_output,
             "expected_output": test_case.expected_output,
             "retrieval_context": test_case.retrieval_context,
-            "criteria": self.criteria,
-            "comment_criteria": "Custom evaluation criteria provided by user.",
-            "evaluation_steps": evaluation_steps,
-            "comment_evaluation_steps": "Auto-generated evaluation steps using Chain-of-Thought (CoT) technique from G-Eval.",
-            "sampled_scores": sampled_scores,
-            "comment_sampled_scores": f"Individual scores from {len(sampled_scores)} samples with temperature=2.0.",
-            "score_distribution": {f"{s:.2f}": sampled_scores.count(s) for s in set(sampled_scores)},
-            "comment_score_distribution": "Frequency distribution of sampled scores for probability-weighted calculation.",
-            "final_score": round(final_score, 4),
-            "comment_final_score": "Probability-weighted score calculated as mean of sampled scores (G-Eval technique).",
+            "main_criteria": self.criteria,
+            "comment_main_criteria": "High-level evaluation criteria provided by user.",
+            "evaluation_criteria": evaluation_steps,
+            "comment_evaluation_criteria": f"Specific sub-criteria ({len(evaluation_steps)} items) used for verdict-based evaluation.",
+            "verdicts": verdicts,
+            "comment_verdicts": "Individual verdicts for each criterion (fully/mostly/partial/minor/none).",
+            "verdict_weights": {
+                i: VERDICT_WEIGHTS.get(v["verdict"], 0.0)
+                for i, v in enumerate(verdicts)
+            },
+            "comment_verdict_weights": "Numeric weights assigned to each verdict for score calculation.",
+            "final_score": final_score,
+            "comment_final_score": f"Weighted average of verdict scores calculated using softmax aggregation (temperature={self.temperature}).",
             "threshold": self.threshold,
             "success": success,
-            "comment_success": "Whether the final score passes the custom threshold.",
-            "final_reason": reason,
-            "comment_reasoning": "LLM-generated explanation based on evaluation steps and criteria."
+            "comment_success": "Whether the final score meets the required threshold.",
+            "summary": summary,
+            "comment_summary": "High-level summary of evaluation performance."
         }
 
         result = {
             "name": self.name,
-            "score": round(final_score, 4),
+            "score": final_score,
             "success": success,
-            "reason": reason,
+            "reason": summary,
             "evaluation_cost": round(total_cost, 6),
-            "evaluation_log": evaluation_log,
+            "evaluation_log": evaluation_log
         }
 
         self.print_result(result)

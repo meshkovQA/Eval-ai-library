@@ -326,7 +326,7 @@ Criteria: [
             "verdict_weights": {i: VERDICT_WEIGHTS.get(v["verdict"], 0.0) for i, v in enumerate(verdicts)},
             "comment_verdict_weights": "Numeric weights assigned to each verdict for score calculation.",
             "final_score": final_score,
-            "comment_final_score": f"Softmax aggregation of verdict weights (temperature={self.temperature}).",
+            "comment_final_score": f"Weighted average of verdict scores using softmax aggregation (temperature={self.temperature}).",
             "threshold": self.threshold,
             "success": success,
             "comment_success": "Whether the task success score meets the required threshold.",

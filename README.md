@@ -71,19 +71,6 @@ async def main():
         test_cases=[test_case],
         metrics=metrics
     )
-    
-    # Print results with detailed logs
-    for test_case, test_results in results:
-        for result in test_results:
-            print(f"✅ Success: {result.success}")
-            print(f"📊 Overall Score: {result.score:.2f}")
-            
-            # Access individual metric results
-            for metric_result in result.metrics_data:
-                print(f"\n{metric_result.name}:")
-                print(f"  Score: {metric_result.score:.2f}")
-                print(f"  Reason: {metric_result.reason}")
-                print(f"  Cost: ${metric_result.evaluation_cost:.6f}")
 
 asyncio.run(main())
 ```
@@ -231,16 +218,7 @@ async def evaluate_conversation():
         )
     ]
     
-    # Set chatbot role for role adherence
-    metrics[0].chatbot_role = conversation.chatbot_role
-    
     results = await evaluate_conversations([conversation], metrics)
-    
-    # Access detailed logs
-    for result in results:
-        print(f"Dialogue: {result.evaluation_log['dialogue']}")
-        print(f"Verdicts: {result.evaluation_log['verdicts']}")
-        print(f"Score: {result.score}")
     
     return results
 
@@ -588,7 +566,7 @@ Features:
 
 ---
 
-## Работа с результатами (Working with Results)
+## Working with Results
 
 Results are returned as simple dictionaries. Access fields directly:
 ```python

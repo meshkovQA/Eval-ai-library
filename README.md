@@ -33,50 +33,70 @@ pip install -e ".[dev]"
 
 ## Quick Start
 
-### Basic RAG Evaluation
+### Basic Batch Evaluation
 ```python
 import asyncio
 from eval_lib import (
     evaluate,
     EvalTestCase,
     AnswerRelevancyMetric,
-    FaithfulnessMetric
+    FaithfulnessMetric,
+    BiasMetric
 )
 
-async def main():
-    # Create test case
-    test_case = EvalTestCase(
-        input="What is the capital of France?",
-        actual_output="The capital of France is Paris, a beautiful city known for its art and culture.",
-        expected_output="Paris",
-        retrieval_context=["Paris is the capital and largest city of France."]
-    )
-    
+async def test_batch_standard_metrics():
+    """Test batch evaluation with multiple test cases and standard metrics"""
+
+    # Create test cases
+    test_cases = [
+        EvalTestCase(
+            input="What is the capital of France?",
+            actual_output="The capital of France is Paris.",
+            expected_output="Paris",
+            retrieval_context=["Paris is the capital of France."]
+        ),
+        EvalTestCase(
+            input="What is photosynthesis?",
+            actual_output="The weather today is sunny.",
+            expected_output="Process by which plants convert light into energy",
+            retrieval_context=[
+                "Photosynthesis is the process by which plants use sunlight."]
+        )
+    ]
+
     # Define metrics
     metrics = [
         AnswerRelevancyMetric(
             model="gpt-4o-mini",
             threshold=0.7,
-            temperature=0.5  # Softmax temperature for score aggregation
+            temperature=0.5,
         ),
         FaithfulnessMetric(
             model="gpt-4o-mini",
             threshold=0.8,
-            temperature=0.5
-        )
+            temperature=0.5,
+        ),
+        BiasMetric(
+            model="gpt-4o-mini",
+            threshold=0.8,
+        ),
     ]
-    
-    # Evaluate
+
+    # Run batch evaluation
     results = await evaluate(
-        test_cases=[test_case],
+        test_cases=test_cases,
         metrics=metrics,
         verbose=True
     )
 
-asyncio.run(main())
+    return results
+
+
+if __name__ == "__main__":
+    asyncio.run(test_batch_standard_metrics())
 ```
 
-### G-Eval with Probability-Weighted Scoring
+### G-Eval with Probability-Weighted Scoring (single evaluation)
 
 G-Eval implements the state-of-the-art evaluation method from the paper ["G-Eval: NLG Evaluation using GPT-4 with Better Human Alignment"](https://arxiv.org/abs/2303.16634). It uses **probability-weighted scoring** (score = Σ p(si) × si) for fine-grained, continuous evaluation scores.
 ```python
@@ -119,7 +139,7 @@ async def evaluate_with_geval():
 asyncio.run(evaluate_with_geval())
 ```
 
-### Custom Evaluation with Verdict-Based Scoring
+### Custom Evaluation with Verdict-Based Scoring (single evaluation)
 
 CustomEvalMetric uses **verdict-based evaluation** with automatic criteria generation for transparent and detailed scoring:
 ```python
@@ -157,7 +177,7 @@ from eval_lib import (
 )
 
 async def evaluate_agent():
-    test_case = EvalTestCase(
+    test_cases = EvalTestCase(
         input="Book a flight to New York for tomorrow",
         actual_output="I've found available flights and booked your trip to New York for tomorrow.",
         tools_called=["search_flights", "book_flight"],
@@ -173,7 +193,11 @@ async def evaluate_agent():
         )
     ]
     
-    results = await evaluate([test_case], metrics, verbose=True)
+    results = await evaluate(
+        test_cases=[test_cases],
+        metrics=metrics,
+        verbose=True
+    )
     return results
 
 asyncio.run(evaluate_agent())
@@ -190,36 +214,82 @@ from eval_lib import (
 )
 
 async def evaluate_conversation():
-    conversation = ConversationalEvalTestCase(
-        chatbot_role="You are a helpful customer support assistant. Be professional and empathetic.",
-        turns=[
-            EvalTestCase(
-                input="I need help with my order",
-                actual_output="I'd be happy to help you with your order. Could you please provide your order number?"
-            ),
-            EvalTestCase(
-                input="It's #12345",
-                actual_output="Thank you! Let me look up order #12345 for you."
-            )
-        ]
-    )
+    # Create conversations
+    conversations = [
+        ConversationalEvalTestCase(
+            chatbot_role="You are a professional customer support assistant.",
+            turns=[
+                EvalTestCase(
+                    input="I need help with my order",
+                    actual_output="I'd be happy to help. Could you provide your order number?"
+                ),
+                EvalTestCase(
+                    input="It's #12345",
+                    actual_output="Thank you! Let me look up order #12345 for you."
+                ),
+                EvalTestCase(
+                    input="When will it arrive?",
+                    actual_output="Your order will be delivered on October 27, 2025."
+                ),
+            ]
+        ),
+        ConversationalEvalTestCase(
+            chatbot_role="You are a formal financial advisor.",
+            turns=[
+                EvalTestCase(
+                    input="Should I invest in stocks?",
+                    actual_output="Yo dude! Just YOLO into stocks!"
+                ),
+                EvalTestCase(
+                    input="What about bonds?",
+                    actual_output="Bonds are boring, bro!"
+                ),
+            ]
+        ),
+        ConversationalEvalTestCase(
+            chatbot_role="You are a helpful assistant.",
+            turns=[
+                EvalTestCase(
+                    input="My name is John",
+                    actual_output="Nice to meet you, John!"
+                ),
+                EvalTestCase(
+                    input="What's my name?",
+                    actual_output="Your name is John."
+                ),
+                EvalTestCase(
+                    input="Where do I live?",
+                    actual_output="I don't have that information."
+                ),
+            ]
+        ),
+    ]
     
+    # Define conversational metrics
     metrics = [
+        TaskSuccessRateMetric(
+            model="gpt-4o-mini",
+            threshold=0.7,
+            temperature=0.9,
+        ),
         RoleAdherenceMetric(
             model="gpt-4o-mini",
             threshold=0.8,
             temperature=0.5,
-            chatbot_role=conversation.chatbot_role
-
         ),
         KnowledgeRetentionMetric(
             model="gpt-4o-mini",
             threshold=0.7,
-            temperature=0.5
-        )
+            temperature=0.5,
+        ),
     ]
     
-    results = await evaluate_conversations([conversation], metrics, verbose=True)
+    # Run batch evaluation
+    results = await evaluate_conversations(
+        conv_cases=conversations,
+        metrics=metrics,
+        verbose=True
+    )
     
     return results
 

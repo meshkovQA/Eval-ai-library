@@ -9,6 +9,22 @@ from eval_lib.utils import extract_json_block
 import asyncio
 import random
 import json
+import time
+
+# Colors for beautiful console output
+
+
+class Colors:
+    HEADER = '\033[95m'
+    BLUE = '\033[94m'
+    CYAN = '\033[96m'
+    GREEN = '\033[92m'
+    YELLOW = '\033[93m'
+    RED = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+    DIM = '\033[2m'
 
 
 async def retry_async(fn, *args, retries=4, base_delay=0.6, max_delay=6.0,
@@ -55,6 +71,7 @@ class DatasetGenerator:
         max_chunks: int = 30,
         relevance_margin: float = 1.5,
         embedding_model: str = "openai:text-embedding-3-small",
+        verbose: bool = False,
     ):
         self.model = model
         self.input_format = input_format
@@ -72,8 +89,101 @@ class DatasetGenerator:
         self.max_chunks = max_chunks
         self.relevance_margin = relevance_margin
         self.embedding_model = embedding_model
+        self.verbose = verbose
+
+    def _log(self, message: str, color: str = Colors.CYAN):
+        """Log message with color if verbose mode is enabled"""
+        if self.verbose:
+            print(f"{color}{message}{Colors.ENDC}")
+
+    def _log_step(self, step_name: str, step_num: int = None):
+        """Log generation step"""
+        if self.verbose:
+            prefix = f"[{step_num}] " if step_num else ""
+            print(f"{Colors.DIM}  {prefix}{step_name}...{Colors.ENDC}")
+
+    def _log_progress(self, current: int, total: int, label: str = "Progress"):
+        """Log progress bar"""
+        if self.verbose:
+            percentage = (current / total) * 100 if total > 0 else 0
+            bar_length = 30
+            filled = int(bar_length * current / total) if total > 0 else 0
+            bar = '█' * filled + '░' * (bar_length - filled)
+            print(
+                f"{Colors.CYAN}  {label}: [{bar}] {current}/{total} ({percentage:.0f}%){Colors.ENDC}")
+
+    def _print_header(self, title: str):
+        """Print beautiful header"""
+        if self.verbose:
+            import shutil
+            terminal_width = shutil.get_terminal_size().columns
+            WIDTH = terminal_width // 2
+            WIDTH = max(WIDTH, 60)
+
+            border = "═" * WIDTH
+            title_text = f"🎯 {title}"
+            padding = WIDTH - len(title_text)
+            left_pad = padding // 2
+            right_pad = padding - left_pad
+            centered_title = " " * left_pad + title_text + " " * right_pad
+
+            print(f"\n{Colors.BOLD}{Colors.CYAN}╔{border}╗{Colors.ENDC}")
+            print(
+                f"{Colors.BOLD}{Colors.CYAN}║{Colors.ENDC}{centered_title}{Colors.BOLD}{Colors.CYAN}║{Colors.ENDC}")
+            print(f"{Colors.BOLD}{Colors.CYAN}╚{border}╝{Colors.ENDC}\n")
+
+    def _print_summary(self, dataset: List[dict], elapsed_time: float, total_cost: float = 0.0):
+        """Print generation summary"""
+        if self.verbose:
+            import shutil
+            terminal_width = shutil.get_terminal_size().columns
+            WIDTH = terminal_width // 2
+            WIDTH = max(WIDTH, 60)
+
+            print(
+                f"\n{Colors.BOLD}{Colors.GREEN}✅ Dataset Generation Complete{Colors.ENDC}\n")
+            print(f"{Colors.BOLD}Summary:{Colors.ENDC}")
+            print(
+                f"  📊 Total rows generated: {Colors.YELLOW}{len(dataset)}{Colors.ENDC}")
+            print(
+                f"  ⏱️  Time elapsed: {Colors.YELLOW}{elapsed_time:.2f}s{Colors.ENDC}")
+            if total_cost > 0:
+                print(
+                    f"  💰 Total cost: {Colors.BLUE}${total_cost:.6f}{Colors.ENDC}")
+
+            # Sample preview
+            if dataset:
+                print(f"\n{Colors.BOLD}Sample (first row):{Colors.ENDC}")
+                border = "─" * WIDTH
+                print(f"{Colors.DIM}╭{border}╮{Colors.ENDC}")
+
+                first_row = dataset[0]
+                for key, value in first_row.items():
+                    # Truncate long values
+                    value_str = str(value)
+                    if len(value_str) > WIDTH - 10:
+                        value_str = value_str[:WIDTH - 13] + "..."
+
+                    print(
+                        f"{Colors.DIM}│{Colors.ENDC} {Colors.BOLD}{key}:{Colors.ENDC} {value_str}")
+
+                print(f"{Colors.DIM}╰{border}╯{Colors.ENDC}\n")
 
     async def generate_from_scratch(self) -> List[dict]:
+
+        start_time = time.time()
+
+        if self.verbose:
+            self._print_header("Dataset Generation from Scratch")
+            self._log(f"Configuration:", Colors.BOLD)
+            self._log(f"  Model: {self.model}")
+            self._log(f"  Max rows: {self.max_rows}")
+            self._log(f"  Test types: {', '.join(self.test_types)}")
+            self._log(f"  Language: {self.language}")
+            self._log("")
+
+        self._log_step("Generating prompt", 1)
+
         prompt = dataset_generation_from_scratch_prompt(
             max_rows=self.max_rows,
             agent_description=self.agent_description,
@@ -86,23 +196,51 @@ class DatasetGenerator:
             language=self.language
         )
 
-        raw, _ = await chat_complete(
+        self._log_step("Calling LLM to generate dataset", 2)
+
+        raw, cost = await chat_complete(
             llm=self.model,
             messages=[{"role": "user", "content": prompt}],
             temperature=self.temperature,
         )
 
+        self._log_step("Parsing response", 3)
+
         try:
             raw_json = extract_json_block(raw)
             data = json.loads(raw_json)
             assert isinstance(data, list), "not a JSON array"
+            elapsed_time = time.time() - start_time
+            self._print_summary(data, elapsed_time, cost or 0.0)
+
             return data
         except Exception as exc:
+            if self.verbose:
+                self._log(f"❌ Failed to parse dataset", Colors.RED)
             raise RuntimeError(f"Failed to parse dataset:\n{exc}\n\n{raw}")
 
     async def generate_from_documents(self, file_paths: List[str]) -> List[dict]:
+        """Generate dataset from documents"""
+        start_time = time.time()
+        total_cost = 0.0
 
+        if self.verbose:
+            self._print_header("Dataset Generation from Documents")
+            self._log(f"Configuration:", Colors.BOLD)
+            self._log(f"  Model: {self.model}")
+            self._log(f"  Max rows: {self.max_rows}")
+            self._log(f"  Documents: {len(file_paths)}")
+            self._log(f"  Chunk size: {self.chunk_size}")
+            self._log(f"  Test types: {', '.join(self.test_types)}")
+            self._log("")
+
+        self._log_step("Loading documents", 1)
         docs = load_documents(file_paths)
+
+        if self.verbose:
+            self._log(f"  ✅ Loaded {len(docs)} documents", Colors.GREEN)
+
+        self._log_step("Chunking documents", 2)
         doc_chunks = chunk_documents(docs,
                                      chunk_size=self.chunk_size,
                                      chunk_overlap=self.chunk_overlap)
@@ -111,7 +249,14 @@ class DatasetGenerator:
         if not chunks_text:
             raise ValueError("No text extracted from documents.")
 
+        if self.verbose:
+            self._log(f"  ✅ Created {len(chunks_text)} chunks", Colors.GREEN)
+
+        self._log_step("Ranking chunks by relevance", 3)
         ranked_chunks = await self._rank_chunks_by_relevance(chunks_text)
+
+        if self.verbose:
+            self._log(f"  ✅ Ranked {len(ranked_chunks)} chunks", Colors.GREEN)
 
         total_chunks = len(ranked_chunks)
         rows_per_chunk = max(1, math.ceil(self.max_rows / total_chunks))
@@ -121,11 +266,21 @@ class DatasetGenerator:
                     self.max_chunks)
         selected_chunks = ranked_chunks[:top_k]
 
+        if self.verbose:
+            self._log(
+                f"  📌 Selected top {len(selected_chunks)} chunks for generation", Colors.YELLOW)
+            self._log("")
+
         dataset: list[dict] = []
 
         MAX_PROMPT_CHARS = 24_000
 
-        for chunk in selected_chunks:
+        self._log_step(f"Generating dataset from chunks", 4)
+
+        for i, chunk in enumerate(selected_chunks):
+            if self.verbose:
+                self._log_progress(
+                    i + 1, len(selected_chunks), "Processing chunks")
 
             safe_chunk = chunk if len(
                 chunk) <= MAX_PROMPT_CHARS else chunk[:MAX_PROMPT_CHARS]
@@ -143,24 +298,39 @@ class DatasetGenerator:
                 language=self.language
             )
 
-            raw, _ = await retry_async(
+            raw, cost = await retry_async(
                 chat_complete,
                 llm=self.model,
                 messages=[{"role": "user", "content": prompt}],
                 temperature=self.temperature,
             )
 
+            total_cost += cost or 0.0
+
             try:
                 chunk_data = json.loads(extract_json_block(raw))
                 assert isinstance(chunk_data, list)
                 dataset.extend(chunk_data)
+
+                if self.verbose:
+                    self._log(
+                        f"    ✅ Generated {len(chunk_data)} rows from chunk {i+1}", Colors.GREEN)
+
             except Exception as exc:
-                raise RuntimeError(f"Chunk parsing error:\n{exc}\n\n{raw}")
+                if self.verbose:
+                    self._log(
+                        f"    ⚠️  Chunk {i+1} parsing failed, skipping", Colors.YELLOW)
+                continue
 
             if len(dataset) >= self.max_rows:
                 break
 
-        return dataset[: self.max_rows]
+        final_dataset = dataset[: self.max_rows]
+        elapsed_time = time.time() - start_time
+
+        self._print_summary(final_dataset, elapsed_time, total_cost)
+
+        return final_dataset
 
     async def _rank_chunks_by_relevance(self, chunks: list[str]) -> list[str]:
         """

@@ -148,7 +148,7 @@ class ConversationalMetricPattern:
             print(result)
             return
 
-        WIDTH = 220
+        WIDTH = 120
 
         success = result.get('success', False)
         score = result.get('score', 0.0)

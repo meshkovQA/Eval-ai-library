@@ -49,16 +49,14 @@ def score_agg(
     """
     if not scores:
         return 0.0
+    # Temperature-based weighting using power function: score^temperature
+    # - temperature < 1.0: Favors low scores (strict)
+    # - temperature = 1.0: Arithmetic mean (balanced)
+    # - temperature > 1.0: Suppresses low scores (lenient)
+    weighted_scores = [s ** temperature for s in scores]
+    weighted_score = sum(weighted_scores) / len(weighted_scores)
 
-    # Compute temperature-weighted scores
-    # Higher temperature = exponentially boost high scores (lenient)
-    # Lower temperature = all scores weighted similarly (strict)
-    exp_scores = [exp(s * temperature) for s in scores]
-    total = sum(exp_scores)
-    weighted_score = sum(s * e / total for s, e in zip(scores, exp_scores))
-
-    # Apply penalty if many statements have low scores (≤ 0.4)
-    # This corresponds to verdicts: partial (0.7), minor (0.3), none (0.0)
+    # Apply penalty ONLY for "none" verdicts (0.0)
     none_count = sum(1 for s in scores if s == 0.0)
     penalty_factor = max(0.0, 1 - penalty * none_count)
 

@@ -312,6 +312,7 @@ JSON:"""
             "final_score": final_score,
             "comment_final_score": f"Weighted average of verdict scores calculated using softmax aggregation (temperature={self.temperature}).",
             "threshold": self.threshold,
+            "temperature": self.temperature,
             "success": success,
             "comment_success": "Whether the final score meets the required threshold.",
             "summary": summary,

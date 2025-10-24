@@ -181,6 +181,7 @@ class AnswerRelevancyMetric(MetricPattern):
             "final_score": final_score,
             "comment_final_score": "Score based on the proportion of relevant statements.",
             "threshold": self.threshold,
+            "temperature": self.temperature,
             "success": success,
             "comment_success": "Whether the score exceeds the pass threshold.",
             "final_reason": summary_reason,

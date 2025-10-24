@@ -328,6 +328,7 @@ Criteria: [
             "final_score": final_score,
             "comment_final_score": f"Weighted average of verdict scores using softmax aggregation (temperature={self.temperature}).",
             "threshold": self.threshold,
+            "temperature": self.temperature,
             "success": success,
             "comment_success": "Whether the task success score meets the required threshold.",
             "final_reason": summary,

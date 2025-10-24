@@ -155,6 +155,7 @@ class ContextualRelevancyMetric(MetricPattern):
             "final_score": score,
             "comment_final_score": "Weighted support score from context.",
             "threshold": self.threshold,
+            "temperature": self.temperature,
             "success": success,
             "comment_success": "Whether the score exceeds the threshold.",
             "final_reason": summary,

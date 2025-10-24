@@ -101,7 +101,6 @@ def _get_client(provider: Provider):
     if provider == Provider.AZURE:
         _check_env_var("AZURE_OPENAI_API_KEY", "Azure OpenAI")
         _check_env_var("AZURE_OPENAI_ENDPOINT", "Azure OpenAI")
-        # AZURE_OPENAI_DEPLOYMENT проверяется при вызове, не обязателен здесь
 
         return AsyncAzureOpenAI(
             api_key=os.getenv("AZURE_OPENAI_API_KEY"),
@@ -114,7 +113,6 @@ def _get_client(provider: Provider):
         return genai.Client(api_key=os.getenv("GOOGLE_API_KEY"))
 
     if provider == Provider.OLLAMA:
-        # Ollama может работать без ключа (локальный сервер)
         api_key = _check_env_var(
             "OLLAMA_API_KEY", "Ollama", required=False) or "ollama"
         base_url = _check_env_var(

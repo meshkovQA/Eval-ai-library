@@ -7,7 +7,7 @@ A powerful library for evaluating AI models with support for multiple LLM provid
 and a wide range of evaluation metrics for RAG systems and AI agents.
 """
 
-__version__ = "0.3.1"
+__version__ = "0.3.2"
 __author__ = "Aleksandr Meshkov"
 
 # Core evaluation functions
@@ -68,12 +68,14 @@ from eval_lib.agent_metrics import (
 
 def __getattr__(name):
     """
-    Ленивый импорт для модулей с тяжёлыми зависимостями.
-    DataGenerator импортируется только когда реально используется.
+    Lazy loading for data generation components.
     """
-    if name == "DataGenerator":
-        from eval_lib.datagenerator.datagenerator import DataGenerator
-        return DataGenerator
+    if name == "DatasetGenerator":
+        from eval_lib.datagenerator.datagenerator import DatasetGenerator
+        return DatasetGenerator
+    if name == "DataGenerator":  # Alias for DatasetGenerator
+        from eval_lib.datagenerator.datagenerator import DatasetGenerator
+        return DatasetGenerator
     if name == "DocumentLoader":
         from eval_lib.datagenerator.document_loader import DocumentLoader
         return DocumentLoader

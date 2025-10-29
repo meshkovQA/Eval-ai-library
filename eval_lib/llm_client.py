@@ -2,6 +2,7 @@
 import openai
 import functools
 import anthropic
+from abc import ABC, abstractmethod
 from openai import AsyncAzureOpenAI
 from google import genai
 from google.genai.types import GenerateContentConfig
@@ -11,6 +12,45 @@ from dataclasses import dataclass
 from typing import Dict, Tuple, Optional
 from types import SimpleNamespace
 from .price import model_pricing
+
+
+class CustomLLMClient(ABC):
+    """
+    Base class for custom LLM clients.
+    Inherit from this to create your own model implementations.
+
+    Example:
+        class MyCustomLLM(CustomLLMClient):
+            async def chat_complete(self, messages, temperature):
+                # Your implementation
+                return response_text, cost
+
+            def get_model_name(self):
+                return "my-custom-model"
+    """
+
+    @abstractmethod
+    async def chat_complete(
+        self,
+        messages: list[dict[str, str]],
+        temperature: float
+    ) -> tuple[str, Optional[float]]:
+        """
+        Generate a response for the given messages.
+
+        Args:
+            messages: List of message dicts [{"role": "user", "content": "..."}]
+            temperature: Sampling temperature
+
+        Returns:
+            Tuple of (response_text, cost_in_usd)
+        """
+        pass
+
+    @abstractmethod
+    def get_model_name(self) -> str:
+        """Return the model name for logging/tracking purposes."""
+        pass
 
 
 class LLMConfigurationError(Exception):
@@ -24,6 +64,7 @@ class Provider(str, Enum):
     GOOGLE = "google"
     OLLAMA = "ollama"
     ANTHROPIC = "anthropic"
+    CUSTOM = "custom"
 
 
 @dataclass(frozen=True, slots=True)
@@ -308,7 +349,7 @@ _HELPERS = {
 
 
 async def chat_complete(
-    llm: str | tuple[str, str] | LLMDescriptor,
+    llm: str | tuple[str, str] | LLMDescriptor | CustomLLMClient,
     messages: list[dict[str, str]],
     temperature: float = 0.0,
 ):
@@ -327,6 +368,11 @@ async def chat_complete(
         LLMConfigurationError: If required API keys or configuration are missing
         ValueError: If provider is not supported
     """
+    # Handle custom LLM clients
+    if isinstance(llm, CustomLLMClient):
+        return await llm.chat_complete(messages, temperature)
+
+    # Standard providers
     llm = LLMDescriptor.parse(llm)
     helper = _HELPERS.get(llm.provider)
 

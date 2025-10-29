@@ -748,6 +748,219 @@ response, cost = await chat_complete(
 )
 ```
 
+## Custom LLM Providers
+
+The library supports custom LLM providers through the `CustomLLMClient` abstract base class. This allows you to integrate any LLM provider, including internal corporate models, locally-hosted models, or custom endpoints.
+
+### Creating a Custom Provider
+
+Implement the `CustomLLMClient` interface:
+```python
+from eval_lib import CustomLLMClient
+from typing import Optional
+from openai import AsyncOpenAI
+
+class InternalLLMClient(CustomLLMClient):
+    """Client for internal corporate LLM or custom endpoint"""
+    
+    def __init__(
+        self,
+        endpoint: str,
+        model: str,
+        api_key: Optional[str] = None,
+        temperature: float = 0.0
+    ):
+        """
+        Args:
+            endpoint: Your internal LLM endpoint URL (e.g., "https://internal-llm.company.com/v1")
+            model: Model name to use
+            api_key: API key if required (optional for local models)
+            temperature: Default temperature
+        """
+        self.endpoint = endpoint
+        self.model = model
+        self.api_key = api_key or "not-needed"  # Some endpoints don't need auth
+        
+        self.client = AsyncOpenAI(
+            api_key=self.api_key,
+            base_url=self.endpoint
+        )
+    
+    async def chat_complete(
+        self,
+        messages: list[dict[str, str]],
+        temperature: float
+    ) -> tuple[str, Optional[float]]:
+        """Generate response from internal LLM"""
+        response = await self.client.chat.completions.create(
+            model=self.model,
+            messages=messages,
+            temperature=temperature,
+        )
+        text = response.choices[0].message.content.strip()
+        cost = None  # Internal models typically don't have API costs
+        return text, cost
+    
+    def get_model_name(self) -> str:
+        """Return model name for logging"""
+        return f"internal:{self.model}"
+```
+
+### Using Custom Providers
+
+Use your custom provider in any metric:
+```python
+import asyncio
+from eval_lib import (
+    evaluate,
+    EvalTestCase,
+    AnswerRelevancyMetric,
+    FaithfulnessMetric
+)
+
+# Create custom internal LLM client
+internal_llm = InternalLLMClient(
+    endpoint="https://internal-llm.company.com/v1",
+    model="company-gpt-v2",
+    api_key="your-internal-key"  # Optional
+)
+
+# Use in metrics
+test_cases = [
+    EvalTestCase(
+        input="What is the capital of France?",
+        actual_output="Paris is the capital.",
+        expected_output="Paris",
+        retrieval_context=["Paris is the capital of France."]
+    )
+]
+
+metrics = [
+    AnswerRelevancyMetric(
+        model=internal_llm,  # ← Your custom LLM
+        threshold=0.7
+    ),
+    FaithfulnessMetric(
+        model=internal_llm,  # ← Same custom client
+        threshold=0.8
+    )
+]
+
+async def run_evaluation():
+    results = await evaluate(
+        test_cases=test_cases,
+        metrics=metrics,
+        verbose=True
+    )
+    return results
+
+asyncio.run(run_evaluation())
+```
+
+### Mixing Standard and Custom Providers
+
+You can mix standard and custom providers in the same evaluation:
+```python
+# Create custom provider
+internal_llm = InternalLLMClient(
+    endpoint="https://internal-llm.company.com/v1",
+    model="company-model"
+)
+
+# Mix standard OpenAI and custom internal LLM
+metrics = [
+    AnswerRelevancyMetric(
+        model="gpt-4o-mini",  # ← Standard OpenAI
+        threshold=0.7
+    ),
+    FaithfulnessMetric(
+        model=internal_llm,  # ← Custom internal LLM
+        threshold=0.8
+    ),
+    ContextualRelevancyMetric(
+        model="anthropic:claude-sonnet-4-0",  # ← Standard Anthropic
+        threshold=0.7
+    )
+]
+
+results = await evaluate(test_cases=test_cases, metrics=metrics)
+```
+
+### Custom Provider Use Cases
+
+**When to use custom providers:**
+
+1. **Internal Corporate LLMs**: Connect to your company's proprietary models
+2. **Local Models**: Integrate locally-hosted models (vLLM, TGI, LM Studio, Ollama with custom setup)
+3. **Fine-tuned Models**: Use your own fine-tuned models hosted anywhere
+4. **Research Models**: Connect to experimental or research models
+5. **Custom Endpoints**: Any LLM accessible via HTTP endpoint
+
+**Example: Local Model with vLLM**
+```python
+# vLLM server running on localhost:8000
+local_model = InternalLLMClient(
+    endpoint="http://localhost:8000/v1",
+    model="meta-llama/Llama-2-7b-chat",
+    api_key=None  # Local models don't need auth
+)
+
+# Use in evaluation
+metric = AnswerRelevancyMetric(model=local_model, threshold=0.7)
+```
+
+**Example: Corporate Internal Model**
+```python
+# Company's internal LLM with authentication
+company_model = InternalLLMClient(
+    endpoint="https://ai-platform.company.internal/api/v1",
+    model="company-gpt-enterprise",
+    api_key="internal-api-key-here"
+)
+
+# Use in evaluation
+metrics = [
+    AnswerRelevancyMetric(model=company_model, threshold=0.7),
+    FaithfulnessMetric(model=company_model, threshold=0.8)
+]
+```
+
+**Key Requirements:**
+
+1. **`async def chat_complete()`** - Must be async and return `(str, Optional[float])`
+2. **`def get_model_name()`** - Return string identifier for logging
+3. **Error Handling** - Handle connection and API errors appropriately
+4. **Cost** - Return `None` for cost if not applicable (e.g., internal/local models)
+
+### Advanced: Custom Authentication
+
+For custom authentication schemes:
+```python
+class CustomAuthLLMClient(CustomLLMClient):
+    """Client with custom authentication"""
+    
+    def __init__(self, endpoint: str, auth_token: str):
+        self.endpoint = endpoint
+        self.headers = {
+            "Authorization": f"Bearer {auth_token}",
+            "X-Custom-Header": "value"
+        }
+        # Use aiohttp or httpx for custom auth
+        import aiohttp
+        self.session = aiohttp.ClientSession(headers=self.headers)
+    
+    async def chat_complete(self, messages, temperature):
+        async with self.session.post(
+            f"{self.endpoint}/chat",
+            json={"messages": messages, "temperature": temperature}
+        ) as response:
+            data = await response.json()
+            return data["content"], None
+    
+    def get_model_name(self):
+        return "custom-auth-model"
+```
+
 ## Test Data Generation
 
 The library includes a powerful test data generator that can create realistic test cases either from scratch or based on your documents.

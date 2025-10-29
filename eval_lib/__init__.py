@@ -7,7 +7,7 @@ A powerful library for evaluating AI models with support for multiple LLM provid
 and a wide range of evaluation metrics for RAG systems and AI agents.
 """
 
-__version__ = "0.3.2"
+__version__ = "0.3.3"
 __author__ = "Aleksandr Meshkov"
 
 # Core evaluation functions
@@ -39,6 +39,7 @@ from eval_lib.llm_client import (
     chat_complete,
     get_embeddings,
     LLMDescriptor,
+    CustomLLMClient,
     Provider
 )
 
@@ -106,6 +107,7 @@ __all__ = [
     "chat_complete",
     "get_embeddings",
     "LLMDescriptor",
+    "CustomLLMClient",
     "Provider",
 
     # RAG Metrics

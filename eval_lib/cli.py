@@ -37,9 +37,15 @@ def run_dashboard():
 
     # Import here to avoid loading everything for --help
     from eval_lib.dashboard_server import DashboardCache
+    from eval_lib.html import HTML_TEMPLATE
+    from flask import Flask, render_template_string, jsonify
 
     # Create cache with custom directory
-    cache = DashboardCache(cache_dir=args.cache_dir)
+    def get_fresh_cache():
+        """Reload cache from disk"""
+        return DashboardCache(cache_dir=args.cache_dir)
+
+    cache = get_fresh_cache()
 
     print("="*70)
     print("📊 Eval AI Library - Dashboard Server")
@@ -64,10 +70,6 @@ def run_dashboard():
     print(f"   Press Ctrl+C to stop\n")
     print("="*70 + "\n")
 
-    # Create app with custom cache
-    from eval_lib.html import HTML_TEMPLATE
-    from flask import Flask, render_template_string, jsonify
-
     app = Flask(__name__)
     app.config['WTF_CSRF_ENABLED'] = False
 
@@ -88,6 +90,7 @@ def run_dashboard():
 
     @app.route('/api/latest')
     def api_latest():
+        cache = get_fresh_cache()
         latest = cache.get_latest()
         if latest:
             return jsonify(latest)
@@ -95,6 +98,7 @@ def run_dashboard():
 
     @app.route('/api/sessions')
     def api_sessions():
+        cache = get_fresh_cache()
         sessions = [
             {
                 'session_id': s['session_id'],
@@ -107,6 +111,7 @@ def run_dashboard():
 
     @app.route('/api/session/<session_id>')
     def api_session(session_id):
+        cache = get_fresh_cache()
         session = cache.get_by_session(session_id)
         if session:
             return jsonify(session)
@@ -114,6 +119,7 @@ def run_dashboard():
 
     @app.route('/api/clear')
     def api_clear():
+        cache = get_fresh_cache()
         cache.clear()
         return jsonify({'message': 'Cache cleared'})
 

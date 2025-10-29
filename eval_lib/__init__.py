@@ -7,7 +7,7 @@ A powerful library for evaluating AI models with support for multiple LLM provid
 and a wide range of evaluation metrics for RAG systems and AI agents.
 """
 
-__version__ = "0.3.9"
+__version__ = "0.3.10"
 __author__ = "Aleksandr Meshkov"
 
 # Core evaluation functions

@@ -748,6 +748,170 @@ response, cost = await chat_complete(
 )
 ```
 
+## Dashboard
+
+The library includes an interactive web dashboard for visualizing evaluation results. All evaluation results are automatically saved to cache and can be viewed in a beautiful web interface.
+
+### Features
+
+- 📊 **Interactive Charts**: Visual representation of metrics with Chart.js
+- 📈 **Metrics Summary**: Aggregate statistics across all evaluations
+- 🔍 **Detailed View**: Drill down into individual test cases and metric results
+- 💾 **Session History**: Access past evaluation runs
+- 🎨 **Beautiful UI**: Modern, responsive interface with color-coded results
+- 🔄 **Real-time Updates**: Refresh to see new evaluation results
+
+### Starting the Dashboard
+
+The dashboard runs as a separate server that you start once and keep running:
+```bash
+# Start dashboard server (from your project directory)
+eval-lib dashboard
+
+# Custom port if 14500 is busy
+eval-lib dashboard --port 8080
+
+# Custom cache directory
+eval-lib dashboard --cache-dir /path/to/cache
+```
+
+Once started, the dashboard will be available at `http://localhost:14500`
+
+### Saving Results to Dashboard
+
+Enable dashboard cache saving in your evaluation:
+```python
+import asyncio
+from eval_lib import (
+    evaluate,
+    EvalTestCase,
+    AnswerRelevancyMetric,
+    FaithfulnessMetric
+)
+
+async def evaluate_with_dashboard():
+    test_cases = [
+        EvalTestCase(
+            input="What is the capital of France?",
+            actual_output="Paris is the capital.",
+            expected_output="Paris",
+            retrieval_context=["Paris is the capital of France."]
+        )
+    ]
+    
+    metrics = [
+        AnswerRelevancyMetric(model="gpt-4o-mini", threshold=0.7),
+        FaithfulnessMetric(model="gpt-4o-mini", threshold=0.8)
+    ]
+    
+    # Results are saved to .eval_cache/ for dashboard viewing
+    results = await evaluate(
+        test_cases=test_cases,
+        metrics=metrics,
+        show_dashboard=True,  # ← Enable dashboard cache
+        session_name="My First Evaluation"  # Optional session name
+    )
+    
+    return results
+
+asyncio.run(evaluate_with_dashboard())
+```
+
+### Typical Workflow
+
+**Terminal 1 - Start Dashboard (once):**
+```bash
+cd ~/my_project
+eval-lib dashboard
+# Leave this terminal open - dashboard stays running
+```
+
+**Terminal 2 - Run Evaluations (multiple times):**
+```python
+# Run evaluation 1
+results1 = await evaluate(
+    test_cases=test_cases1,
+    metrics=metrics,
+    show_dashboard=True,
+    session_name="Evaluation 1"
+)
+
+# Run evaluation 2
+results2 = await evaluate(
+    test_cases=test_cases2,
+    metrics=metrics,
+    show_dashboard=True,
+    session_name="Evaluation 2"
+)
+
+# All results are cached and viewable in dashboard
+```
+
+**Browser:**
+- Open `http://localhost:14500`
+- Refresh page (F5) to see new evaluation results
+- Switch between different evaluation sessions using the dropdown
+
+### Dashboard Features
+
+**Summary Cards:**
+- Total test cases evaluated
+- Total cost across all evaluations
+- Number of metrics used
+
+**Metrics Overview:**
+- Average scores per metric
+- Pass/fail counts
+- Success rates
+- Model used for evaluation
+- Total cost per metric
+
+**Detailed Results Table:**
+- Test case inputs and outputs
+- Individual metric scores
+- Pass/fail status
+- Click "View Details" for full information including:
+  - Complete input/output/expected output
+  - Full retrieval context
+  - Detailed evaluation reasoning
+  - Complete evaluation logs
+
+**Charts:**
+- Bar chart: Average scores by metric
+- Doughnut chart: Success rate distribution
+
+### Cache Management
+
+Results are stored in `.eval_cache/results.json` in your project directory:
+```bash
+# View cache contents
+cat .eval_cache/results.json
+
+# Clear cache via dashboard
+# Click "Clear Cache" button in dashboard UI
+
+# Or manually delete cache
+rm -rf .eval_cache/
+```
+
+### CLI Commands
+```bash
+# Start dashboard with defaults
+eval-lib dashboard
+
+# Custom port
+eval-lib dashboard --port 8080
+
+# Custom cache directory
+eval-lib dashboard --cache-dir /path/to/project/.eval_cache
+
+# Check library version
+eval-lib version
+
+# Help
+eval-lib help
+```
+
 ## Custom LLM Providers
 
 The library supports custom LLM providers through the `CustomLLMClient` abstract base class. This allows you to integrate any LLM provider, including internal corporate models, locally-hosted models, or custom endpoints.

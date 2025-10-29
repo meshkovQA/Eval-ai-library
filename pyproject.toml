@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "eval-ai-library"
-version = "0.3.3"
+version = "0.3.9"
 description = "Comprehensive AI Model Evaluation Framework with support for multiple LLM providers"
 readme = "README.md"
 authors = [
@@ -53,6 +53,9 @@ dependencies = [
     "markdown>=3.4.0",
     "pandas>=2.0.0",
     "striprtf>=0.0.26",
+
+     # Dashboard dependencies
+    "flask>=3.0.0", 
 ]
 
 [project.optional-dependencies]
@@ -74,6 +77,10 @@ Homepage = "https://github.com/meshkovQA/Eval-ai-library"
 Documentation = "https://github.com/meshkovQA/Eval-ai-library#readme"
 Repository = "https://github.com/meshkovQA/Eval-ai-library"
 "Bug Tracker" = "https://github.com/meshkovQA/Eval-ai-library/issues"
+
+
+[project.scripts]
+eval-lib = "eval_lib.cli:main"
 
 [tool.setuptools]
 packages = ["eval_lib", "eval_lib.metrics", "eval_lib.agent_metrics", "eval_lib.datagenerator"]

@@ -68,7 +68,9 @@ def _print_summary(results: List, total_cost: float, total_time: float, passed: 
 async def evaluate(
     test_cases: List[EvalTestCase],
     metrics: List[MetricPattern],
-    verbose: bool = True
+    verbose: bool = True,
+    show_dashboard: bool = False,
+    session_name: str = None,
 ) -> List[Tuple[None, List[TestCaseResult]]]:
     """
     Evaluate test cases with multiple metrics.
@@ -77,6 +79,10 @@ async def evaluate(
         test_cases: List of test cases to evaluate
         metrics: List of metrics to apply
         verbose: Enable detailed logging (default: True)
+        show_dashboard: Launch interactive web dashboard (default: False) 
+        dashboard_port: Port for dashboard server (default: 14500)
+        session_name: Name for this evaluation session
+        cache_dir: Directory to store cache (default: .eval_cache)
 
     Returns:
         List of evaluation results
@@ -182,6 +188,23 @@ async def evaluate(
     if verbose:
         _print_summary(results, total_cost, total_time,
                        total_passed, total_tests)
+
+    if show_dashboard:
+        from eval_lib.dashboard_server import save_results_to_cache
+
+        session_id = save_results_to_cache(results, session_name)
+
+        if verbose:
+            print(f"\n{Colors.BOLD}{Colors.GREEN}{'='*70}{Colors.ENDC}")
+            print(f"{Colors.BOLD}{Colors.GREEN}📊 DASHBOARD{Colors.ENDC}")
+            print(f"{Colors.BOLD}{Colors.GREEN}{'='*70}{Colors.ENDC}")
+            print(
+                f"\n✅ Results saved to cache: {Colors.CYAN}{session_id}{Colors.ENDC}")
+            print(f"\n💡 To view results, run:")
+            print(f"   {Colors.YELLOW}eval-lib dashboard{Colors.ENDC}")
+            print(
+                f"\n   Then open: {Colors.CYAN}http://localhost:14500{Colors.ENDC}")
+            print(f"\n{Colors.BOLD}{Colors.GREEN}{'='*70}{Colors.ENDC}\n")
 
     return results
 

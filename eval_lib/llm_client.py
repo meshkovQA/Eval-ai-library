@@ -47,6 +47,29 @@ class CustomLLMClient(ABC):
         """
         pass
 
+    async def get_embeddings(
+        self,
+        texts: list[str],
+        model: str = "text-embedding-3-small"
+    ) -> tuple[list[list[float]], Optional[float]]:
+        """
+        Get embeddings for texts (optional implementation).
+
+        Args:
+            texts: List of texts to embed
+            model: Embedding model name
+
+        Returns:
+            Tuple of (embeddings_list, cost_in_usd)
+
+        Raises:
+            NotImplementedError: If custom client doesn't support embeddings
+        """
+        raise NotImplementedError(
+            f"{self.__class__.__name__} does not support embeddings. "
+            "Implement get_embeddings() method or use OpenAI for embeddings."
+        )
+
     @abstractmethod
     def get_model_name(self) -> str:
         """Return the model name for logging/tracking purposes."""
@@ -405,14 +428,14 @@ def _calculate_cost(llm: LLMDescriptor, usage) -> Optional[float]:
 
 
 async def get_embeddings(
-    model: str | tuple[str, str] | LLMDescriptor,
+    model: str | tuple[str, str] | LLMDescriptor | CustomLLMClient,
     texts: list[str],
 ) -> tuple[list[list[float]], Optional[float]]:
     """
-    Get embeddings for a list of texts using OpenAI models.
+    Get embeddings for a list of texts.
 
     Args:
-        model: Model specification (e.g., "openai:text-embedding-3-small")
+        model: Model specification or CustomLLMClient instance
         texts: List of texts to embed
 
     Returns:
@@ -420,8 +443,13 @@ async def get_embeddings(
 
     Raises:
         LLMConfigurationError: If required API keys are missing
-        ValueError: If non-OpenAI provider is specified
+        ValueError: If provider doesn't support embeddings
+        NotImplementedError: If CustomLLMClient doesn't implement get_embeddings
     """
+    # Handle custom LLM clients
+    if isinstance(model, CustomLLMClient):
+        return await model.get_embeddings(texts)
+
     llm = LLMDescriptor.parse(model)
 
     if llm.provider != Provider.OPENAI:

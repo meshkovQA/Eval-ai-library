@@ -6,6 +6,8 @@ Command-line interface for Eval AI Library
 import argparse
 import sys
 from pathlib import Path
+import os
+import json
 
 
 def run_dashboard():
@@ -70,8 +72,11 @@ def run_dashboard():
     print(f"   Press Ctrl+C to stop\n")
     print("="*70 + "\n")
 
-    app = Flask(__name__)
+    static_folder = os.path.join(os.path.dirname(__file__), 'static')
+
+    app = Flask(__name__, static_folder=static_folder)
     app.config['WTF_CSRF_ENABLED'] = False
+    app.config['JSON_SORT_KEYS'] = False
 
     @app.route('/')
     def index():
@@ -93,7 +98,13 @@ def run_dashboard():
         cache = get_fresh_cache()
         latest = cache.get_latest()
         if latest:
-            return jsonify(latest)
+            json_str = json.dumps(latest, ensure_ascii=False, sort_keys=False)
+            from flask import Response
+            return Response(
+                json_str,
+                mimetype='application/json',
+                headers={'Content-Type': 'application/json; charset=utf-8'}
+            )
         return jsonify({'error': 'No results available'}), 404
 
     @app.route('/api/sessions')
@@ -114,7 +125,13 @@ def run_dashboard():
         cache = get_fresh_cache()
         session = cache.get_by_session(session_id)
         if session:
-            return jsonify(session)
+            json_str = json.dumps(session, ensure_ascii=False, sort_keys=False)
+            from flask import Response
+            return Response(
+                json_str,
+                mimetype='application/json',
+                headers={'Content-Type': 'application/json; charset=utf-8'}
+            )
         return jsonify({'error': 'Session not found'}), 404
 
     @app.route('/api/clear')

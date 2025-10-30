@@ -31,7 +31,7 @@ class DashboardCache:
         try:
             with open(self.cache_file, 'w', encoding='utf-8') as f:
                 json.dump(self.results_history, f,
-                          indent=2, ensure_ascii=False)
+                          indent=2, ensure_ascii=False, sort_keys=False)
         except Exception as e:
             print(f"Warning: Could not save cache: {e}")
 

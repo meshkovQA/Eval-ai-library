@@ -8,16 +8,19 @@ Comprehensive AI Model Evaluation Framework with advanced techniques including *
 ## Features
 
 - 🎯 **15+ Evaluation Metrics**: RAG metrics and agent-specific evaluations
-- 🧠 **G-Eval Implementation**: State-of-the-art evaluation with probability-weighted scoring
-- 🔗 **Chain-of-Thought**: Automatic generation of evaluation steps from criteria
-- 🤖 **Multi-Provider Support**: OpenAI, Azure OpenAI, Google Gemini, Anthropic Claude, Ollama
 - 📊 **RAG Metrics**: Answer relevancy, faithfulness, contextual precision/recall, and more
 - 🔧 **Agent Metrics**: Tool correctness, task success rate, role adherence, knowledge retention
 - 🎨 **Custom Metrics**: Advanced custom evaluation with CoT and probability weighting
-- 📦 **Data Generation**: Built-in test case generator from documents
+- 🧠 **G-Eval Implementation**: State-of-the-art evaluation with probability-weighted scoring
+- 🤖 **Multi-Provider Support**: OpenAI, Azure OpenAI, Google Gemini, Anthropic Claude, Ollama
+- 🔌 **Custom LLM Providers**: Integrate any LLM through CustomLLMClient interface - internal corporate models, locally-hosted models, or custom endpoints
+- 📦 **Data Generation**: Built-in test case generator from documents (15+ formats: PDF, DOCX, CSV, JSON, HTML, images with OCR)
+- 🌐 **Interactive Dashboard**: Web-based visualization with charts, detailed logs, and session history
 - ⚡ **Async Support**: Full async/await support for efficient evaluation
 - 💰 **Cost Tracking**: Automatic cost calculation for LLM API calls
 - 📝 **Detailed Logging**: Comprehensive evaluation logs for transparency
+- 🎭 **Flexible Configuration**: Temperature control for verdict aggregation, threshold customization, verbose mode
+
 
 ## Installation
 ```bash

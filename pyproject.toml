@@ -53,6 +53,10 @@ dependencies = [
     "markdown>=3.4.0",
     "pandas>=2.0.0",
     "striprtf>=0.0.26",
+    "transformers>=4.30.0",
+    "torch>=2.0.0",
+    "presidio-analyzer>=2.2.0",
+    "spacy>=3.0.0,<3.8.0",
 
      # Dashboard dependencies
     "flask>=3.0.0", 

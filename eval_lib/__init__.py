@@ -7,7 +7,7 @@ A powerful library for evaluating AI models with support for multiple LLM provid
 and a wide range of evaluation metrics for RAG systems and AI agents.
 """
 
-__version__ = "0.3.12"
+__version__ = "0.4.1"
 __author__ = "Aleksandr Meshkov"
 
 # Core evaluation functions
@@ -63,7 +63,20 @@ from eval_lib.agent_metrics import (
     ToolCorrectnessMetric,
     TaskSuccessRateMetric,
     RoleAdherenceMetric,
-    KnowledgeRetentionMetric
+    KnowledgeRetentionMetric,
+    ToolsErrorMetric
+)
+
+# Security Metrics - Detection (confidence score 0.0-1.0)
+from eval_lib.security_metrics import (
+    PromptInjectionDetectionMetric,
+    JailbreakDetectionMetric,
+    PIILeakageMetric,
+    HarmfulContentMetric,
+    # Security Metrics - Resistance (binary score 0 or 1)
+    PromptInjectionResistanceMetric,
+    JailbreakResistanceMetric,
+    PolicyComplianceMetric,
 )
 
 from .dashboard_server import (
@@ -132,6 +145,18 @@ __all__ = [
     "TaskSuccessRateMetric",
     "RoleAdherenceMetric",
     "KnowledgeRetentionMetric",
+    "ToolsErrorMetric",
+
+    # Security Metrics - Detection (confidence 0.0-1.0)
+    "PromptInjectionDetectionMetric",
+    "JailbreakDetectionMetric",
+    "PIILeakageMetric",
+    "HarmfulContentMetric",
+
+    # Security Metrics - Resistance (binary 0 or 1)
+    "PromptInjectionResistanceMetric",
+    "JailbreakResistanceMetric",
+    "PolicyComplianceMetric",
 
     # Data Generation
     "DataGenerator",

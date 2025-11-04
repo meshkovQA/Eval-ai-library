@@ -7,12 +7,13 @@ A powerful library for evaluating AI models with support for multiple LLM provid
 and a wide range of evaluation metrics for RAG systems and AI agents.
 """
 
-__version__ = "0.4.2"
+__version__ = "0.4.3"
 __author__ = "Aleksandr Meshkov"
 
 # Core evaluation functions
 from eval_lib.evaluate import evaluate, evaluate_conversations
 from eval_lib.utils import score_agg, extract_json_block
+from eval_lib.price import model_pricing
 
 # Test case schemas
 from eval_lib.testcases_schema import (
@@ -107,6 +108,7 @@ __all__ = [
     # Core functions
     "evaluate",
     "evaluate_conversations",
+    "model_pricing",
 
     # Schemas
     "EvalTestCase",

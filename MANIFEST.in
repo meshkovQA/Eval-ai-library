@@ -2,6 +2,7 @@ include README.md
 include LICENSE
 include pyproject.toml
 recursive-include eval_lib *.py
+recursive-include eval_lib/static *.css *.js
 recursive-exclude eval_lib __pycache__
 recursive-exclude eval_lib *.pyc
 recursive-exclude eval_lib *.pyo

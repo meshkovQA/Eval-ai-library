@@ -3,7 +3,7 @@
 [![Python Version](https://img.shields.io/badge/python-3.9%2B-blue)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Comprehensive AI Model Evaluation Framework with advanced techniques including **Probability-Weighted Scoring** and **Auto Chain-of-Thought**. Support for multiple LLM providers and 15+ evaluation metrics for RAG systems and AI agents.
+Comprehensive AI Model Evaluation Framework with advanced techniques including **Temperature-Controlled Verdict Aggregation via Generalized Power Mean**. Support for multiple LLM providers and 15+ evaluation metrics for RAG systems and AI agents.
 
 ## Features
 

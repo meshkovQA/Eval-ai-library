@@ -1,7 +1,7 @@
 # Eval AI Library
 
 [![Python Version](https://img.shields.io/badge/python-3.9%2B-blue)](https://www.python.org/downloads/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 Comprehensive AI Model Evaluation Framework with advanced techniques including **Temperature-Controlled Verdict Aggregation via Generalized Power Mean**. Support for multiple LLM providers and 15+ evaluation metrics for RAG systems and AI agents.
 

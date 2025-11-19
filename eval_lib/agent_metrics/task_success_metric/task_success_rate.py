@@ -6,18 +6,11 @@ the user achieve their goal in a conversation.
 Score calculation: Softmax aggregation of success criteria verdicts
 """
 import json
-from typing import List, Dict, Any, Tuple
-from eval_lib.testcases_schema import ConversationalEvalTestCase
-from eval_lib.metric_pattern import ConversationalMetricPattern
+from typing import List, Dict, Any, Tuple, Union
+from eval_lib.testcases_schema import ConversationalEvalTestCase, EvalTestCase
+from eval_lib.metric_pattern import ConversationalMetricPattern, MetricPattern
 from eval_lib.llm_client import chat_complete
 from eval_lib.utils import score_agg, extract_json_block
-import re
-
-
-def _contains_links(dialogue: str) -> bool:
-    """Check if dialogue contains any URLs/links"""
-    url_pattern = r'https?://[^\s]+|www\.[^\s]+|\[.*?\]\(.*?\)'
-    return bool(re.search(url_pattern, dialogue))
 
 
 # Verdict weights for task completion levels
@@ -29,12 +22,8 @@ VERDICT_WEIGHTS = {
     "none": 0.0        # Criterion not satisfied at all
 }
 
-# Configuration constants
-MAX_CRITERIA = 2
-LINK_CRITERION = "The user got the link to the requested resource."
 
-
-class TaskSuccessRateMetric(ConversationalMetricPattern):
+class TaskSuccessRateMetric(MetricPattern, ConversationalMetricPattern):
     """
     Evaluates whether an AI assistant successfully helped the user complete
     their intended task across a multi-turn conversation.
@@ -60,7 +49,22 @@ class TaskSuccessRateMetric(ConversationalMetricPattern):
         super().__init__(model=model, threshold=threshold, verbose=verbose)
         self.temperature = temperature
 
+        MetricPattern.__init__(
+            self, model=model, threshold=threshold, verbose=verbose)
+        ConversationalMetricPattern.__init__(
+            self, model=model, threshold=threshold, verbose=verbose)
+        self.temperature = temperature
+
     # ==================== HELPER METHODS ====================
+    @staticmethod
+    def _convert_to_conversational(test_case: EvalTestCase) -> ConversationalEvalTestCase:
+        """
+        Convert regular EvalTestCase to ConversationalEvalTestCase.
+        """
+        return ConversationalEvalTestCase(
+            chatbot_role="You are an AI assistant helping users accomplish their goals.",
+            turns=[test_case]
+        )
 
     @staticmethod
     def _render_dialogue(turns) -> str:
@@ -87,15 +91,14 @@ fully   – criterion completely satisfied"""
         return """Example 1:
 User goal: Order a pizza online
 Criteria: [
-  "The assistant provided available pizza options.",
-  "The user received an order confirmation number."
+  "The assistant provided available pizza options."
 ]
 
 Example 2:
 User goal: Reset an email password
 Criteria: [
   "The assistant gave a working password-reset link.",
-  "The user confirmed they could log in."
+  "The assistant explained the password reset steps clearly."
 ]"""
 
     # ==================== CORE EVALUATION STEPS ====================
@@ -134,12 +137,15 @@ Criteria: [
             dialogue: Full conversation text (needed to check for links)
         """
         prompt = (
-            f"{self._prompt_criteria_few_shot()}\n\n"
-            f"Now do the same for the next case.\n\n"
+            "You will be shown a USER GOAL describing what the user wanted to achieve.\n\n"
             f"User goal: {goal}\n\n"
-            f"List up to {MAX_CRITERIA} concrete SUCCESS CRITERIA that could realistically be satisfied "
-            f"within a brief chat of 2–5 turns.\n\n"
-            "Each criterion must be a short, observable statement.\n"
+            "Generate the MINIMUM number of SUCCESS CRITERIA needed to verify if the goal was achieved.\n"
+            "Start with 1 criterion. Add a 2nd ONLY if there are two CLEARLY DISTINCT aspects.\n\n"
+            "Rules:\n"
+            "- Each criterion evaluates what the ASSISTANT provided (not user actions)\n"
+            "- Be specific and observable from the conversation\n"
+            "- Avoid redundant criteria that check the same thing\n\n"
+            f"{self._prompt_criteria_few_shot()}\n\n"
             "Return only a JSON array of strings."
         )
 
@@ -155,13 +161,6 @@ Criteria: [
 
             if not isinstance(criteria, list):
                 raise ValueError("Expected JSON array of criteria")
-
-            # Add LINK_CRITERION only if dialogue contains links
-            if _contains_links(dialogue) and LINK_CRITERION not in criteria:
-                criteria.append(LINK_CRITERION)
-
-            # Truncate to MAX_CRITERIA
-            criteria = criteria[:MAX_CRITERIA]
 
             return criteria, cost or 0.0
 
@@ -263,24 +262,15 @@ Criteria: [
 
     # ==================== MAIN EVALUATION ====================
 
-    async def evaluate(self, test_case: ConversationalEvalTestCase) -> Dict[str, Any]:
+    async def _evaluate_conversational(self, test_case: ConversationalEvalTestCase) -> Dict[str, Any]:
         """
-        Evaluate task success rate across conversation turns.
-
-        Steps:
-        1. Format dialogue into readable text
-        2. Infer user's primary goal from conversation
-        3. Generate concrete success criteria for the goal
-        4. Generate verdicts for each criterion (fully/mostly/partial/minor/none)
-        5. Aggregate verdicts into final score using softmax
-        6. Generate summary explanation
-        7. Build comprehensive evaluation log
+        Internal method to evaluate conversational test case.
 
         Args:
             test_case: Conversational test case with multiple turns
 
         Returns:
-            Evaluation results with score, success, reason, cost, and detailed log
+            Evaluation results
         """
         total_cost = 0.0
 
@@ -343,6 +333,33 @@ Criteria: [
             "evaluation_cost": round(total_cost, 6),
             "evaluation_log": evaluation_log
         }
-        self.print_result(result)
 
+        self.print_result(result)
         return result
+
+    async def evaluate(self, test_case: Union[EvalTestCase, ConversationalEvalTestCase]) -> Dict[str, Any]:
+        """
+        Evaluate task success rate for either single or multi-turn conversation.
+
+        This method automatically detects the test case type:
+        - If EvalTestCase: wraps it into a single-turn conversation
+        - If ConversationalEvalTestCase: processes directly
+
+        Args:
+            test_case: Either EvalTestCase or ConversationalEvalTestCase
+
+        Returns:
+            Evaluation results with score, success, reason, cost, and detailed log
+        """
+        # Auto-detect and convert if needed
+        if isinstance(test_case, EvalTestCase):
+            # Convert single-turn to conversational format
+            conv_test_case = self._convert_to_conversational(test_case)
+            return await self._evaluate_conversational(conv_test_case)
+        elif isinstance(test_case, ConversationalEvalTestCase):
+            # Already conversational, process directly
+            return await self._evaluate_conversational(test_case)
+        else:
+            raise TypeError(
+                f"Expected EvalTestCase or ConversationalEvalTestCase, got {type(test_case)}"
+            )

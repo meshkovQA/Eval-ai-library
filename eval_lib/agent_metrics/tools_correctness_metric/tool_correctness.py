@@ -17,13 +17,13 @@ class ToolCorrectnessMetric(MetricPattern):
         threshold: float = 0.5,
         verbose: bool = False,
         evaluation_params: List[str] = [],
-        should_exact_match: bool = False,
-        should_consider_ordering: bool = False
+        exact_match: bool = False,
+        check_ordering: bool = False
     ):
         super().__init__(model=None, threshold=threshold, verbose=verbose)
         self.evaluation_params = evaluation_params
-        self.should_exact_match = should_exact_match
-        self.should_consider_ordering = should_consider_ordering
+        self.exact_match = exact_match
+        self.check_ordering = check_ordering
 
     async def evaluate(self, test_case: EvalTestCase) -> Dict[str, Any]:
         self.tools_called = test_case.tools_called or []
@@ -48,12 +48,12 @@ class ToolCorrectnessMetric(MetricPattern):
         called_names = self.tools_called
         expected_names = self.expected_tools
 
-        if self.should_exact_match:
+        if self.exact_match:
             if self.calculate_exact_match_score() == 1.0:
                 return f"Exact match: all expected tools {expected_names} were called exactly."
             else:
                 return f"Mismatch: expected {expected_names}, called {called_names}."
-        elif self.should_consider_ordering:
+        elif self.check_ordering:
             lcs, weighted = self.compute_weighted_lcs()
             if weighted == len(self.expected_tools):
                 return "Correct tool usage and order."
@@ -68,9 +68,9 @@ class ToolCorrectnessMetric(MetricPattern):
                 return f"Missing tools {list(missing)}. Expected {expected_names}, got {called_names}."
 
     def calculate_score(self) -> float:
-        if self.should_exact_match:
+        if self.exact_match:
             return self.calculate_exact_match_score()
-        elif self.should_consider_ordering:
+        elif self.check_ordering:
             _, score = self.compute_weighted_lcs()
             return score / len(self.expected_tools) if self.expected_tools else 0.0
         else:

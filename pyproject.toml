@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "eval-ai-library"
-version = "0.4.11"
+version = "0.4.37"
 description = "Comprehensive AI Model Evaluation Framework with support for multiple LLM providers"
 readme = "README.md"
 authors = [
@@ -58,8 +58,11 @@ dependencies = [
     "presidio-analyzer>=2.2.0",
     "spacy>=3.0.0,<3.8.0",
 
-     # Dashboard dependencies
-    "flask>=3.0.0", 
+    # Dashboard dependencies
+    "flask>=3.0.0",
+
+    # Tracing dependencies
+    "aiohttp>=3.8.0",
 ]
 
 [project.optional-dependencies]
@@ -87,7 +90,7 @@ Repository = "https://github.com/meshkovQA/Eval-ai-library"
 eval-lib = "eval_lib.cli:main"
 
 [tool.setuptools]
-packages = ["eval_lib", "eval_lib.metrics", "eval_lib.agent_metrics", "eval_lib.datagenerator"]
+packages = ["eval_lib", "eval_lib.metrics", "eval_lib.agent_metrics", "eval_lib.datagenerator", "eval_lib.security_metrics", "eval_lib.tracing"]
 
 [tool.setuptools.package-data]
 eval_lib = ["py.typed"]

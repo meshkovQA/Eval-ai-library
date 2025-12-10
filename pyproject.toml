@@ -85,7 +85,6 @@ Documentation = "https://github.com/meshkovQA/Eval-ai-library#readme"
 Repository = "https://github.com/meshkovQA/Eval-ai-library"
 "Bug Tracker" = "https://github.com/meshkovQA/Eval-ai-library/issues"
 
-
 [project.scripts]
 eval-lib = "eval_lib.cli:main"
 

@@ -24,9 +24,18 @@ Comprehensive AI Model Evaluation Framework with advanced techniques including *
 
 
 ## Installation
+
+### Full Installation (Default)
 ```bash
 pip install eval-ai-library
 ```
+Installs all dependencies including LLM providers, data generation tools, and ML models.
+
+### Lightweight Installation (Tracing Only)
+```bash
+pip install eval-ai-library[lite]
+```
+Minimal installation with only `pydantic` and `aiohttp` for tracing functionality. Use this when you only need to collect traces without evaluation metrics or data generation.
 
 ### Development Installation
 ```bash

@@ -137,3 +137,5 @@ Thumbs.db
 *.log
 test_results/
 evaluation_results/
+
+figures/

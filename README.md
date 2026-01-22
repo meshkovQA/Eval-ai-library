@@ -1624,8 +1624,8 @@ This library implements techniques from:
 ## Support
 
 - 📧 Email: alekslynx90@gmail.com
-- 🐛 Issues: [GitHub Issues](https://github.com/meshkovQA/Eval-ai-library.git/issues)
-- 📖 Documentation: [Full Documentation](https://github.com/meshkovQA/Eval-ai-library.git#readme)
+- 🐛 Issues: [GitHub Issues](https://github.com/meshkovQA/Eval-ai-library/issues)
+- 📖 Documentation: [Full Documentation](https://github.com/meshkovQA/Eval-ai-library#readme)
 
 ## Acknowledgments
 

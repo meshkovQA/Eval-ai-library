@@ -2,6 +2,9 @@
 
 [![Python Version](https://img.shields.io/badge/python-3.9%2B-blue)](https://www.python.org/downloads/)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![PyPI](https://img.shields.io/pypi/v/eval-ai-library)](https://pypi.org/project/eval-ai-library/)
+
+> Based on [firstlinesoftware/eval-ai-library](https://github.com/firstlinesoftware/eval-ai-library). This is an independently maintained version with additional features and PyPI distribution.
 
 Comprehensive AI Model Evaluation Framework with advanced techniques including **Temperature-Controlled Verdict Aggregation via Generalized Power Mean**. Support for multiple LLM providers and 15+ evaluation metrics for RAG systems and AI agents.
 
@@ -39,7 +42,7 @@ Minimal installation with only `pydantic` and `aiohttp` for tracing functionalit
 
 ### Development Installation
 ```bash
-git clone https://github.com/yourusername/eval-ai-library.git
+git clone https://github.com/meshkovQA/Eval-ai-library.git
 cd eval-ai-library
 pip install -e ".[dev]"
 ```

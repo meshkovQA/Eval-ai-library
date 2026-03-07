@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "eval-ai-library"
-version = "0.4.40"
+version = "0.5.1"
 description = "Comprehensive AI Model Evaluation Framework with support for multiple LLM providers"
 readme = "README.md"
 authors = [
@@ -71,6 +71,16 @@ lite = [
     "pydantic>=2.0.0",
     "aiohttp>=3.8.0",
 ]
+# LLM as a judge — only LLM providers, no local models or document processing
+llm = [
+    "openai>=1.0.0",
+    "anthropic>=0.18.0",
+    "google-genai>=0.2.0",
+    "pydantic>=2.0.0",
+    "numpy>=1.24.0",
+    "flask>=3.0.0",
+    "aiohttp>=3.8.0",
+]
 dev = [
     "pytest>=7.0.0",
     "pytest-asyncio>=0.21.0",
@@ -78,6 +88,13 @@ dev = [
     "flake8>=6.0.0",
     "mypy>=1.0.0",
     "isort>=5.12.0",
+]
+vectors = [
+    "sentence-transformers>=2.0.0",
+]
+deterministic = [
+    "jsonschema>=4.0.0",
+    "langdetect>=1.0.9",
 ]
 docs = [
     "sphinx>=6.0.0",
@@ -94,10 +111,10 @@ Repository = "https://github.com/meshkovQA/Eval-ai-library"
 eval-lib = "eval_lib.cli:main"
 
 [tool.setuptools]
-packages = ["eval_lib", "eval_lib.metrics", "eval_lib.agent_metrics", "eval_lib.datagenerator", "eval_lib.security_metrics", "eval_lib.tracing"]
+packages = ["eval_lib", "eval_lib.metrics", "eval_lib.agent_metrics", "eval_lib.datagenerator", "eval_lib.security_metrics", "eval_lib.tracing", "eval_lib.connector", "eval_lib.deterministic_metrics", "eval_lib.vector_metrics"]
 
 [tool.setuptools.package-data]
-eval_lib = ["py.typed"]
+eval_lib = ["py.typed", "static/*.js", "static/*.css"]
 
 [tool.black]
 line-length = 100

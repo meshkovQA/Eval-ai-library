@@ -10,6 +10,25 @@ HTML_TEMPLATE = """
     <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
 </head>
 <body>
+    <nav class="top-nav">
+        <div class="nav-brand">Eval AI</div>
+        <div class="nav-links">
+            <a href="/" class="nav-link active">Dashboard</a>
+            <a href="/connector" class="nav-link">API Connector</a>
+            <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme" id="themeBtn">&#9790;</button>
+        </div>
+    </nav>
+    <script>
+    (function(){var t=localStorage.getItem('eval-theme');if(t)document.documentElement.setAttribute('data-theme',t);
+    var btn=document.getElementById('themeBtn');if(!btn)return;
+    var isDark=t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme:dark)').matches);
+    btn.textContent=isDark?'\u2600':'\u263E';})();
+    function toggleTheme(){var r=document.documentElement,c=r.getAttribute('data-theme');
+    var isDark=c==='dark'||(c!=='light'&&window.matchMedia('(prefers-color-scheme:dark)').matches);
+    var next=isDark?'light':'dark';r.setAttribute('data-theme',next);localStorage.setItem('eval-theme',next);
+    document.getElementById('themeBtn').textContent=next==='dark'?'\u2600':'\u263E';}
+    </script>
+
     <div class="container">
         <header>
             <div>

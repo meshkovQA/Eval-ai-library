@@ -92,6 +92,8 @@ class DashboardCache:
                     'expected_output': result.expected_output[:200] if result.expected_output else '',
                     'expected_output_full': result.expected_output,
                     'retrieval_context': result.retrieval_context if result.retrieval_context else [],
+                    'tools_called': result.tools_called if hasattr(result, 'tools_called') and result.tools_called else [],
+                    'expected_tools': result.expected_tools if hasattr(result, 'expected_tools') and result.expected_tools else [],
                     'metrics': []
                 }
 

@@ -430,12 +430,18 @@ function renderDashboard(session) {
                         <div class="value">${metricsLabels.length}</div>
                     </div>
                 </div>
-                
+
+                <div class="dashboard-tabs">
+                    <button class="dashboard-tab active" onclick="switchDashboardTab('metrics')">Metrics</button>
+                    <button class="dashboard-tab" onclick="switchDashboardTab('performance')">Performance</button>
+                </div>
+
+                <div id="dashTabMetrics">
                 <h2 class="section-title">Metrics Summary</h2>
                 <div class="metrics-grid">
                     ${metricCards}
                 </div>
-                
+
                 <h2 class="section-title">Charts</h2>
                 <div class="charts">
                     <div class="chart-container">
@@ -447,7 +453,12 @@ function renderDashboard(session) {
                         <canvas id="passFailChart"></canvas>
                     </div>
                 </div>
-                
+                </div>
+
+                <div id="dashTabPerformance" style="display:none">
+                    ${renderPerformanceTab(data)}
+                </div>
+
                 <h2 class="section-title">Test Results</h2>
                 <div class="table-wrapper">
                     <table>
@@ -471,6 +482,116 @@ function renderDashboard(session) {
     } catch (error) {
         console.error('Error rendering dashboard:', error);
         showNoData();
+    }
+}
+
+function switchDashboardTab(tab) {
+    document.querySelectorAll('.dashboard-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('dashTabMetrics').style.display = tab === 'metrics' ? '' : 'none';
+    document.getElementById('dashTabPerformance').style.display = tab === 'performance' ? '' : 'none';
+    event.target.classList.add('active');
+    if (tab === 'performance') renderPerformanceCharts();
+}
+
+function renderPerformanceTab(data) {
+    const perf = data.performance;
+    if (!perf) {
+        return `<div class="section-card" style="text-align:center;padding:40px;color:var(--text-muted)">
+            <p>No performance data available.</p>
+            <p style="font-size:0.85em">Performance metrics are captured when running evaluations through the API Connector.</p>
+        </div>`;
+    }
+
+    const avgRt = perf.avg_response_time_ms || 0;
+    const minRt = perf.min_response_time_ms || 0;
+    const maxRt = perf.max_response_time_ms || 0;
+    const totalTokens = perf.total_tokens || 0;
+    const totalCost = perf.total_api_cost || 0;
+
+    return `
+        <div class="summary">
+            <div class="summary-card">
+                <h3>Avg Response Time</h3>
+                <div class="value">${avgRt}ms</div>
+            </div>
+            <div class="summary-card">
+                <h3>Min / Max</h3>
+                <div class="value">${minRt}ms / ${maxRt}ms</div>
+            </div>
+            <div class="summary-card">
+                <h3>Total Tokens</h3>
+                <div class="value">${totalTokens.toLocaleString()}</div>
+            </div>
+            <div class="summary-card">
+                <h3>Total AI Cost</h3>
+                <div class="value">$${totalCost.toFixed(6)}</div>
+            </div>
+        </div>
+        <div class="charts">
+            <div class="chart-container">
+                <h2>Response Time per Request</h2>
+                <canvas id="responseTimeChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <h2>Token Usage per Request</h2>
+                <canvas id="tokenUsageChart"></canvas>
+            </div>
+        </div>
+    `;
+}
+
+function renderPerformanceCharts() {
+    if (!currentData || !currentData.performance) return;
+    const perf = currentData.performance;
+    const rts = perf.response_times_ms || [];
+    const perRow = perf.per_row || [];
+    const labels = rts.map((_, i) => `#${i + 1}`);
+
+    // Response time chart
+    const rtCtx = document.getElementById('responseTimeChart');
+    if (rtCtx && rts.length) {
+        new Chart(rtCtx, {
+            type: 'bar',
+            data: {
+                labels,
+                datasets: [{
+                    label: 'Response Time (ms)',
+                    data: rts,
+                    backgroundColor: 'rgba(37, 99, 235, 0.6)',
+                    borderColor: 'rgba(37, 99, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: { y: { beginAtZero: true, title: { display: true, text: 'ms' } } }
+            }
+        });
+    }
+
+    // Token usage chart
+    const tuCtx = document.getElementById('tokenUsageChart');
+    const tokenData = perRow.map(r => r.token_usage || 0);
+    if (tuCtx && tokenData.some(t => t > 0)) {
+        new Chart(tuCtx, {
+            type: 'bar',
+            data: {
+                labels,
+                datasets: [{
+                    label: 'Tokens',
+                    data: tokenData,
+                    backgroundColor: 'rgba(22, 163, 74, 0.6)',
+                    borderColor: 'rgba(22, 163, 74, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: { y: { beginAtZero: true, title: { display: true, text: 'tokens' } } }
+            }
+        });
     }
 }
 
@@ -592,15 +713,42 @@ function showDetails(testCaseIdx) {
         `;
         }
 
+        // Tools called
+        if (testCase.tools_called && testCase.tools_called.length) {
+            modalContent += `
+            <div class="detail-section">
+                <h3>TOOLS CALLED</h3>
+                <div class="content">
+                    <div style="display:flex;flex-wrap:wrap;gap:6px">
+                        ${testCase.tools_called.map(t => `<span style="padding:3px 10px;background:var(--bg-tertiary);font-size:0.85em;font-family:monospace">${t}</span>`).join('')}
+                    </div>
+                    ${testCase.expected_tools && testCase.expected_tools.length ? `<div style="margin-top:8px;font-size:0.8em;color:var(--text-muted)">Expected: ${testCase.expected_tools.join(', ')}</div>` : ''}
+                </div>
+            </div>`;
+        }
+
         // Add metadata sections
+        const rt = testCase.response_time_ms != null ? `${testCase.response_time_ms}ms` : (testCase.response_time || 'N/A');
+        const tokens = testCase.token_usage != null ? testCase.token_usage.toLocaleString() : 'N/A';
+        const apiCost = testCase.api_cost != null ? `$${testCase.api_cost.toFixed(6)}` : 'N/A';
+
         modalContent += `
                         <div class="detail-section">
-                            <h3>RESPONSE TIME</h3>
+                            <h3>PERFORMANCE</h3>
                             <div class="content">
                                 <div class="info-row">
-                                    <span class="info-label">Duration:</span>
-                                    <span class="info-value">${testCase.response_time || 'N/A'}</span>
+                                    <span class="info-label">Response Time:</span>
+                                    <span class="info-value">${rt}</span>
                                 </div>
+                                <div class="info-row">
+                                    <span class="info-label">Tokens:</span>
+                                    <span class="info-value">${tokens}</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">AI Cost:</span>
+                                    <span class="info-value">${apiCost}</span>
+                                </div>
+                                ${testCase.system_prompt ? `<div class="info-row"><span class="info-label">System Prompt:</span><span class="info-value" style="font-size:0.85em">${testCase.system_prompt}</span></div>` : ''}
                             </div>
                         </div>
                     </div>

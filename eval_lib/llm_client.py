@@ -87,6 +87,12 @@ class Provider(str, Enum):
     GOOGLE = "google"
     OLLAMA = "ollama"
     ANTHROPIC = "anthropic"
+    DEEPSEEK = "deepseek"
+    QWEN = "qwen"
+    ZHIPU = "zhipu"
+    MISTRAL = "mistral"
+    GROQ = "groq"
+    GROK = "grok"
     CUSTOM = "custom"
 
 
@@ -191,6 +197,48 @@ def _get_client(provider: Provider):
         _check_env_var("ANTHROPIC_API_KEY", "Anthropic Claude")
         return anthropic.AsyncAnthropic(
             api_key=os.getenv("ANTHROPIC_API_KEY"),
+        )
+
+    if provider == Provider.DEEPSEEK:
+        _check_env_var("DEEPSEEK_API_KEY", "DeepSeek")
+        return openai.AsyncOpenAI(
+            api_key=os.getenv("DEEPSEEK_API_KEY"),
+            base_url="https://api.deepseek.com/v1",
+        )
+
+    if provider == Provider.QWEN:
+        _check_env_var("DASHSCOPE_API_KEY", "Qwen (DashScope)")
+        return openai.AsyncOpenAI(
+            api_key=os.getenv("DASHSCOPE_API_KEY"),
+            base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",
+        )
+
+    if provider == Provider.ZHIPU:
+        _check_env_var("ZHIPU_API_KEY", "Zhipu GLM")
+        return openai.AsyncOpenAI(
+            api_key=os.getenv("ZHIPU_API_KEY"),
+            base_url="https://open.bigmodel.cn/api/paas/v4",
+        )
+
+    if provider == Provider.MISTRAL:
+        _check_env_var("MISTRAL_API_KEY", "Mistral AI")
+        return openai.AsyncOpenAI(
+            api_key=os.getenv("MISTRAL_API_KEY"),
+            base_url="https://api.mistral.ai/v1",
+        )
+
+    if provider == Provider.GROQ:
+        _check_env_var("GROQ_API_KEY", "Groq")
+        return openai.AsyncOpenAI(
+            api_key=os.getenv("GROQ_API_KEY"),
+            base_url="https://api.groq.com/openai/v1",
+        )
+
+    if provider == Provider.GROK:
+        _check_env_var("XAI_API_KEY", "Grok (xAI)")
+        return openai.AsyncOpenAI(
+            api_key=os.getenv("XAI_API_KEY"),
+            base_url="https://api.x.ai/v1",
         )
 
     raise ValueError(f"Unsupported provider: {provider}")
@@ -368,6 +416,12 @@ _HELPERS = {
     Provider.GOOGLE: _google_chat_complete,
     Provider.OLLAMA: _ollama_chat_complete,
     Provider.ANTHROPIC: _anthropic_chat_complete,
+    Provider.DEEPSEEK: _openai_chat_complete,
+    Provider.QWEN: _openai_chat_complete,
+    Provider.ZHIPU: _openai_chat_complete,
+    Provider.MISTRAL: _openai_chat_complete,
+    Provider.GROQ: _openai_chat_complete,
+    Provider.GROK: _openai_chat_complete,
 }
 
 

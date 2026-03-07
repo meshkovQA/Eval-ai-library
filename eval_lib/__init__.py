@@ -80,6 +80,26 @@ from eval_lib.security_metrics import (
     PolicyComplianceMetric,
 )
 
+# Deterministic Metrics
+from eval_lib.deterministic_metrics import (
+    RegexMatchMetric,
+    JsonSchemaMetric,
+    LengthCheckMetric,
+    ContainsMetric,
+    StartsWithMetric,
+    EndsWithMetric,
+    ExactMatchMetric,
+    NonEmptyMetric,
+    FormatCheckMetric,
+    LanguageDetectionMetric,
+)
+
+# Vector Metrics
+from eval_lib.vector_metrics import (
+    SemanticSimilarityMetric,
+    ReferenceMatchMetric,
+)
+
 from .dashboard_server import (
     DashboardCache
 )
@@ -159,6 +179,22 @@ __all__ = [
     "PromptInjectionResistanceMetric",
     "JailbreakResistanceMetric",
     "PolicyComplianceMetric",
+
+    # Deterministic Metrics
+    "RegexMatchMetric",
+    "JsonSchemaMetric",
+    "LengthCheckMetric",
+    "ContainsMetric",
+    "StartsWithMetric",
+    "EndsWithMetric",
+    "ExactMatchMetric",
+    "NonEmptyMetric",
+    "FormatCheckMetric",
+    "LanguageDetectionMetric",
+
+    # Vector Metrics
+    "SemanticSimilarityMetric",
+    "ReferenceMatchMetric",
 
     # Data Generation
     "DataGenerator",

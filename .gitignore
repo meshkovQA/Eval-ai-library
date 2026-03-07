@@ -139,3 +139,7 @@ test_results/
 evaluation_results/
 
 figures/
+
+.claude
+.eval_cache
+tests

@@ -40,6 +40,8 @@ def run_dashboard():
     # Import here to avoid loading everything for --help
     from eval_lib.dashboard_server import DashboardCache
     from eval_lib.html import HTML_TEMPLATE
+    from eval_lib.connector_html import CONNECTOR_HTML_TEMPLATE
+    from eval_lib.connector.routes import connector_bp, set_cache_dir
     from flask import Flask, render_template_string, jsonify
 
     # Create cache with custom directory
@@ -77,10 +79,19 @@ def run_dashboard():
     app = Flask(__name__, static_folder=static_folder)
     app.config['WTF_CSRF_ENABLED'] = False
     app.config['JSON_SORT_KEYS'] = False
+    app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024  # 50MB upload limit
+
+    # Register connector blueprint
+    set_cache_dir(args.cache_dir)
+    app.register_blueprint(connector_bp)
 
     @app.route('/')
     def index():
         return render_template_string(HTML_TEMPLATE)
+
+    @app.route('/connector')
+    def connector():
+        return render_template_string(CONNECTOR_HTML_TEMPLATE)
 
     @app.route('/favicon.ico')
     def favicon():

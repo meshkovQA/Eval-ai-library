@@ -8,14 +8,57 @@ from typing import List, Dict, Any, Optional
 
 import aiohttp
 
+from openai import AsyncOpenAI
+
 from eval_lib.connector.models import (
     EvalJobConfig, JobProgress, JobStatus,
     ApiConnectionConfig, ResponseMapping, DatasetColumnMapping,
+    CustomLLMConfig,
 )
 from eval_lib.connector.metric_registry import instantiate_metric
 from eval_lib.testcases_schema import EvalTestCase
 from eval_lib.evaluate import evaluate
 from eval_lib.dashboard_server import save_results_to_cache
+from eval_lib.llm_client import CustomLLMClient
+
+
+class _CustomLLMClientImpl(CustomLLMClient):
+    """OpenAI-compatible custom LLM client for connector UI."""
+
+    def __init__(self, base_url: str, api_key: str, model_name: str):
+        self.model = model_name
+        self.client = AsyncOpenAI(
+            api_key=api_key or "no-key",
+            base_url=base_url,
+        )
+
+    async def chat_complete(
+        self,
+        messages: list[dict[str, str]],
+        temperature: float,
+    ) -> tuple[str, Optional[float]]:
+        response = await self.client.chat.completions.create(
+            model=self.model,
+            messages=messages,
+            temperature=temperature,
+        )
+        text = response.choices[0].message.content.strip()
+        return text, None
+
+    def get_model_name(self) -> str:
+        return f"custom:{self.model}"
+
+
+def _create_custom_llm_client(cfg: CustomLLMConfig) -> _CustomLLMClientImpl:
+    if not cfg.base_url:
+        raise ValueError("Custom LLM base_url is required")
+    if not cfg.model_name:
+        raise ValueError("Custom LLM model_name is required")
+    return _CustomLLMClientImpl(
+        base_url=cfg.base_url,
+        api_key=cfg.api_key,
+        model_name=cfg.model_name,
+    )
 
 
 def extract_path(obj: Any, path: str) -> Any:
@@ -287,10 +330,15 @@ class ConnectorEngine:
             progress.status = JobStatus.COMPLETED
             return
 
+        # Resolve eval model — create CustomLLMClient for custom_llm provider
+        eval_model = config.eval_model
+        if eval_model.startswith("custom:") and config.custom_llm_config:
+            eval_model = _create_custom_llm_client(config.custom_llm_config)
+
         metrics = []
         for mc in config.metrics:
             try:
-                m = instantiate_metric(mc.metric_class, config.eval_model, mc.params)
+                m = instantiate_metric(mc.metric_class, eval_model, mc.params)
                 metrics.append(m)
             except Exception as e:
                 progress.errors.append(f"Metric {mc.metric_class}: {str(e)}")

@@ -10,6 +10,7 @@ from flask import Blueprint, request, jsonify, Response
 from eval_lib.connector.models import (
     ApiConnectionConfig, HeaderEntry, EvalJobConfig,
     ResponseMapping, DatasetColumnMapping, MetricConfig,
+    CustomLLMConfig,
 )
 from eval_lib.connector.dataset_parser import parse_dataset
 from eval_lib.connector.metric_registry import get_metrics_info
@@ -313,6 +314,14 @@ PROVIDERS = {
         "env_var": "XAI_API_KEY",
         "models": ["grok-4.1", "grok-4", "grok-4-heavy", "grok-4-fast", "grok-beta", "grok-3", "grok-2"],
     },
+    "custom": {
+        "name": "Custom LLM",
+        "env_var": "CUSTOM_LLM_API_KEY",
+        "extra_vars": ["CUSTOM_LLM_BASE_URL"],
+        "models": [],
+        "key_optional": True,
+        "is_custom_llm": True,
+    },
 }
 
 
@@ -340,6 +349,15 @@ def _apply_api_keys():
     for var, val in keys.items():
         if val:
             os.environ[var] = val
+    # Also apply custom LLM config
+    try:
+        cfg = _load_custom_llm_config()
+        if cfg.get("api_key"):
+            os.environ["CUSTOM_LLM_API_KEY"] = cfg["api_key"]
+        if cfg.get("base_url"):
+            os.environ["CUSTOM_LLM_BASE_URL"] = cfg["base_url"]
+    except Exception:
+        pass
 
 
 # Apply saved keys on module load
@@ -352,9 +370,66 @@ def _init_keys():
 _init_keys()
 
 
+def _get_custom_llm_config_path() -> Path:
+    d = Path(_cache_dir)
+    d.mkdir(parents=True, exist_ok=True)
+    return d / "custom_llm_config.json"
+
+
+def _load_custom_llm_config() -> dict:
+    p = _get_custom_llm_config_path()
+    if p.exists():
+        return json.loads(p.read_text(encoding="utf-8"))
+    return {}
+
+
+def _save_custom_llm_config(cfg: dict):
+    p = _get_custom_llm_config_path()
+    p.write_text(json.dumps(cfg, ensure_ascii=False, indent=2), encoding="utf-8")
+
+
+@connector_bp.route("/api/connector/custom-llm-config", methods=["GET"])
+def get_custom_llm_config():
+    cfg = _load_custom_llm_config()
+    return jsonify(cfg)
+
+
+@connector_bp.route("/api/connector/custom-llm-config", methods=["POST"])
+def save_custom_llm_config():
+    body = request.get_json()
+    if not body:
+        return jsonify({"error": "No JSON body"}), 400
+
+    cfg = _load_custom_llm_config()
+    if "base_url" in body:
+        cfg["base_url"] = body["base_url"]
+    if "api_key" in body:
+        cfg["api_key"] = body["api_key"]
+    if "model_name" in body:
+        cfg["model_name"] = body["model_name"]
+
+    _save_custom_llm_config(cfg)
+
+    # Set env vars so they are available for LLM client
+    if cfg.get("api_key"):
+        os.environ["CUSTOM_LLM_API_KEY"] = cfg["api_key"]
+    if cfg.get("base_url"):
+        os.environ["CUSTOM_LLM_BASE_URL"] = cfg["base_url"]
+
+    # Clear cached LLM clients
+    try:
+        from eval_lib.llm_client import _get_client
+        _get_client.cache_clear()
+    except Exception:
+        pass
+
+    return jsonify({"ok": True})
+
+
 @connector_bp.route("/api/connector/providers")
 def list_providers():
     keys = _load_api_keys()
+    custom_cfg = _load_custom_llm_config()
     result = []
     for pid, pinfo in PROVIDERS.items():
         env_var = pinfo["env_var"]
@@ -362,7 +437,8 @@ def list_providers():
         extra = {}
         for ev in pinfo.get("extra_vars", []):
             extra[ev] = bool(os.environ.get(ev) or keys.get(ev))
-        result.append({
+
+        item = {
             "id": pid,
             "name": pinfo["name"],
             "env_var": env_var,
@@ -372,7 +448,26 @@ def list_providers():
             "has_key": has_key,
             "key_optional": pinfo.get("key_optional", False),
             "extra_configured": extra,
-        })
+        }
+
+        # For custom_llm, inject saved config and dynamic model list
+        if pinfo.get("is_custom_llm"):
+            item["is_custom_llm"] = True
+            item["custom_llm_config"] = {
+                "base_url": custom_cfg.get("base_url", ""),
+                "api_key": bool(custom_cfg.get("api_key")),
+                "model_name": custom_cfg.get("model_name", ""),
+            }
+            # Build models list from saved model name
+            model_name = custom_cfg.get("model_name", "")
+            if model_name:
+                item["models"] = [model_name]
+            has_base_url = bool(custom_cfg.get("base_url"))
+            item["configured"] = has_base_url
+            item["has_key"] = bool(custom_cfg.get("api_key"))
+            item["extra_configured"]["CUSTOM_LLM_BASE_URL"] = has_base_url
+
+        result.append(item)
     return jsonify(result)
 
 
@@ -469,12 +564,25 @@ def _parse_job_config(data: dict) -> EvalJobConfig:
             params=mc.get("params", {}),
         ))
 
+    # Parse custom LLM config if eval_model starts with custom_llm:
+    custom_llm_cfg = None
+    eval_model = data.get("eval_model", "gpt-4o-mini")
+    if eval_model.startswith("custom:"):
+        saved_cfg = _load_custom_llm_config()
+        if saved_cfg.get("base_url"):
+            custom_llm_cfg = CustomLLMConfig(
+                base_url=saved_cfg.get("base_url", ""),
+                api_key=saved_cfg.get("api_key", ""),
+                model_name=saved_cfg.get("model_name", ""),
+            )
+
     return EvalJobConfig(
         name=data.get("name", "Untitled Job"),
         api_config=api_config,
         response_mapping=response_mapping,
         dataset_column_mapping=column_mapping,
         metrics=metrics,
-        eval_model=data.get("eval_model", "gpt-4o-mini"),
+        eval_model=eval_model,
+        custom_llm_config=custom_llm_cfg,
         cost_per_1m_tokens=float(data.get("cost_per_1m_tokens", 0)),
     )

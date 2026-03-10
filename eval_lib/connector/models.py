@@ -49,6 +49,12 @@ class MetricConfig(BaseModel):
     params: Dict[str, Any] = {}
 
 
+class CustomLLMConfig(BaseModel):
+    base_url: str = ""
+    api_key: str = ""
+    model_name: str = ""
+
+
 class EvalJobConfig(BaseModel):
     id: Optional[str] = None
     name: str = "Untitled Job"
@@ -57,6 +63,7 @@ class EvalJobConfig(BaseModel):
     dataset_column_mapping: DatasetColumnMapping = DatasetColumnMapping()
     metrics: List[MetricConfig] = []
     eval_model: str = "gpt-4o-mini"
+    custom_llm_config: Optional[CustomLLMConfig] = None
     cost_per_1m_tokens: float = 0.0
     created_at: Optional[str] = None
 

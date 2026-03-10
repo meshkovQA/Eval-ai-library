@@ -41,6 +41,7 @@ const state = {
     testValues: {},
     providers: [],
     _activeProvider: null,
+    customLlmConfig: { base_url: '', api_key: '', model_name: '' },
     jobId: null,
     jobPollingInterval: null,
     savedConfigs: [],
@@ -629,37 +630,74 @@ function renderTabSettings() {
     const activeP = state.providers.find(p => p.id === state._activeProvider);
     if (activeP) {
         const isConfigured = activeP.has_key || (activeP.key_optional && Object.values(activeP.extra_configured || {}).some(v => v));
-        html += `<div style="border:1px solid var(--border);border-radius:var(--radius);padding:14px;background:var(--bg-secondary)">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-                <span style="font-weight:600;font-size:0.9em;color:var(--text)">${esc(activeP.name)}</span>
-                <span style="font-size:0.75em;color:${isConfigured ? 'var(--success)' : 'var(--text-muted)'}">${isConfigured ? '&#10003; Configured' : 'Not configured'}</span>
-            </div>
-            <div style="display:flex;gap:6px;align-items:center;margin-bottom:4px">
-                <input class="form-input" id="key_${esc(activeP.env_var)}" type="password"
-                    placeholder="${activeP.has_key ? '••••••••••••' : activeP.env_var}"
-                    style="font-size:0.8em;flex:1">
-                <button class="btn btn-sm btn-primary" onclick="saveApiKey('${esc(activeP.env_var)}', document.getElementById('key_${esc(activeP.env_var)}').value)" style="white-space:nowrap">Save</button>
-                ${activeP.has_key ? `<button class="btn btn-sm btn-danger" onclick="if(confirm('Remove key?')) deleteApiKey('${esc(activeP.env_var)}')" style="padding:4px 8px" title="Remove key">&#10005;</button>` : ''}
-            </div>`;
 
-        if (activeP.extra_vars?.length) {
-            activeP.extra_vars.forEach(ev => {
-                html += `<div style="display:flex;gap:6px;align-items:center;margin-top:6px">
-                    <input class="form-input" id="key_${esc(ev)}" type="text"
-                        placeholder="${activeP.extra_configured?.[ev] ? '••••••••' : ev}"
+        if (activeP.is_custom_llm) {
+            // Custom LLM configuration panel
+            const clCfg = activeP.custom_llm_config || {};
+            html += `<div style="border:1px solid var(--border);border-radius:var(--radius);padding:14px;background:var(--bg-secondary)">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+                    <span style="font-weight:600;font-size:0.9em;color:var(--text)">${esc(activeP.name)}</span>
+                    <span style="font-size:0.75em;color:${isConfigured ? 'var(--success)' : 'var(--text-muted)'}">${isConfigured ? '&#10003; Configured' : 'Not configured'}</span>
+                </div>
+                <p style="font-size:0.78em;color:var(--text-muted);margin-bottom:10px">Connect any OpenAI-compatible API endpoint (e.g. LiteLLM, vLLM, LocalAI, custom server).</p>
+                <div style="display:flex;flex-direction:column;gap:8px">
+                    <div>
+                        <label style="font-size:0.75em;font-weight:600;color:var(--text-secondary);display:block;margin-bottom:3px">Base URL *</label>
+                        <input class="form-input" id="customLlmBaseUrl" type="text"
+                            placeholder="https://your-server.com/v1"
+                            value="${esc(clCfg.base_url || '')}"
+                            style="font-size:0.8em">
+                    </div>
+                    <div>
+                        <label style="font-size:0.75em;font-weight:600;color:var(--text-secondary);display:block;margin-bottom:3px">API Key</label>
+                        <input class="form-input" id="customLlmApiKey" type="password"
+                            placeholder="${clCfg.api_key ? '••••••••' : 'Optional — leave empty if not required'}"
+                            style="font-size:0.8em">
+                    </div>
+                    <div>
+                        <label style="font-size:0.75em;font-weight:600;color:var(--text-secondary);display:block;margin-bottom:3px">Model name *</label>
+                        <input class="form-input" id="customLlmModelName" type="text"
+                            placeholder="e.g. gpt-4o-mini, my-model, llama3"
+                            value="${esc(clCfg.model_name || '')}"
+                            style="font-size:0.8em">
+                    </div>
+                    <button class="btn btn-sm btn-primary" onclick="saveCustomLlmConfig()" style="align-self:flex-start;margin-top:4px">Save Configuration</button>
+                </div>
+            </div>`;
+        } else {
+            // Standard provider config panel
+            html += `<div style="border:1px solid var(--border);border-radius:var(--radius);padding:14px;background:var(--bg-secondary)">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+                    <span style="font-weight:600;font-size:0.9em;color:var(--text)">${esc(activeP.name)}</span>
+                    <span style="font-size:0.75em;color:${isConfigured ? 'var(--success)' : 'var(--text-muted)'}">${isConfigured ? '&#10003; Configured' : 'Not configured'}</span>
+                </div>
+                <div style="display:flex;gap:6px;align-items:center;margin-bottom:4px">
+                    <input class="form-input" id="key_${esc(activeP.env_var)}" type="password"
+                        placeholder="${activeP.has_key ? '••••••••••••' : activeP.env_var}"
                         style="font-size:0.8em;flex:1">
-                    <button class="btn btn-sm" onclick="saveApiKey('${esc(ev)}', document.getElementById('key_${esc(ev)}').value)" style="white-space:nowrap">Save</button>
+                    <button class="btn btn-sm btn-primary" onclick="saveApiKey('${esc(activeP.env_var)}', document.getElementById('key_${esc(activeP.env_var)}').value)" style="white-space:nowrap">Save</button>
+                    ${activeP.has_key ? `<button class="btn btn-sm btn-danger" onclick="if(confirm('Remove key?')) deleteApiKey('${esc(activeP.env_var)}')" style="padding:4px 8px" title="Remove key">&#10005;</button>` : ''}
                 </div>`;
-            });
-        }
 
-        if (activeP.models.length) {
-            html += `<div style="margin-top:8px;font-size:0.75em;color:var(--text-muted)">
-                Models: ${activeP.models.map(m => `<code style="background:var(--bg);padding:1px 5px;border-radius:3px;font-size:0.95em">${esc(m)}</code>`).join(' ')}
-            </div>`;
-        }
+            if (activeP.extra_vars?.length) {
+                activeP.extra_vars.forEach(ev => {
+                    html += `<div style="display:flex;gap:6px;align-items:center;margin-top:6px">
+                        <input class="form-input" id="key_${esc(ev)}" type="text"
+                            placeholder="${activeP.extra_configured?.[ev] ? '••••••••' : ev}"
+                            style="font-size:0.8em;flex:1">
+                        <button class="btn btn-sm" onclick="saveApiKey('${esc(ev)}', document.getElementById('key_${esc(ev)}').value)" style="white-space:nowrap">Save</button>
+                    </div>`;
+                });
+            }
 
-        html += `</div>`;
+            if (activeP.models.length) {
+                html += `<div style="margin-top:8px;font-size:0.75em;color:var(--text-muted)">
+                    Models: ${activeP.models.map(m => `<code style="background:var(--bg);padding:1px 5px;border-radius:3px;font-size:0.95em">${esc(m)}</code>`).join(' ')}
+                </div>`;
+            }
+
+            html += `</div>`;
+        }
     }
 
     html += `</div>`;
@@ -1320,6 +1358,10 @@ async function loadConfigs() {
 
 async function loadProviders() {
     try { state.providers = await (await fetch('/api/connector/providers')).json(); } catch {}
+    try {
+        const cfg = await (await fetch('/api/connector/custom-llm-config')).json();
+        if (cfg) state.customLlmConfig = { base_url: cfg.base_url || '', api_key: cfg.api_key ? '••••••••' : '', model_name: cfg.model_name || '' };
+    } catch {}
 }
 
 async function saveApiKey(envVar, value) {
@@ -1345,6 +1387,28 @@ async function deleteApiKey(envVar) {
         await loadProviders();
         renderStep(1);
         showToast('API key removed');
+    } catch (e) { alert('Error: ' + e.message); }
+}
+
+async function saveCustomLlmConfig() {
+    const baseUrl = document.getElementById('customLlmBaseUrl')?.value || '';
+    const apiKey = document.getElementById('customLlmApiKey')?.value || '';
+    const modelName = document.getElementById('customLlmModelName')?.value || '';
+
+    if (!baseUrl) { alert('Base URL is required'); return; }
+    if (!modelName) { alert('Model name is required'); return; }
+
+    try {
+        const body = { base_url: baseUrl, model_name: modelName };
+        if (apiKey && !apiKey.startsWith('••')) body.api_key = apiKey;
+        await fetch('/api/connector/custom-llm-config', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body),
+        });
+        await loadProviders();
+        renderStep(1);
+        showToast('Custom LLM configured');
     } catch (e) { alert('Error: ' + e.message); }
 }
 

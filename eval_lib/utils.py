@@ -70,6 +70,11 @@ def score_agg(
     return round(agg * penalty_factor, 4)
 
 
+def _sanitize_json_string(raw: str) -> str:
+    """Remove trailing commas before closing } or ] to fix common LLM JSON errors."""
+    return re.sub(r",\s*([}\]])", r"\1", raw)
+
+
 def extract_json_block(text: str) -> str:
     """
     Extract JSON from LLM response that may contain markdown code blocks.
@@ -96,17 +101,19 @@ def extract_json_block(text: str) -> str:
     # Try to extract from markdown code blocks
     match = re.search(r"```json\s*(.*?)```", text, re.DOTALL)
     if match:
-        return match.group(1).strip()
+        candidate = _sanitize_json_string(match.group(1).strip())
+        return candidate
 
     # Try to parse as direct JSON
+    sanitized = _sanitize_json_string(text)
     try:
-        obj = json.loads(text)
+        obj = json.loads(sanitized)
         return json.dumps(obj, ensure_ascii=False)
     except Exception:
         pass
 
     # Try to find JSON object/array pattern
-    json_match = re.search(r"({.*?}|\[.*?\])", text, re.DOTALL)
+    json_match = re.search(r"(\{.*\}|\[.*\])", sanitized, re.DOTALL)
     if json_match:
         return json_match.group(1).strip()
 

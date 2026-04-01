@@ -19,7 +19,9 @@ from eval_lib.price import model_pricing
 from eval_lib.testcases_schema import (
     EvalTestCase,
     ConversationalEvalTestCase,
-    ToolCall
+    ToolCall,
+    TraceStep,
+    ResourceUsage,
 )
 
 # Evaluation schemas
@@ -100,6 +102,19 @@ from eval_lib.vector_metrics import (
     ReferenceMatchMetric,
 )
 
+# Reliability Metrics
+from eval_lib.reliability_metrics import (
+    OutcomeConsistencyMetric,
+    LoopDetectionMetric,
+    PromptRobustnessMetric,
+    PerturbationGenerator,
+    PlanningQualityMetric,
+    ContextDecayMetric,
+    CalibrationMetric,
+    ReliabilityScoreAggregator,
+    ReliabilityProfile,
+)
+
 from .dashboard_server import (
     DashboardCache
 )
@@ -134,6 +149,8 @@ __all__ = [
     "EvalTestCase",
     "ConversationalEvalTestCase",
     "ToolCall",
+    "TraceStep",
+    "ResourceUsage",
     "MetricResult",
     "TestCaseResult",
     "ConversationalTestCaseResult",
@@ -195,6 +212,17 @@ __all__ = [
     # Vector Metrics
     "SemanticSimilarityMetric",
     "ReferenceMatchMetric",
+
+    # Reliability Metrics
+    "OutcomeConsistencyMetric",
+    "LoopDetectionMetric",
+    "PromptRobustnessMetric",
+    "PerturbationGenerator",
+    "PlanningQualityMetric",
+    "ContextDecayMetric",
+    "CalibrationMetric",
+    "ReliabilityScoreAggregator",
+    "ReliabilityProfile",
 
     # Data Generation
     "DataGenerator",

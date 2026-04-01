@@ -1,0 +1,793 @@
+\documentclass[sn-basic]{sn-jnl}
+
+%%%% Standard Packages
+\usepackage{graphicx}%
+\usepackage{multirow}%
+\usepackage{amsmath,amssymb,amsfonts}%
+\usepackage{amsthm}%
+\usepackage{mathrsfs}%
+\usepackage[title]{appendix}%
+\usepackage{xcolor}%
+\usepackage{textcomp}%
+\usepackage{manyfoot}%
+\usepackage{booktabs}%
+\usepackage{algorithm}%
+\usepackage{algorithmicx}%
+\usepackage{algpseudocode}%
+\usepackage{listings}%
+
+\theoremstyle{thmstyleone}%
+\newtheorem{theorem}{Theorem}%
+\newtheorem{proposition}[theorem]{Proposition}%
+
+\theoremstyle{thmstyletwo}%
+\newtheorem{example}{Example}%
+\newtheorem{remark}{Remark}%
+
+\theoremstyle{thmstylethree}%
+\newtheorem{definition}{Definition}%
+
+\raggedbottom
+
+\begin{document}
+
+\title{Adaptive Rigor in AI System Evaluation using Temperature-Controlled Verdict Aggregation via Generalized Power Mean}
+
+\author*[1]{\fnm{Aleksandr} \sur{Meshkov}}\email{alekslynx90@gmail.com}
+
+\affil*[1]{\orgname{Independent Researcher}, \orgaddress{\city{Budva}, \country{Montenegro}}}
+
+\abstract{Today, AI systems based on large language models (LLM) are widely used in various fields, such as medicine, finance, retail, education and others. However, existing evaluation methods, such as LLM as a Judge, verdict system, NLI, despite their reliability, do not always show results that correlate with human assessment, which requires AI specialists to regularly deeply validate the results obtained from evaluating AI systems.
+This paper presents a temperature-controlled verdict aggregation (TCVA) method, which includes a five-level verdict scoring system, calculation of the final metric score via a generalized power average, and a temperature parameter $T \in [0.1, 1.0]$, which allows you to control the severity of the evaluation from the most pessimistic to the most optimistic depending on the context of the application of the AI system. The method is mathematically justified by the theory of power averages, providing stable evaluation results.
+The proposed approach can be applied to various LLM-based systems, including retrieval augmented generation (RAG) systems, AI chat bots and AI agents. The results show that the TCVA method, used in calculating the performance metrics of AI temperature control systems for a specific AI application, correlates better with human evaluation than existing methods. The method provides a transparent and well-interpreted evaluation through a verdict system, allowing, among other things, to calibrate the evaluation process to the requirements of the AI system, as well as providing the opportunity to clearly understand why the LLM evaluator assigned a certain final score to the measured metric. }
+
+\keywords{AI evaluation, large language models, verdict aggregation, power mean, adaptive metrics, RAG systems}
+
+\maketitle
+
+\section{Introduction}
+
+In recent years, systems based on generative artificial intelligence (hereinafter referred to as AI) have received significant development and application in various fields of activity. Nowadays, in almost every field, medicine, finance, education, internal corporate processes, systems based on generative artificial intelligence are being implemented using technologies such as RAG, AI agents, MCP servers. Taking into account the availability of these technologies, the speed of development of new approaches to implementation, the emergence of systems that allow you to create your own AI agent with minimal coding skills, an important question arises: how to correctly evaluate the quality and reliability of such AI systems?
+
+On the one hand, a fairly large number of benchmarks have recently appeared that allow to evaluate one or another aspect of an AI-based solution \cite{White2024,Ivanov2024benchmarks,Wang2024usercentric}, but if we are talking about an adaptive AI system that was created within a company to work with certain, non-public data, or an AI system that specializes in providing certain narrowly focused services for clients, then the use of benchmarks becomes irrelevant, since test datasets are more focused on testing the general capabilities of LLM models.
+
+Unlike machine learning and deep learning neural networks, where to evaluate accuracy you can use part of the original dataset, which contains certain expected results for comparison, generative models do not provide a clear, unambiguous answer, and the same query can provide several possible answers, each of which may be correct and suitable from the point of view of human assessment. This leads to difficulties in evaluating AI systems based on generative models, but with the development of generative AI, solutions have appeared that allow such evaluation, for example, the DeepEval or RAGAS \cite{Es2023} libraries, which contain algorithms for evaluating metrics such as response relevance or identification of hallucinations and others.
+
+However, during the practical use of these frameworks on various projects, it was revealed that the results of evaluating metrics do not always correlate well enough with human assessment. Often, such frameworks can underestimate the final score of a metric, despite the fact that a human assessment considers this answer to be quite relevant and correct.
+
+This problem is the key topic to which this work is devoted, and is due to the fact that existing algorithms for evaluating AI systems, which will be further discussed in this work, are not able to adapt to the field of application of the AI system, which is why there is a discrepancy between the evaluation obtained from the framework and the human assessment.
+
+Let's look at the following options for using AI systems. As a first example, it is worth considering the use of AI in medicine. To do this, let's imagine an AI system that can analyze a patient's symptoms and suggest possible diagnoses for treatment. When evaluating this AI system built on the basis of LLM models, it is important to understand that even partially incorrect information provided to the client can have critical consequences. For example, an incorrect diagnosis or treatment methods can threaten the life and health of the patient, therefore the evaluation of such AI systems should be as strict as possible and even one incorrect phrase or sentence in the response of the AI system, which may be caused by a hallucination or incorrect context, should immediately significantly reduce the final score of the metric being measured.
+
+On the other hand, if consider a regular AI chatbot designed to maintain a conversation with the user, then the appearance of a small hallucination in the answer, which does not contradict the facts, can be considered a correct answer. Users in this case may, on the contrary, value the chatbot's ability to improvise or maintain a lively dialogue, because the task of an AI chatbot in the current context is not absolute accuracy, but the overall satisfaction of users, therefore, the evaluation of such AI chatbots should be less strict.
+
+In connection with the above, the question arose whether it is possible to adapt the evaluation metrics for LLM-based systems depending on the type of project and the requirements of human evaluation. As a solution to this issue, this work proposes a new algorithm for evaluating metrics for systems using generative AI, based on an extended version of the LLM as a Judge approach through a verdict system, but with the ability to control the severity of the evaluation through an additional temperature parameter.
+
+The main features of this algorithm are that it includes a number of key changes. 
+\begin{enumerate}
+   \item A five-level system of verdicts and weights, which is used instead of the classical binary classification of verdicts, which allows to more accurately evaluate the level of compliance of the AI system's response with the criteria of the measured metrics. 
+   \item Calculation of the final metric score through a generalized power average \cite{Hwang1981}, which allows you to change the severity of the evaluation through the $p$ parameter and determine how low the verdict weights should influence the final calculated metric score. Below is the calculation formula: 
+\begin{equation} 
+M_p(w_1, \ldots, w_n) = \left( \frac{1}{n} \sum_{i=1}^n w_i^p \right)^{1/p} 
+\end{equation}
+If $p \to -\infty$, then the average approaches the minimum and the most rigorous estimate is obtained. 
+If $p = 1$, then the classical arithmetic mean is obtained. 
+If $p \to +\infty$, then the average approaches the maximum and the most lenient estimate is obtained. 
+Therefore, depending on the set parameter $p$, it is possible to change the severity of the final evaluation of the measured metric. 
+   \item For more convenient work with this parameter $p$, a more intuitive and understandable temperature parameter $T \in [0.1, 1.0]$ was introduced. Low temperature means a strict evaluation, high temperature implies a more lenient evaluation. This makes the method in question accessible to practical use, meaning that it is easy to select the appropriate temperature to obtain results that better correlate with human judgment. 
+\end{enumerate}
+
+\section{Review of existing evaluation approaches}
+
+Before considering the proposed method, it is necessary to analyze existing approaches, determine their advantages and disadvantages in order to understand how the proposed solution reuses these approaches to evaluate AI systems based on LLM and what is the exclusive feature of the new proposed approach. To do this, the following approaches will be analyzed: LLM as a Judge with a direct request, LLM as a Judge with a verdict system, and approaches based on NLI.
+
+\subsection{LLM as a Judge with a simple prompt}
+
+The LLM as a Judge approach \cite{Zheng2023} is based on the idea that if LLM generation algorithms are able to generate answers that are close to human judgments, then it is possible to use these models to evaluate other models. This approach has become quite widespread in terms of the use of a large number of modern frameworks for evaluating AI-based systems.
+
+A simple prompt means that the specialist performing the evaluation creates a prompt in which he indicates the data for evaluation, as well as the assessment criteria themselves. As a result, the LLM model evaluates the data based on the specified evaluation criteria in the provided product and assigns a final score.
+
+An evaluation prompt might look like this: 
+
+\begin{quote}
+\textit{Rate the quality of the following answer to the question.} 
+
+\textit{Question: What is the capital of France?} 
+
+\textit{Answer: Paris is the capital of France, known for its art and culture.} 
+
+\textit{Rate the relevance of the answer on a scale of 0 to 10, where:} 
+\begin{itemize} 
+\item \textit{0 means completely incorrect or irrelevant} 
+\item \textit{10 means perfect, comprehensive answer} 
+\end{itemize} 
+
+\textit{Provide a single number rating.} 
+
+\textit{Rating: \_\_} 
+\end{quote}
+
+As a result, LLM generates a score, for example 8, which shows how well the specified data meets the evaluation criteria.
+
+Unfortunately, this approach has a significant drawback, namely, in most cases, a utility bias, since the model tries to be useful to the user, which leads to some overestimation, so even if the answer is not completely relevant or contains unnecessary information, the model will still give a high score to the metric.
+
+To optimize this approach, a number of methods have been developed that improve the quality of evaluation through the use of large language models: 
+\begin{enumerate} 
+\item \textbf{G-Eval.} This method \cite{Liu2023} uses the Chain-of-Thought technique, where the model first independently or through user instructions generates evaluation criteria that are used to reason the model step by step in order to obtain a final estimate. This makes the evaluation more transparent and accurate, but requires more tokens and evaluation runtime to compute. 
+\item \textbf{Multi Judge approach.} This method uses several LLMs at once to evaluate the same answer, after receiving all the estimates, they are aggregated and the average value is calculated from the obtained data. This approach partially reduces the bias of individual models, but requires more execution time and also increases token costs. 
+\item \textbf{Constitutional LLM as a Judge} This approach uses pre-formed assessment principles for each metric, each of which the LLM evaluates independently, after which the arithmetic average of the obtained scores is calculated. 
+\end{enumerate}
+
+Apart from the above-mentioned problem of bias, there are other disadvantages of using the simple LLM as a Judge option. Despite the simplicity and intuitiveness of using this approach, the question of using the same evaluation prompt in different projects still remains open. On the one hand, you can modify the prompt with the phrases "be very strict" or "be lenient", but such changes in most cases have a rather unpredictable effect. For example, adding "be very strict" can reduce all grades by 2-4 points, but this decrease will be quite uneven, since the model will begin to reduce points including those answers that are correct and meet the evaluation criteria. Additionally, some scientific papers have stated that, for example, GPT-4 exhibits a "self-preference bias," meaning the model regularly rates its own generated responses higher than those of other models \cite{Wang2024}, even when human evaluation rates them equally. Moreover, even small changes in the wording of the evaluation prompt itself can significantly affect the result. For example, changing the order of criteria in a prompt or adding examples for a few prompt shootings can change the distribution of scores by several points on a 10-point scale. Lastly, marks are usually whole numbers (0-10), but there is no clear understanding on the part of the assessor of why the LLM awarded a particular mark, in addition to this there may be a blurring of the boundaries between marks and there is no clear difference between a 7 mark answer and an 8 mark answer.
+
+Let's consider a specific example showing the shortcomings of the LLM as a Judge direct request approach in context, as the main direction of this work: 
+\textit{Question:} "What are the main symptoms of myocardial infarction?" 
+
+\textit{Answer~1:} "The main symptoms of a heart attack: pressing chest pain, shortness of breath, nausea, pain radiating to the left arm or jaw, cold sweat." 
+
+\textit{Answer~2:} "There may be chest pain and difficulty breathing." 
+
+Using the prompt in the format "score from 0 to 10", you can get the following data: 
+Answer~1: 9/10; Answer~2: 5/10.
+
+Now let's present an assessment of the same answers, but in two different contexts: 
+\begin{itemize} 
+\item \textbf{Context~A: Medical education system.} In this context, the incompleteness of Answer~2 will be critical, because students must know all the main symptoms for correct diagnosis and treatment. 
+\item \textbf{Context~B: General information chatbot for general purposes.} In this context, Answer~2, despite being incomplete, nevertheless contains some information about symptoms and does not mislead users.
+ \end{itemize}
+
+This example shows that the same request, but in different contexts, should be evaluated differently. That is, the resulting estimate for Answer 2, depending on the context, should either be underestimated for a medical system, or, on the contrary, overestimated for a general-purpose chatbot.
+
+\subsection{LLM as a Judge based on verdicts}
+
+To improve the evaluation of LLM as a Judge, an approach using a verdict system was developed \cite{Yu2024evaluation,Gan2025rag,Roychowdhury2024}. This approach means that instead of receiving a single assessment through the process from the LLM, the evaluation process is broken down into separate steps. To clearly understand how the verdict system works, consider a simple example based on obtaining a score for identifying hallucinations in the RAG system. The algorithm for the verdict system is as follows:
+
+\begin{enumerate} 
+\item The response from the RAG system is broken down into atomic statements. 
+\item For each statement, the LLM checks whether there is a context for that particular statement. 
+\item As a result of internal evaluation, each statement is assigned a verdict from a predefined set of ratings.
+\item To calculate the final metric score, the ratio of confirmed verdicts to the total number of verdicts is used.
+\end{enumerate}
+
+This approach allows for greater evaluation transparency compared to using LLM as a Judge through a simple prompt. In this case, it is already possible to see exactly what statements were made and how they were evaluated in terms of their correctness, which allows for more targeted improvements to the AI system.
+
+There are various methods for assessing verdicts: 
+
+\textbf{Binary verdicts: \{Yes, No\}.} The most common option for assessing verdicts, where for each statement LLM gives a binary assessment, correct/incorrect (Yes/No). One of the tools for assessing generative AI systems where this verdict method has been used is the RAGAS framework \cite{Es2023}, which is often used to evaluate RAG systems. Let's look at an example from the RAGAS framework for the Faithfulness metric:
+
+\textit{Question:} "What are the main symptoms of myocardial infarction?" 
+
+\textit{System answer:} "Main symptoms: pressing chest pain, shortness of breath, nausea. There may also be a high temperature." 
+
+\textit{Context:} "Heart attack symptoms: chest pain, shortness of breath, nausea, cold sweat."
+
+Extracted statements and binary verdicts: 
+\begin{enumerate} 
+\item "Pressing chest pain is a symptom" $\to$ Yes (1.0) - confirmed by context 
+\item "Shortness of breath is a symptom" $\to$ Yes (1.0) - confirmed by context 
+\item "Nausea is a symptom" $\to$ Yes (1.0) - confirmed by context 
+\item "Fever is a symptom" $\to$ No (0.0) - not mentioned in context 
+\end{enumerate} 
+
+\begin{equation} 
+\text{Final score: Faithfulness} = \frac{\#\text{Yes}}{\#\text{total}} = \frac{3}{4} = 0.75
+\end{equation} 
+
+Experience using this framework has shown that assessing AI systems using RAGAS is quite straightforward and may, as in the case of LLM as a Judge with a simple prompt, not take into account the context and specifics of the project. Moreover, binary verdicts are unable to evaluate partial support for a claim. For example, a statement may be largely supported by the context, but have minor inaccuracies that will not be critical for certain types of AI systems, but the binary system is forced to choose between Yes and No, which leads to a significant increase or decrease in the final score.
+
+\textbf{Ternary verdicts: \{Yes, No, Unsure\}.} One attempt to improve the binary scheme was the addition of a third category of verdict - the uncertainty of the model in making a decision on the statement. The uncertainty of the model in this case means that this verdict will not be included in the final formula for calculating the metric. This method provides a slightly better score, but still leads to one glaring problem where LLM as a Judge scores all verdicts as Unsure, or only scores Yes and Unsure, resulting in either an inability to evaluate the metric or an overestimated score. Also, the model's uncertainty still makes it difficult to explicitly identify differences between verdict scores such as "almost fully confirmed" and "partially confirmed" or between "barely affected by context" and "completely absent."
+
+In some systems used to evaluate AI, the uncertainty parameter is assigned a weight of 0.5, which creates the following scale for evaluating statements and making verdicts: Yes - 1.0, Unsure - 0.5, No - 0. The most commonly used approach for calculating the final score of a metric based on verdicts is a simple arithmetic average of the weights: 
+\begin{equation} 
+\text{Faithfulness} = \frac{1}{N} \sum_{i=1}^N w_i 
+\end{equation} 
+where $w_i$~---~the weight of the verdict for the $i$th statement, $N$~---~the number of statements.
+
+This aggregation assumes a linear impact of each verdict on the final metric score. Let's consider calculating the hallucination metric for two different contexts of using an AI system:
+
+\textbf{Context~A: Medical diagnostic system.}
+
+\textit{Response from the AI system:} "Symptoms of a heart attack: chest pain, shortness of breath, nausea. I recommend seeing a therapist."
+
+Statements and verdicts: 
+\begin{enumerate} 
+\item "Chest pain~---~symptom" $\to$ Yes (1.0) 
+\item "Shortness of breath~---~symptom" $\to$ Yes (1.0) 
+\item "Nausea~---~symptom" $\to$ Yes (1.0) 
+\item "Referral to therapist" $\to$ No (0.0), but, for example, the context requires immediate hospitalization 
+\end{enumerate}
+
+\begin{equation} 
+\text{Faithfulness} = (1.0 + 1.0 + 1.0 + 0.0) / 4 = 0.75
+\end{equation} 
+
+Taking into account the fact that in most cases the threshold value for metrics is set within 0.7-0.8, this result may also be successfully passed if, for example, the threshold for the hallucination identification metric is set within 0.7. Also, an increase in the number of verdicts can lead to an even greater increase in the final score, when, for example, 6 out of 7 statements received Yes verdicts, then the final score will be 0.85. But in a medical context, an incorrect recommendation can have serious consequences and estimates and results of 0.75 or 0.85 do not reflect the correct results at all. The expert rating should be significantly lower, for example 0.3-0.5, indicating that this response could result in serious danger to the client.
+
+\textbf{Context~B: AI system for technical support of users.}
+
+\textit{Response from the AI system:} "Try to reboot the router. Check cables. Checking your account balance may also help."
+
+Statements and verdicts: 
+\begin{enumerate} 
+\item "Restarting the router may help" $\to$ Yes (1.0) 
+\item "Checking cables may help" $\to$ Yes (1.0) 
+\item "Checking balance may help" $\to$ No (0.0) - not mentioned in the context of the standard procedure 
+\end{enumerate}
+
+\begin{equation} 
+\text{Faithfulness} = (1.0 + 1.0 + 0.0) / 3 = 0.67
+\end{equation} 
+
+In this context, the final metric score is 0.67, which may seem too low, because the two main tips from the AI system were quite correct and generally solve most of the user's problems, so the mention of balance, although not out of context, is simply a reasonable addition on the part of the AI system. In this case, the expert rating would be in the range of 0.8-0.9, indicating that the recommendations specified in the answer are generally correct and can be applied by the client.
+
+\subsection{NLI-based approach}
+
+Natural Language Inference (NLI) methods use specially trained models that can determine the logical relationships between pairs of sentences in the format: 
+\begin{itemize} 
+\item \textbf{Entailment:} If the premise is true, the hypothesis must be true 
+\item \textbf{Neutrality:} A hypothesis can be either true or false 
+\item \textbf{Contradiction:} If the premise is true, the hypothesis must be false 
+\end{itemize}
+
+To evaluate the response of an AI system using the NLI approach, the following algorithm is used:
+
+\begin{enumerate} 
+\item As in the case of a verdict system, the answer is divided into atomic statements. 
+\item For each statement, a pair is formed: a premise (context or document) and a hypothesis (statement from the answer). 
+\item The NLI model classifies their relationship. 
+\item The final score is calculated as the proportion of statements that received a "Follow" verdict. 
+\end{enumerate}
+
+The main limitation of using the NLI model is that the model checks the logical connective, but does not evaluate whether the statement is relevant to the original question. Let's look at the example below using the response relevance metric as an example:
+
+Question: "What is the capital of France?" 
+Answer: "The capital of France~---~Paris. The Eiffel Tower is located in Paris. Louvre~---~the largest art museum in the world."
+
+All three statements would be classified as "Entailment" relative to the correct context about France. The final score will be ~=~3/3~=~1.0. However, only the first statement really answers the question. The second and third statements, although factually true, are irrelevant information. The correct response relevance score in this case should be approximately 0.33.
+
+In addition to the above limitation, the assessment, as in the case of LLM as a Judge, can also be affected by the correctness of the definition of atomic statements. The authors of FActScore \cite{Min2023} acknowledge that the quality of the FActScore score is highly dependent on how well the model performs this decomposition. Let's look at an example of such a problematic case:
+
+Response from the AI system: "Paris, founded in the 3rd century BC, has been the capital of France since ~987." 
+
+Possible decompositions: 
+\begin{itemize} 
+\item \{"Paris was founded in the 3rd century BC", "Paris is the capital of France", "Paris became the capital in ~987"\} 
+\item \{"Paris~---~the capital of France", "Paris was founded BC", "France had a capital in ~987"\} 
+\end{itemize}
+
+The example shows that different decomposition options can lead to different estimates, since atomic statements can have different meanings in a given answer.
+
+As with other approaches, NLI models do not take into account the specifics and scope of the AI system, since such models are trained on general data sets, for example SNLI, MultiNLI, etc. The verdict "Contradiction" may have different criticality depending on the context, for example, in medical systems it will have a greater role and significance for the evaluation, and in general-purpose chatbots this verdict may exist, but the response from the AI system will still be considered correct. Thus, the NLI model will produce approximately the same estimates regardless of the subject area of application of the AI system.
+
+\subsection{Summary of Limitations}
+
+This review showed that despite the popularity of various approaches to evaluating AI systems, they all have a common limitation, namely, the inability to adapt to the application field of a generative AI-based system. Apart from the mechanism for changing the system evaluation prompt, which is not possible when using existing libraries and frameworks for assessing AI systems, there are no other possibilities for universalizing the evaluation of AI systems depending on the context. Complete adaptation of existing algorithms from scratch to the area of use of the AI system being developed and building an evaluation system from scratch is a rather expensive solution for the company and requires significant financial investments.
+
+These limitations were fundamental to the development of the temperature-controlled verdict aggregation method presented in this work, which provides the ability to adapt the evaluation to the specific use of the AI system.
+
+\section{Temperature-Controlled Verdict Aggregation (TCVA)}
+
+For a more flexible setup of metrics that could adapt to different contexts of using an AI system, it is proposed to improve the approach to evaluating AI systems through verdicts by adding three changes, namely, expanding the evaluation system of verdicts to a five-point scale, changing the calculation of the final metric score using a generalized power average, and also introducing a temperature parameter that will allow you to intuitively and flexibly adjust the severity of the metric.
+
+\subsection{Five-level verdict system}
+
+In contrast to binary and ternary verdict evaluation systems, it is proposed to use a five-level verdict evaluation system with predefined parameters and weights for each of the five values. The choice of exactly five levels is justified by the fact that there is already a Likert scale, which has proven its effectiveness in evaluation based on thousands of studies and correlates well with the gradation of human judgments.
+
+\textbf{Likert scale} is a psychometric scale used in surveys to measure respondents' opinions, attitudes, and satisfaction \cite{Zadeh1965} by ranking their agreement or disagreement with a statement on a scale of 1 to 5 (strongly disagree~/disagree~/neutral~/agree~/strongly agree). Based on this scale, special levels for rendering a verdict on the assessed statement were developed. Table \ref{tab:verdict-levels} shows the five-level verdict system used with weights, semantics and examples of use based on the assessment of the metric of faithfulness.
+
+\begin{table}[h]
+\caption{Five-level verdict system}
+\label{tab:verdict-levels}
+\centering
+\begin{tabular}{@{}lclp{5.5cm}@{}}
+\toprule
+\textbf{Level} & \textbf{Weight $w$} & \textbf{Semantics} & \textbf{Example of usage} \\
+\midrule
+Fully & 1.0 & Fully satisfied & The atomic statement (part of the AI response text) is fully supported by facts from the context of the AI system\\
+\addlinespace
+Mostly & 0.9 & Mostly satisfied & The atomic statement is completely based on facts, but the structure of the text is slightly changed \\
+\addlinespace
+Partially & 0.7 & Partially satisfied & The atomic statement is about half generated from facts and half made up by the AI model, but overall the answer is still relevant to the query \\
+\addlinespace
+Minor & 0.3 & Minimally affected & The atomic statement is not explicitly confirmed in the facts used for generation, but a number of phrases or individual words are still present in the facts \\
+\addlinespace
+None & 0.0 & Not satisfied & There is no connection between the generated atomic statement and the facts used by the AI model to generate the answer\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The choice of weights \{1.0, 0.9, 0.7, 0.3, 0.0\} was based on the following principles:
+
+\begin{itemize} 
+\item Small penalty for "Mostly". The difference between "Fully" (1.0) and "Mostly" (0.9) remains small, since very often you can encounter situations where the criteria are satisfied in general with minor comments and, in order to avoid in such situations an immediate sharp decrease in the score or an unintentional overestimation, it was decided to use a small penalty for such results that would not greatly affect the final calculation of the score, but at the same time showed that there are small non-critical flaws in the system and it doesn't work perfectly. 
+\item Significant gap between "Mostly" and "Partially". The transition from 0.9 to 0.7 is a fairly significant decrease, reflecting a qualitative leap from "almost ideal" to "problems are noticeable", thereby showing that in general the metric may still be within normal limits, but there are situations that require analysis and decision-making. 
+\item Large gap between "Partially" and "Minor". The transition from 0.7 to 0.3 means that significant problems have appeared in the AI system that require solutions. Moreover, if we consider all verdicts within one assessment, then even one verdict "Minor" in some cases can significantly affect the assessment, even if other verdicts received higher scores. 
+\item None remains none. Total nonconformity should produce zero contribution, clearly distinguishing complete failure from any degree of success.
+\end{itemize}
+
+Figure \ref{fig:verdict-scale} illustrates the non-uniform distribution of weights across the five verdict levels, highlighting the deliberate gaps between levels that reflect the qualitative differences in evaluation severity.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\textwidth]{fig3.eps}
+\caption{Five-level verdict scale with non-uniform gaps between semantic levels.}\label{fig:verdict-scale}
+\end{figure}
+
+\subsection{Generalized Power Mean}
+
+After receiving verdicts for atomic statements, as part of the evaluation, it is necessary to use not just the arithmetic mean, but to find a function that would allow you to adjust the evaluation due to a certain parameter, providing control of severity in the final calculations of the metric. To solve this problem, in the course of a number of experiments, it was decided to use the power mean function.
+
+The power mean function is already used in machine learning systems to aggregate values \cite{Kortvelesy2023,Derr2024}. Research has shown that using parametric aggregation functions instead of fixed averages can improve the performance of models. The power mean has a mathematical basis and is naturally suitable for problems that require flexible aggregation of estimates with the ability to regulate their severity.
+
+For a set of positive numbers $x_1, \ldots, x_n$ and a parameter $p \in \mathbb{R}$, the generalized power mean (or Hölder mean) is defined as:
+\begin{equation}
+\label{eq:power-mean}
+M_p(x_1, \ldots, x_n) = \begin{cases} 
+\left( \frac{1}{n} \displaystyle\sum_{i=1}^n x_i^p \right)^{1/p}, & \text{if } p \neq 0 \\
+\left( \prod_{i=1}^n x_i \right)^{1/n}, & \text{if } p = 0
+\end{cases}
+\end{equation}
+
+This definition is correct for $p > 0$ and positive $x_i$. For $p < 0$, $x_i > 0$ is required.
+
+The power mean has been extensively studied in the context of aggregation theory and multi-attribute decision making \cite{Hwang1981}. Its flexibility in controlling the influence of extreme values through the parameter $p$ makes it particularly suitable for scenarios where the importance of minimum or maximum values varies depending on the application context.
+
+The power mean function is a natural generalization of well-known averages. By varying the parameter $p$, it is possible to obtain different types of means, ranging from a minimum (at $p \to -\infty$) to a maximum (at $p \to +\infty$). Table \ref{tab:power-mean-cases} shows the main special cases of the power mean and their interpretation.
+
+\begin{table}[h]
+\caption{Special cases of power mean}
+\label{tab:power-mean-cases}
+\centering
+\begin{tabular}{@{}cllp{5cm}@{}}
+\toprule
+\textbf{$p$} & \textbf{Name} & \textbf{Function} & \textbf{Characteristics} \\
+\midrule
+$-\infty$ & Minimum & $\min(x_1, \ldots, x_n)$ & Extreme pessimism: only the worst value is taken into account\\
+$-2$ & --- & $\left(\frac{1}{n}\sum_{i=1}^n x_i^{-2}\right)^{-1/2}$ & Strong shift to minimum \\
+$-1$ & Harmonic & $\frac{n}{\sum_{i=1}^n 1/x_i}$ & Shift to small values \\
+$0$ & Geometric & $\sqrt[n]{x_1 \cdot \ldots \cdot x_n}$ & Multiplicative mean \\
+$1$ & Arithmetic & $\frac{1}{n}\sum_{i=1}^n x_i$ & Standard average \\
+$2$ & Quadratic & $\sqrt{\frac{1}{n}\sum_{i=1}^n x_i^2}$ & Root Mean Square \\
+$+\infty$ & Maximum & $\max(x_1, \ldots, x_n)$ & Extreme optimism: only the best value is taken into account\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+As a result, we can say that the larger the parameter $p$, the higher the final score will be, which means that the severity of the evaluation can be controlled through a predictable change in the parameter $p$. For clarity, let's consider a specific example, where for three verdicts, using our five-point scale, weights $w = [1.0, 0.9, 0.7]$ were obtained (three criteria: Fully, Mostly, Partially). Table \ref{tab:p-influence} shows how the final estimate $M_p(w)$ can vary taking into account changes in the parameter~$p$.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\textwidth]{fig2.eps}
+\caption{Effect of the power parameter $p$ on the aggregated score $M_p(w)$
+             for $w = [1.0, 0.9, 0.7]$.}\label{fig:p-influence}
+\end{figure}
+
+\begin{table}[h]
+\caption{Influence of parameter $p$ on the final estimate}
+\label{tab:p-influence}
+\centering
+\begin{tabular}{@{}ccp{7cm}@{}}
+\toprule
+\textbf{$p$} & \textbf{$M_p(w)$} & \textbf{Interpretation} \\
+\midrule
+$-10$ & 0.773 & Approximately $\min = 0.7$, strict estimate \\ 
+$-5$ & 0.809 & Strong bias towards the minimum \\ 
+$-2$ & 0.838 & Noticeable bias towards the minimum \\ 
+$-1$ & 0.848 & Harmonic mean \\ 
+$0$ & 0.857 & Geometric mean \\ 
+$1$ & 0.867 & Arithmetic mean \\ 
+$2$ & 0.876 & Quadratic mean \\ 
+$5$ & 0.899 & Maximum bias \\ 
+$10$ & 0.925 & Strong maximum bias \\ 
+$+\infty$ & 1.000 & $= \max = 1.0$, optimistic estimate \\ 
+\bottomrule
+\end{tabular}
+\end{table}
+
+It is worth noting that at $p \to -\infty$ the results of the final assessment approach the worst verdict (0.7), which can be used in those areas where even a slight error in the answers can be important. On the other hand, for $p \to +\infty$ the score tends to the best verdict (1.0), meaning that if at least one verdict is fully consistent, then the AI system as a whole is working correctly.
+
+\subsection{Using the temperature parameter to customize the metric for the project context}
+
+The $p$ parameter has a clear mathematical interpretation, but for practitioners (developers and testers of AI systems) it may not always be intuitive from a setup point of view. Therefore, for a more simplified setup of metrics for evaluation, a more understandable parameter was introduced - aggregation temperature $T \in [0.1, 1.0]$.
+
+The use of the temperature parameter is determined by a linear mapping from temperature to degree:
+\begin{equation}
+\label{eq:temp-mapping}
+p(T) = p_{\min} + \left( \frac{T - T_{\min}}{T_{\max} - T_{\min}} \right) \cdot (p_{\max} - p_{\min})
+\end{equation}
+
+$p_{\min}=-8$, $p_{\max}=12.25$, $T_{\min}=0.1$, $T_{\max}=1.0$:
+\[
+p(T) = -8 + \left( \frac{T - 0.1}{0.9} \right) \cdot 20.25
+\]
+\begin{itemize}
+\item $T \in [T_{\min}, T_{\max}] = [0.1, 1.0]$~---~aggregation temperature (input parameter)
+\item $p_{\min} = -8$~---~minimum degree (maximum strict evaluation)
+\item $p_{\max} = +12.25$~---~maximum degree (most lenient evaluation)
+\end{itemize}
+
+The choice of boundaries was based on a series of tests performed on existing AI systems and was calibrated according to human evaluation of the projects. However, this does not imply that $p_{\min}$ and $p_{\max}$ are constants; they can also be adapted and modified to provide a more accurate estimate for other projects. It was experimentally determined that at $p = -8$ the estimate is already quite close to the minimum and its further reduction has an insignificant effect due to numerical convergence. $p_{\max} = 12.25$ is chosen so that at $T = 0.5$ the parameter value $p = 1$ (arithmetic mean) is obtained, which is a natural neutral reference point. This provides a clearer calibration of metrics where the average temperature corresponds to a balanced estimate.
+
+Table \ref{tab:temperature-mapping} is a mapping of temperature to degree with interpretation within the framework of the fixed weights of the five-point rating scale.
+
+\begin{table}[h]
+\caption{Mapping temperature to power-law mean}
+\label{tab:temperature-mapping}
+\centering
+\begin{tabular}{@{}cclp{6cm}@{}}
+\toprule
+\textbf{$T$} & \textbf{$p$} & \textbf{Type of mean} & \textbf{Explanation} \\
+\midrule
+0.1 & $-8$ & Close to minimum & Maximum strict, even one bad verdict is critical \\
+0.3 & $-3.5$ & Close to Harmonic & Strict, focus on worst verdicts\\
+0.5 & $1$ & Arithmetic & Balanced, each verdict has equal contribution\\
+0.7 & $5.5$ & Quadratic & Forgiving, focus on best verdicts\\
+0.9 & $10.0$ & Close to maximum & Maximum lenient, good verdicts dominate the final score\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+For greater convenience in using the temperature parameter, practitioners are offered the following intuitive interpretation:
+
+\begin{itemize} 
+\item \textbf{Low temperature ($T = 0.1$--$0.3$): "Strict evaluation"}. In this case, if, when assigning verdicts, at least one of them received a low weight, then this will significantly affect the final score of the evaluated metric. The scope of application can be areas such as medicine, finance, security, that is, those areas where the evaluation criteria are quite strict. 
+\item \textbf{Average temperature ($T = 0.4$--$0.6$): "Balanced evaluation"}. In this case, all verdicts affect the evaluation evenly, the evaluation is very close to existing frameworks such as DeepEval or RAGAS. Scope - education, corporate systems that often use standard requirements for assessing AI systems 
+\item \textbf{High temperature ($T = 0.7$--$1.0$): "Lenient evaluation"}. In this case, if the majority of verdicts have high weights, but there is a small part of verdicts that received low weights, then overall the score remains high, since most of the atomic statements meet the criteria when evaluated. Area of application: creative systems, conversational AI chat bots. 
+\end{itemize}
+
+\subsection{A complete description of how the TCVA algorithm works}
+
+Taking into account the changes described above in the process of evaluating metrics for AI systems built on the basis of generative models, below is a complete description of the process of evaluating metrics taking into account all components of the TCVA algorithm.
+
+\textbf{Inputs:}
+\begin{itemize}
+\item User request $x$
+\item AI response $y$
+\item Set of metric evaluation criteria $K$
+\item Aggregation temperature $T \in [0.1, 1.0]$
+\item (Optional) Context or retrieval context $D$
+\end{itemize}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\textwidth]{fig1.eps}
+\caption{The complete TCVA evaluation pipeline}\label{fig:tcva-pipeline}
+\end{figure}
+
+\textit{Step~1. Obtaining atomic statements using LLM or a pre-trained model.} 
+At the first step, atomic statements (facts, judgments or statements) are extracted from the response of the AI system $y$, which will then be used for evaluation against a given set of criteria $K$. Atomic assertion extraction can be done using LLM or a custom pre-trained model.
+
+\begin{equation}
+A = \text{Extract Atomic Statements}(x, y, D)
+\end{equation}
+
+where $A = \{a_1, a_2, \ldots, a_i\}$ is the set of selected atomic statements and $m = |A|$ is the number of selected atomic statements.
+
+\textit{Step 2. Putting down verdicts for each atomic statement}
+
+At this step, for each atomic statement $a_i$, based on a set of specified criteria for evaluating the metric $K$, the model produces a verdict reflecting the degree of compliance of this statement with the criteria:
+
+\begin{equation}
+v_i \leftarrow \text{Get verdict}(x, y, D, K)\text{ where }
+v_i \in V = \{\text{Fully}, \text{Mostly}, \text{Partially}, \text{Minor}, \text{None}\}
+\end{equation}
+
+\textit{Step~3. Converting the resulting verdicts into weights.}
+\begin{equation}
+w_i \leftarrow \text{Weight}(v_i)
+\end{equation}
+where the Weight function is defined as:
+\begin{align}
+\text{Weight}(\text{Fully}) &= 1.0 \nonumber \\
+\text{Weight}(\text{Mostly}) &= 0.9 \nonumber \\
+\text{Weight}(\text{Partually}) &= 0.7 \nonumber \\
+\text{Weight}(\text{Minor}) &= 0.3 \nonumber \\
+\text{Weight}(\text{None}) &= 0.0 \nonumber
+\end{align}
+
+\textit{Step~4. Calculate the parameter $p$ from the given temperature $T$.} 
+In this step, we use the given temperature $T$ into metrics to determine the severity of the aggregation of the results. The $p$ parameter is calculated as follows:
+\begin{equation}
+p \leftarrow -8 + \left( \frac{T - 0.1}{0.9} \right) \times 20.25
+\end{equation}
+
+which is equivalent to linear interpolation between $p_{\min} = -8.0$ and $p_{\max} = 12.25$, 
+where:
+\[
+T = 0.1 \rightarrow p = -8.0,\quad
+T = 0.5 \rightarrow p = 1.0,\quad
+T = 1.0 \rightarrow p = 12.25.
+\]
+
+\textit{Step~5. Calculation of the final estimate using the power average.} 
+To ensure correct calculations, two mechanisms of numerical stability are provided. First, for negative values of $p$ the zero weights are replaced by a small value of $\varepsilon = 10^{-9}$ to avoid division by zero when raised to a negative power.
+
+\[
+\tilde{w}_i =
+\begin{cases}
+\max(w_i, \varepsilon), & p < 0,\\
+w_i, & p \ge 0,
+\end{cases}
+\qquad \varepsilon = 10^{-9}.
+\]
+
+Secondly, if the exponent $p$ is practically equal to zero ($|p| < 10^{-12}$), then the limiting expression of the geometric mean is used instead of the main formula. This avoids loss of accuracy at small values of $p$ and maintains a smooth transition between mean modes. Therefore, the final metric score (before applying the penalty) is calculated as:
+
+\begin{equation}
+\text{score} \leftarrow
+\begin{cases}
+\exp\!\left( \frac{1}{m} \displaystyle\sum_{i=1}^m \log(\max(w_i, \varepsilon)) \right), & |p| < 10^{-12}\\[10pt]
+\left( \frac{1}{m} \displaystyle\sum_{i=1}^m \tilde{w}_i^{\,p} \right)^{\!1/p}, & \text{otherwise.
+}
+\end{cases}
+\end{equation}
+
+\textit{Step~6. Applying a penalty for the presence of a "None" verdict.} To ensure that "None" verdicts with a weight of 0.0 had a significant impact on the final score and did not take into account the temperature parameter, a separate penalty of 10\% is applied for each "None" verdict.
+
+\begin{equation}
+\text{Final score} = \text{score} \times \max\!\big(0,\, 1 - 0.1 \cdot n_{\text{None}}\big),
+\quad n_{\text{None}} = \#\{i : v_i = \text{None}\}.
+\end{equation}
+
+\textbf{Evaluation results:}
+\begin{itemize}
+\item Final score $\text{Final score} \in [0, 1]$
+\item Set of verdicts $\{v_1, \ldots, v_i\}$ with explanation
+\item Weights $\{w_1, \ldots, w_i\}$
+\end{itemize}
+
+\section{Examples of using the TCVA method}
+
+In order to understand the effectiveness of using the TCVA method, it is worth considering several examples of the real application of this algorithm in calculating the metrics of answer relevancy and faithfulness in the context of several examples of the use of an AI system based on LLM in various contexts.
+
+\subsection{Medical diagnostic system (\texorpdfstring{$T = 0.2$}{T = 0.2})}
+
+Medical diagnostics most often require the utmost rigor of evaluation, so even partially incorrect information in the AI system's response can lead to incorrect treatment and threaten the life and health of the patient. Therefore, for this class of AI systems, the temperature indicator $T=0.2$ was chosen, which makes it possible to make the estimated metrics more stringent to shortcomings through the negative parameter $p=-5.75$, which ultimately leads to a large influence of low verdicts in the final evaluation of the metric.
+
+\textbf{User request:} "I have had a severe headache, nausea, fear of light, and tight muscles in the back of my head for three days now. What could this be?"
+
+\textbf{AI response:} "Based on the symptoms, meningitis - inflammation of the membranes of the brain is possible. Typical symptoms: headache, nausea, photophobia. There may also be a high temperature and general weakness. I recommend seeing a therapist for an examination. Meningitis requires bed rest and drinking plenty of fluids to detoxify."
+
+\textbf{Retrieval Context:}
+\begin{itemize}
+\item "Meningitis~---~inflammation of the membranes of the brain and spinal cord." 
+\item "Classic symptoms of meningitis: headache, fever, stiff neck, photophobia, nausea." 
+\item "If meningitis is suspected, immediate hospitalization and inpatient treatment are required."
+\end{itemize}
+
+\textit{Metric 1. Answer Relevancy ($T=0.2$)}
+
+To evaluate this metric, we use the LLM as a Judge approach, which is used for all stages of metric evaluation. In this case, LLM creates atomic statements from the response from the system being evaluated by the AI and determines verdicts based on the specified criteria in the metric.
+
+\textbf{Extracted atomic statements and obtained verdicts:} 
+\begin{enumerate} 
+\item "Based on the symptoms, meningitis is possible - inflammation of the meninges" $\to$ fully (1.0) 
+\item "Typical symptoms of meningitis: headache, nausea, photophobia" $\to$~mostly (0.9) 
+\item "There may also be a high fever and general weakness" $\to$ partially (0.7)
+\item "I recommend seeing a physician for examination" $\to$ mostly (0.9) 
+\item "Meningitis requires bed rest" $\to$ minor (0.3) 
+\item "Meningitis requires drinking plenty of fluids for detoxification" $\to$ minor (0.3) 
+\end{enumerate} 
+
+\textbf{Received weights:} $[1.0, 0.9, 0.7, 0.9, 0.3, 0.3]$ 
+
+\textbf{Final evaluation of the metric through the TCVA algorithm:}
+
+$T = 0.2 \to p = -5.75$
+
+$\text{Final score} \approx 0.33$
+
+At the used temperature $T=0.2$, the negative parameter $p=-5.75$ causes a "pulling to a minimum" effect, so the resulting two verdicts "Minor" (0.3) begin to dominate the assessment, significantly reducing the final estimate from potential 0.68 (arithmetic mean) to 0.33. This result shows that the answer contains shortcomings that could potentially be critical for the AI system and require careful analysis.
+
+\textit{Metric 2: Faithfulness ($T=0.2$)} 
+
+This metric measures the presence of hallucinations in the response from the AI system, based on the retrieved context that was obtained from various data sources within the AI system and was used to generate the response to the user. The user's request and the AI system's response remain the same as when calculating metric 1.
+
+\textbf{Extracted atomic statements and obtained verdicts:} 
+\begin{enumerate} 
+\item "Meningitis~---~inflammation of the meninges" $\to$ fully (1.0) 
+\item "Typical symptoms of meningitis include headache" $\to$ fully (1.0) 
+\item "Typical symptoms of meningitis include nausea" $\to$ fully (1.0) 
+\item "Typical symptoms of meningitis include photophobia" $\to$ fully (1.0) 
+\item "Meningitis may be accompanied by a high fever" $\to$ mostly (0.9) 
+\item "Meningitis may be accompanied by general weakness" $\to$ none (0.0) 
+\item "It is recommended to consult a physician if you suspect meningitis" $\to$ none (0.0) 
+\item "Meningitis requires bed rest" $\to$ none (0.0) 
+\item "Meningitis requires heavy drinking for detoxification" $\to$ none (0.0) 
+\end{enumerate}
+
+\textbf{Received weights:} $[1.0, 1.0, 1.0, 1.0, 0.9, 0.0, 0.0, 0.0, 0.0]$
+
+\textbf{Penalty for zero verdicts}~=~0.6
+
+\textbf{Final evaluation of the metric through the TCVA algorithm:}
+
+$T = 0.2 \to p = -5.75$
+
+\[
+\text{score} = \left(\frac{1}{9} \sum_{i=1}^9 \tilde{w}_i^{\,p}\right)^{1/p} \approx 1.1\times10^{-9}.
+\]
+
+Taking into account the four verdicts "None", a penalty is also applied:
+\[
+\text{Final score} = \text{score} \times 0.6 \approx 0.0.
+\]
+In this case, it turns out that four verdicts of "None" significantly reduce the score and effectively bring it to zero given the low temperature that was set for this metric, which correctly reflects the importance of the absence of hallucinations in the answer for the medical field.
+
+\subsection{Corporate RAG system (\texorpdfstring{$T = 0.5$}{T = 0.5})}
+
+In the second example, consider a classic AI system that works with corporate documentation, which in general should require factual accuracy, but allows for some variability in the wording in AI responses. To evaluate this system, the temperature $T=0.5$ will be used, which will allow us to obtain a balanced estimate through the parameter $p=1.0$ (arithmetic mean), creating a balance between the accuracy and variability of the AI system.
+
+\textbf{User request:} "What is the procedure for approving the budget for new projects in the first quarter of 2025?"
+
+\textbf{AI response:} "To approve the project budget in the first quarter of 2025, you must submit an application through the Jira system before December 15, 2024. The application must include a business case with justification for the project and ROI analysis. The company's finance committee makes the final decision on the budget. Application processing usually takes about a week."
+
+\textbf{Retrieval Context:}
+\begin{itemize}
+\item "Procedure for approving the 2025 budget: all new projects require prior approval by the finance committee." 
+\item "Applications are submitted through the Jira system before the 15th day of the month preceding the start of the quarter." 
+\item "Required components of the application for the first quarter of 2025: business case, ROI analysis, assessment of technical resources, approval by the head of the department."
+\item "The processing time of applications by the financial committee is 7-10 working days."
+\end{itemize}
+
+\textit{Metric 1. Answer Relevancy ($T=0.5$)}
+
+\textbf{Extracted atomic statements and obtained verdicts:}
+\begin{enumerate}
+\item "To approve the project budget in the first quarter of 2025, submit an application through Jira before December 15, 2024" $\to$ fully (1.0) 
+\item "The application must include a business case with justification for the project and ROI analysis" $\to$ mostly (0.9) 
+\item "The company's finance committee makes the final decision on budget" $\to$ mostly (0.9) 
+\item "Application processing usually takes about a week" $\to$ partially (0.7)
+\end{enumerate}
+
+\textbf{Received weights:} $[1.0, 0.9, 0.9, 0.7]$
+
+\textbf{Final evaluation of the metric through the TCVA algorithm:}
+
+$T = 0.5 \to p = 1.0$ (arithmetic mean)
+
+$\text{Final score} = \frac{1.0 + 0.9 + 0.9 + 0.7}{4} = 0.875$
+
+In accordance with the TCVA algorithm, when using temperature $T=0.5$, the arithmetic mean, that is, the parameter $p=1.0$, is used to calculate the final metric estimate, which allows us to obtain a balanced simple aggregation. In this example, one verdict "Partially" (0.7), which is set on the basis of missing details, namely the exact time "7--10 days" is replaced by "about a week", reduces the final metric score from 0.93 to 0.88, which in general may not be very critical for assessing the quality of such an AI system.
+
+\textit{Metric 2: Faithfulness ($T=0.5$)}
+
+\textbf{Extracted atomic statements and obtained verdicts:}
+\begin{enumerate}
+\item "For approval...Jira until December 15, 2024" $\to$ mostly (0.9) 
+\item "Application must include a business case with project justification and ROI analysis" $\to$ fully (1.0) 
+\item "The company's finance committee makes the final decision on the budget" $\to$ partially (0.7) 
+\item "Application processing usually takes about a week" $\to$ partially (0.7)
+\end{enumerate}
+
+\textbf{Received weights:} $[0.9, 1.0, 0.7, 0.7]$
+
+\textbf{Final evaluation of the metric through the TCVA algorithm:}
+
+$\text{Final score} = \frac{0.9 + 1.0 + 0.7 + 0.7}{4} = 0.825$
+
+The average temperature $T=0.5$ processes two verdicts "Partially" (0.7) in proportion to their weight. In this case, the context states "evaluation of technical resources, approval of the head of the department", but this is omitted from the response. In medicine, such omissions would be critical, but in this context there is a slight reduction in the estimate to 0.82.
+
+\subsection{Technical support chatbot (\texorpdfstring{$T = 0.7$}{T = 0.7})}
+
+The third example will consider an AI chat bot for customer technical support, where it is very important for AI responses to have a natural response and a quick solution to the problem. Small inaccuracies in the wording of the response are not very critical if the context of the response is correct for the user's request. Temperature $T=0.7$ will be used to evaluate the metrics, which will allow for a more lenient evaluation through the parameter $p=5.5$, which will lead to a slight dominance of high verdicts when calculating the final score for the metrics.
+
+\textbf{User request:} "The Internet has been down for 2 hours! What to do???"
+
+\textbf{AI response:}"I understand your concern about problems with the Internet. Let's try to solve the problem together. First, check the indicators on the router to see which ones are lit. Then try rebooting the router: turn it off for 30 seconds, then turn it back on. Also check to see if the cable is disconnected from the outlet. If these steps do not help, I will create a technical support ticket for you. Additionally, I recommend checking your account balance; perhaps the service has been suspended due to outstanding payments."
+
+\textbf{Retrieval context:}
+\begin{itemize}
+\item "Standard procedure for diagnosing problems with the Internet: 1)Check the router indicators, 2)Reboot the router (30~seconds), 3)Check the physical connections." 
+\item "If unsuccessful, a technical support request is created with priority depending on the type of client." 
+\item "Possible reasons for disconnection: technical problems, debt payments, scheduled work."
+\end{itemize}
+
+\textit{Metric 1. Answer Relevancy ($T=0.7$)}
+
+\textbf{Extracted atomic statements and obtained verdicts:}
+\begin{enumerate} 
+\item "Check the lights on the router which ones are lit" $\to$ fully (1.0)
+\item "Try to reboot the router: turn it off for 30~seconds, then turn it back on" $\to$ fully (1.0) 
+\item "Check if the cable is unplugged from the outlet" $\to$ mostly (0.9) 
+\item "If these steps do not help, I will create a technical support ticket for you" $\to$ mostly (0.9) 
+\item "I recommend checking your account balance" $\to$ partially (0.7) 
+\item "Service may be suspended due to outstanding payments" $\to$ partially (0.7) 
+\end{enumerate}
+
+\textbf{Received weights:} $[1.0, 1.0, 0.9, 0.9, 0.7, 0.7]$
+
+\textbf{Final evaluation of the metric through the TCVA algorithm:}
+
+$T = 0.7 \to p = 5.5$
+
+$\text{Final score} \approx 0.90$
+
+When using a temperature of $T=0.7$, the parameter $p=5.5$ causes a "pull-to-maximum" effect and the resulting four high verdict weights of 1.0 and 0.9 dominate the calculation of the final score, reducing the influence of the two weights of 0.7. This mathematically implements the leniency of the rating, namely, mentioning the account balance, although partially relevant, does not change the overall quality of the answer.
+
+\textit{Metric 2. Faithfulness ($T=0.7$)}
+
+\textbf{Extracted atomic statements and obtained verdicts:}
+\begin{enumerate}
+\item "Internet problems may be a concern" $\to$ minor (0.3) 
+\item "Router lights can show device status" $\to$ fully (1.0) 
+\item "The router can be rebooted by turning it off for 30~seconds" $\to$ fully (1.0) 
+\item "The router cable can be unplugged from the outlet" $\to$ mostly (0.9) 
+\item "If the suggested actions do not help, you can create a request for technical support" $\to$ fully (1.0) 
+\item "It is recommended to check your account balance" $\to$ partially (0.7) 
+\item "The service may be suspended due to outstanding payments" $\to$ mostly (0.9)
+\end{enumerate}
+
+\textbf{Received weights:} $[0.3, 1.0, 1.0, 0.9, 1.0, 0.7, 0.9]$
+
+\textbf{Final evaluation of the metric through the TCVA algorithm:}
+
+$T = 0.7 \to p = 5.5$
+
+$\text{Final score} \approx 0.91$
+
+Using the temperature $T=0.7$ in the metric significantly reduces the impact of the verdict weights 0.3 and 0.7. Five high verdicts have a greater impact on the final score obtained - ~0.91 versus 0.83 (arithmetic mean). The resulting score may be appropriate for this application of the AI system because the concern phrase, although not supported by the context, does not seriously affect the quality of the AI system's response. A strict estimate ($T=0.2$) would give approximately ~0.38, reducing the metric's score for this inaccuracy.
+
+\section{Discussion and limitations of the approach}
+
+The TCVA algorithm described above has a number of advantages compared to classical LLM as a Judge approaches, namely:
+
+\textbf{The ability to adapt the metric to the area of use of the AI system.} The introduced temperature parameter $T$ allows practitioners to flexibly adjust the severity of the evaluation to the specifics of the use of the AI system, thereby allowing the use of the same evaluation algorithm through verdicts for metrics in different subject areas.
+
+\textbf{Mathematical calculation.} Decomposing into atomic statements and issuing verdicts on them allows us to minimize the risk of LLM bias. Also, using the power mean \cite{Hwang1981,Kortvelesy2023,Derr2024} is a mathematical method that allows you to guarantee the accuracy of the estimated calculation.
+
+\textbf{Interpretability of evaluation results.} A five-level system of weights for issuing verdicts provides transparency in the evaluation of metrics. By using this algorithm, a practitioner can see exactly which statements were generated and what verdicts they received. This transparency in the assessment process allows you to fine-tune metrics and AI systems for better quality.
+
+\textbf{Easy to use.} This approach only requires selecting the appropriate temperature $T$ from Table \ref{tab:temperature-mapping}. There is no need to configure weights or train additional models to use.
+
+\subsection{Limitations and open questions}
+
+Despite a number of advantages, this approach also has a number of limitations that require discussion:
+
+\textbf{Determination of temperature for application.} Despite the fact that temperature in the proposed approach is a fairly intuitive parameter, its selection still requires some expert analysis and a series of evaluation tests to determine it more accurately.
+
+\textbf{Dependency on the quality of atomic statements.} The proposed approach produces verdicts on atomic statements, but it does not solve the problem of obtaining high-quality atomic statements from an LLM or a pre-trained model. If the generated atomic statements are incorrect or incomplete, the final estimate may not be accurate enough.
+
+\textbf{Discreteness of verdicts.} The use of five levels in the verdict system is an expertly determined solution that is most optimally suited for evaluating atomic statements, taking into account some of the specifics of the gradation. In exceptional cases, an atomic statement may be located "between" levels. As one of the solutions, it is possible to use not exact, but probabilistic verdicts, when the model returns a probability distribution instead of one verdict, for example $P(\text{Fully})=0.3$, $P(\text{Partually})=0.7$. This approach could provide more accurate statement evaluation results.
+
+\section{Conclusion}
+
+Creating AI systems based on LLM models requires not only reliable methods for assessing various metrics, but also the ability to correlate the results obtained with human assessment. Existing approaches such as LLM as a Judge, NLI, binary and ternary verdicts do not always ensure that the assessment corresponds to human experience.
+
+To solve this problem and be able to adapt metrics to specific domains of use of an AI system, this paper presents a temperature-controlled verdict aggregation (TCVA) method based on three key changes:
+
+\textbf{Five-level verdict system} \{Completely, Mostly, Partially, Slightly, Not at all\} provides sufficient gradation of quality while maintaining the interpretability and reliability of human annotation.
+
+\textbf{Generalized Power Mean} provides a mathematically based family of aggregation methods where the $p$ parameter controls the "rigor" of the estimates.
+
+\textbf{Temperature parameter} $T \in [0.1, 1.0]$ serves as an intuitive parameter that can be passed as input to the metric to select the severity of the evaluation. This option allows practitioners to calibrate the estimate without mathematical expertise.
+
+This approach is implemented in an open framework for evaluating AI solutions and is applicable to various types of systems: RAG systems, conversational agents and autonomous AI agents. The project repository is available at: \textit{https://github.com/meshkovQA/Eval-ai-library} or via the python library: \textit{pip install eval-ai-library}
+
+\backmatter
+
+\bmhead{Acknowledgements}
+
+The author would like to thank the reviewers for their valuable feedback and suggestions.
+
+\bmhead{Author Contributions}
+
+AM is the sole author and is responsible for all aspects of this work, including conceptualization, methodology, algorithm development, implementation, and manuscript preparation.
+
+\bmhead{Funding}
+
+This research received no specific grant from any funding agency in the public, commercial, or not-for-profit sectors.
+
+\bmhead{Competing Interests}
+
+The author declares no competing interests.
+
+\bmhead{Availability of data and material}
+
+The implementation of the TCVA method, including all code and examples presented in this paper, is publicly available at \url{https://github.com/meshkovQA/Eval-ai-library}. The library can be installed via pip: \texttt{pip install eval-ai-library}. The datasets used for the experimental evaluation of the algorithm are proprietary and confidential, and cannot be made publicly available due to corporate restrictions.
+
+\bibliography{references}
+
+\end{document}
+
+

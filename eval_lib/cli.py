@@ -41,7 +41,9 @@ def run_dashboard():
     from eval_lib.dashboard_server import DashboardCache
     from eval_lib.html import HTML_TEMPLATE
     from eval_lib.connector_html import CONNECTOR_HTML_TEMPLATE
-    from eval_lib.connector.routes import connector_bp, set_cache_dir
+    from eval_lib.connector.routes import connector_bp, set_cache_dir, _datasets
+    from eval_lib.connector.trace_routes import trace_bp, _datasets as _trace_datasets
+    from eval_lib.connector.trace_receiver import TraceStore
     from flask import Flask, render_template_string, jsonify
 
     # Create cache with custom directory
@@ -84,6 +86,13 @@ def run_dashboard():
     # Register connector blueprint
     set_cache_dir(args.cache_dir)
     app.register_blueprint(connector_bp)
+
+    # Register trace receiver blueprint
+    import eval_lib.connector.trace_routes as tr
+    tr._datasets = _datasets  # Share datasets between connector and trace receiver
+    trace_store = TraceStore()
+    trace_store.set_cache_dir(args.cache_dir)
+    app.register_blueprint(trace_bp)
 
     @app.route('/')
     def index():

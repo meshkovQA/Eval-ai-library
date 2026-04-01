@@ -118,6 +118,20 @@ class TraceSender:
                 self._traces[trace_id] = []
             self._traces[trace_id].append(span)
 
+    def get_trace(self, trace_id: str) -> List[TraceSpan]:
+        """Get all spans for a trace without removing them.
+
+        Returns a copy of the spans list for the given trace_id,
+        or an empty list if the trace is not found.
+        """
+        with self._lock:
+            return list(self._traces.get(trace_id, []))
+
+    def get_trace_metadata(self, trace_id: str) -> Dict[str, Any]:
+        """Get trace-level metadata without removing it."""
+        with self._lock:
+            return dict(self._trace_metadata.get(trace_id, {}))
+
     def flush_trace(self, trace_id: str):
         """Send all spans for a specific trace"""
         with self._lock:

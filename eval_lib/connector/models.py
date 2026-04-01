@@ -9,6 +9,11 @@ class HttpMethod(str, Enum):
     PUT = "PUT"
 
 
+class EvalMode(str, Enum):
+    SYNC = "sync"
+    FIRE_AND_FORGET = "fire_and_forget"
+
+
 class HeaderEntry(BaseModel):
     key: str
     value: str
@@ -33,6 +38,12 @@ class ResponseMapping(BaseModel):
     tools_called_path: Optional[str] = None
     token_usage_path: Optional[str] = None
     system_prompt_path: Optional[str] = None
+    # Reliability evaluation fields
+    execution_trace_path: Optional[str] = None
+    reasoning_path: Optional[str] = None
+    agent_confidence_path: Optional[str] = None
+    planning_steps_path: Optional[str] = None
+    resource_usage_path: Optional[str] = None
 
 
 class DatasetColumnMapping(BaseModel):
@@ -66,6 +77,13 @@ class EvalJobConfig(BaseModel):
     custom_llm_config: Optional[CustomLLMConfig] = None
     cost_per_1m_tokens: float = 0.0
     created_at: Optional[str] = None
+    # Reliability evaluation settings
+    runs_per_query: int = 1
+    generate_perturbations: bool = False
+    perturbation_count: int = 3
+    # Evaluation mode
+    eval_mode: EvalMode = EvalMode.SYNC
+    trace_project: Optional[str] = None
 
 
 class JobStatus(str, Enum):

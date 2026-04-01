@@ -2,6 +2,7 @@
 __pycache__/
 *.py[cod]
 *$py.class
+.article.tex
 
 # C extensions
 *.so
@@ -143,3 +144,5 @@ figures/
 .claude
 .eval_cache
 tests
+examples
+.deepeval

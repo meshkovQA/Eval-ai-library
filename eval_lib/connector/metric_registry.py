@@ -43,6 +43,14 @@ from eval_lib.vector_metrics import (
     SemanticSimilarityMetric,
     ReferenceMatchMetric,
 )
+from eval_lib.reliability_metrics import (
+    OutcomeConsistencyMetric,
+    LoopDetectionMetric,
+    PromptRobustnessMetric,
+    PlanningQualityMetric,
+    ContextDecayMetric,
+    CalibrationMetric,
+)
 
 
 METRIC_REGISTRY = {
@@ -447,6 +455,60 @@ METRIC_REGISTRY = {
             {"name": "aggregation", "type": "select", "default": "max", "options": ["max", "mean"]},
             {"name": "embedding_provider", "type": "select", "default": "openai", "options": ["openai", "local"]},
             {"name": "model_name", "type": "string", "default": "text-embedding-3-small"},
+        ],
+    },
+    # Reliability Metrics (Rabanser + Meshkov)
+    "OutcomeConsistencyMetric": {
+        "class": OutcomeConsistencyMetric,
+        "category": "reliability",
+        "description": "Measures consistency of agent outputs across multiple runs of the same input (Rabanser C_out)",
+        "requires_model": False,
+        "required_fields": ["actual_output"],
+        "params": [
+            {"name": "threshold", "type": "float", "default": 0.7, "min": 0, "max": 1},
+            {"name": "similarity_threshold", "type": "float", "default": 0.85, "min": 0, "max": 1},
+        ],
+    },
+    "LoopDetectionMetric": {
+        "class": LoopDetectionMetric,
+        "category": "reliability",
+        "description": "Detects cyclic behavior patterns in agent execution traces (Meshkov Loop Detection)",
+        "requires_model": False,
+        "required_fields": ["execution_trace"],
+        "params": [
+            {"name": "threshold", "type": "float", "default": 0.8, "min": 0, "max": 1},
+            {"name": "max_acceptable_repeats", "type": "int", "default": 3},
+            {"name": "max_cycle_length", "type": "int", "default": 5},
+        ],
+    },
+    "PlanningQualityMetric": {
+        "class": PlanningQualityMetric,
+        "category": "reliability",
+        "description": "Evaluates agent planning quality: granularity, efficiency, goal alignment (Meshkov)",
+        "requires_model": True,
+        "required_fields": ["input", "actual_output"],
+        "params": [
+            {"name": "threshold", "type": "float", "default": 0.7, "min": 0, "max": 1},
+        ],
+    },
+    "ContextDecayMetric": {
+        "class": ContextDecayMetric,
+        "category": "reliability",
+        "description": "Measures how context retention degrades over conversation depth (Meshkov CRA(d))",
+        "requires_model": True,
+        "required_fields": ["input", "actual_output"],
+        "params": [
+            {"name": "threshold", "type": "float", "default": 0.7, "min": 0, "max": 1},
+        ],
+    },
+    "CalibrationMetric": {
+        "class": CalibrationMetric,
+        "category": "reliability",
+        "description": "Measures alignment between agent confidence and actual accuracy (Rabanser P_brier)",
+        "requires_model": False,
+        "required_fields": ["actual_output", "agent_confidence"],
+        "params": [
+            {"name": "threshold", "type": "float", "default": 0.7, "min": 0, "max": 1},
         ],
     },
 }

@@ -38,8 +38,13 @@ class FaithfulnessMetric(MetricPattern):
 
     async def _generate_statements(self, answer: str) -> Tuple[List[str], float]:
         prompt = (
-            "Extract standalone factual claims from the following answer.\n"
-            "Each statement must be a distinct, verifiable fact.\n\n"
+            "Extract the key factual claims from the following answer.\n\n"
+            "Rules:\n"
+            "- Each claim must be a single, verifiable factual statement.\n"
+            "- Ignore greetings, meta-comments (\"Sure!\", \"Here's...\"), and stylistic phrases.\n"
+            "- Do NOT split one sentence into micro-facts. Keep claims at sentence-level granularity.\n"
+            "- Combine closely related details into one claim rather than listing separately.\n"
+            "- Maximum 8 claims. Focus on the most important facts.\n\n"
             f"Answer:\n{answer}\n\n"
             "Return a JSON array of strings."
         )
@@ -50,28 +55,44 @@ class FaithfulnessMetric(MetricPattern):
         return statements, cost or 0.0
 
     async def _generate_verdicts(self, context: str, statements: List[str]) -> Tuple[List[Dict[str, str]], float, float]:
+        """Single-step verdict with improved prompt.
+
+        Key improvements over naive approach:
+        - Paraphrasing = "fully" (not "mostly")
+        - "none" ONLY for contradictions or zero related info
+        - Chain-of-thought: find relevant passage first, then judge
+        """
         prompt = (
             "Evaluate how well each statement is supported by the context.\n\n"
-            "Levels:\n"
-            "- fully: directly supported word-for-word\n"
-            "- mostly: strongly supported but wording differs slightly\n"
-            "- partial: partially supported but with some gaps\n"
-            "- minor: tangentially related or ambiguous\n"
-            "- none: clearly unsupported or contradicted\n\n"
+            "IMPORTANT: First, find the relevant passage in the context. Then assign a verdict.\n\n"
+            "Verdict levels:\n"
+            "- fully: The core meaning is clearly present in the context (exact wording NOT required).\n"
+            "- mostly: The main idea is supported but with minor differences in details "
+            "(e.g., approximate numbers, paraphrased names).\n"
+            "- partial: Some parts are supported but key information is missing or incomplete.\n"
+            "- minor: Only tangentially related; the context mentions the topic but not the specific claim.\n"
+            "- none: The claim directly contradicts the context, OR the context contains "
+            "absolutely no related information.\n\n"
+            "Key distinctions:\n"
+            "- Paraphrasing or using synonyms = \"fully\" (not \"mostly\").\n"
+            "- Missing exact numbers/dates but correct overall = \"mostly\" (not \"partial\" or \"none\").\n"
+            "- Use \"none\" ONLY when the context contradicts the claim or has zero relevant information.\n\n"
             f"CONTEXT:\n{context}\n\n"
             f"STATEMENTS (JSON array):\n{json.dumps(statements, ensure_ascii=False)}\n\n"
+            "For each statement, first quote the relevant context passage, then assign a verdict.\n"
             "Return only a JSON array of objects like:\n"
             '[{"verdict": "fully|mostly|partial|minor|none", '
-            '"reason": "<brief>", '
-            '"support": "<exact context sentence(s)> or \'none\'"}]'
+            '"reason": "<brief explanation>", '
+            '"support": "<exact context sentence(s) that support/contradict this claim> or \'none\'"}]'
         )
         text, cost = await chat_complete(self.model, [{"role": "user", "content": prompt}], temperature=0.0)
         raw_json = extract_json_block(text)
         verdicts: List[Dict[str, Any]] = json.loads(raw_json)
 
+        # Safety check: high verdict but no support → downgrade
         for v in verdicts:
             supp = v.get("support", "").strip().lower()
-            if supp == "none" and v["verdict"] in ("fully", "mostly"):
+            if supp in ("none", "") and v["verdict"] in ("fully", "mostly"):
                 v["verdict"] = "partial"
 
         scores = [VERDICT_WEIGHTS.get(v["verdict"], 0.0) for v in verdicts]

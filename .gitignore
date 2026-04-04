@@ -2,6 +2,9 @@
 __pycache__/
 *.py[cod]
 *$py.class
+article.tex
+references.bib
+experiments/history.md
 
 # C extensions
 *.so
@@ -143,3 +146,10 @@ figures/
 .claude
 .eval_cache
 tests
+examples
+.deepeval
+CLAUDE.md
+experiments/TODO_experiments.md
+# Experiments: show data and results, hide scripts
+experiments/*.py
+experiments/__pycache__/

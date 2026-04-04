@@ -1,0 +1,4134 @@
+[
+  {
+    "id": "usr_topicalchat_165",
+    "human_score": 1.0,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The context only discusses baseball managers wearing uniforms and does not mention the Cincinnati Bengals or any fan affiliations.",
+        "support": "none"
+      }
+    ],
+    "weights": [
+      0.0
+    ]
+  },
+  {
+    "id": "usr_personachat_647",
+    "human_score": 1.0,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The context states the persona spent a decade working in human services and is currently a stay at home dad, with no mention of working in the tech industry.",
+        "support": "none"
+      }
+    ],
+    "weights": [
+      0.0
+    ]
+  },
+  {
+    "id": "usr_personachat_560",
+    "human_score": 0.6667,
+    "tcva_scores": {
+      "T0.2": 1.0,
+      "T0.3": 1.0,
+      "T0.5": 1.0,
+      "T0.7": 1.0,
+      "T0.9": 1.0
+    },
+    "ablation_arithmetic": 1.0,
+    "verdicts": [
+      {
+        "verdict": "fully",
+        "reason": "The context explicitly states 'i am a piano teacher on the side.'",
+        "support": "your persona: i am a piano teacher on the side."
+      }
+    ],
+    "weights": [
+      1.0
+    ]
+  },
+  {
+    "id": "usr_topicalchat_65",
+    "human_score": 1.0,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_topicalchat_350",
+    "human_score": 0.6667,
+    "tcva_scores": {
+      "T0.2": 1.0,
+      "T0.3": 1.0,
+      "T0.5": 1.0,
+      "T0.7": 1.0,
+      "T0.9": 1.0
+    },
+    "ablation_arithmetic": 1.0,
+    "verdicts": [
+      {
+        "verdict": "fully",
+        "reason": "The context explicitly states that Jeff Bezos built a clock into a mountain.",
+        "support": "amazon ceo jeff bezos built a clock into a mountain that should run for 10,000 years ."
+      },
+      {
+        "verdict": "fully",
+        "reason": "The context clearly mentions the clock is intended to run for 10,000 years.",
+        "support": "amazon ceo jeff bezos built a clock into a mountain that should run for 10,000 years ."
+      }
+    ],
+    "weights": [
+      1.0,
+      1.0
+    ]
+  },
+  {
+    "id": "usr_personachat_523",
+    "human_score": 0.8889,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_topicalchat_337",
+    "human_score": 0.5556,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_topicalchat_94",
+    "human_score": 0.6667,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_personachat_639",
+    "human_score": 1.0,
+    "tcva_scores": {
+      "T0.2": 1.0,
+      "T0.3": 1.0,
+      "T0.5": 1.0,
+      "T0.7": 1.0,
+      "T0.9": 1.0
+    },
+    "ablation_arithmetic": 1.0,
+    "verdicts": [
+      {
+        "verdict": "fully",
+        "reason": "The context explicitly states that the person spends most of their time on Facebook when not working.",
+        "support": "your persona: i spend most of my time on facebook when i am not working."
+      }
+    ],
+    "weights": [
+      1.0
+    ]
+  },
+  {
+    "id": "usr_topicalchat_260",
+    "human_score": 0.3333,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The context is empty and contains no information related to the statement.",
+        "support": "none"
+      },
+      {
+        "verdict": "none",
+        "reason": "The context is empty and contains no information related to the statement.",
+        "support": "none"
+      }
+    ],
+    "weights": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "id": "usr_topicalchat_290",
+    "human_score": 0.6667,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The context does not mention anything about her husband or any comparison of liking.",
+        "support": "none"
+      },
+      {
+        "verdict": "none",
+        "reason": "The context does not provide any information about her artistic abilities or qualities.",
+        "support": "none"
+      }
+    ],
+    "weights": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "id": "usr_personachat_417",
+    "human_score": 0.3333,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_personachat_426",
+    "human_score": 0.5556,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_personachat_441",
+    "human_score": 0.3333,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_personachat_588",
+    "human_score": 0.4444,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The context does not mention anything about liking to eat junk food.",
+        "support": "none"
+      }
+    ],
+    "weights": [
+      0.0
+    ]
+  },
+  {
+    "id": "usr_personachat_551",
+    "human_score": 0.7778,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The context does not mention anything about fishing or the speaker's feelings towards it.",
+        "support": "none"
+      },
+      {
+        "verdict": "none",
+        "reason": "There is no information about the speaker's parents, a pond, a farm, or Kentucky in the context.",
+        "support": "none"
+      }
+    ],
+    "weights": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "id": "usr_topicalchat_332",
+    "human_score": 0.6667,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The context does not mention any personal usage or frequency of use.",
+        "support": "burger king had a promotion where if you unfriend 10 people on facebook you get a free whopper ."
+      },
+      {
+        "verdict": "none",
+        "reason": "The context does not mention whether anyone joined or did not join the promotion.",
+        "support": "burger king had a promotion where if you unfriend 10 people on facebook you get a free whopper ."
+      }
+    ],
+    "weights": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "id": "usr_topicalchat_223",
+    "human_score": 0.3333,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The context does not mention whether Google is still around or not.",
+        "support": "none"
+      },
+      {
+        "verdict": "none",
+        "reason": "The statement reverses the roles: new employees are called nooglers and they wear a propeller beanie, not that employees who wear a propeller hat are called nooglers.",
+        "support": "new google employees are called ' nooglers ' and are given a propeller beanie cap to wear on their first friday ."
+      }
+    ],
+    "weights": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "id": "usr_topicalchat_140",
+    "human_score": 0.4444,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.175,
+      "T0.7": 0.3544,
+      "T0.9": 0.4309
+    },
+    "ablation_arithmetic": 0.175,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The context does not mention anything about being in the top 10.",
+        "support": "none"
+      },
+      {
+        "verdict": "partial",
+        "reason": "The context states she is the highest paid celebrity only after LeBron James, so she is not the highest paid overall.",
+        "support": "judge judy makes $ 123,000 per episode , making her the highest paid celebrity only after lebron james ."
+      }
+    ],
+    "weights": [
+      0.0,
+      0.7
+    ]
+  },
+  {
+    "id": "usr_personachat_658",
+    "human_score": 0.3333,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_personachat_413",
+    "human_score": 0.4444,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The context does not mention anything about liking to eat fish or any food preferences.",
+        "support": "none"
+      }
+    ],
+    "weights": [
+      0.0
+    ]
+  },
+  {
+    "id": "usr_topicalchat_10",
+    "human_score": 0.5556,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The context does not mention anything about a 'third quarter back' or anything similar.",
+        "support": "none"
+      },
+      {
+        "verdict": "none",
+        "reason": "The context does not mention anything about a 'mini Super Bowl' or reasons for such a comparison.",
+        "support": "none"
+      }
+    ],
+    "weights": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "id": "usr_topicalchat_28",
+    "human_score": 0.6667,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The context does not mention anything about whether Georgia Tech Cumberland was still on that day.",
+        "support": "none"
+      },
+      {
+        "verdict": "none",
+        "reason": "The context does not include any speaker's opinion or mention doubt about Georgia Tech Cumberland.",
+        "support": "none"
+      }
+    ],
+    "weights": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "id": "usr_topicalchat_255",
+    "human_score": 0.3333,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_topicalchat_181",
+    "human_score": 0.3333,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.25,
+      "T0.7": 0.5063,
+      "T0.9": 0.6156
+    },
+    "ablation_arithmetic": 0.25,
+    "verdicts": [
+      {
+        "verdict": "fully",
+        "reason": "The context explicitly states that the pallbearers were at Billy Mays' funeral, indicating their involvement in the event.",
+        "support": "at billy mays ' funeral the pallbearers wore blue shirts and khaki pants"
+      },
+      {
+        "verdict": "none",
+        "reason": "The context does not mention any opinion or evaluation of the funeral, so there is no support for the claim that it was considered great.",
+        "support": "at billy mays ' funeral the pallbearers wore blue shirts and khaki pants"
+      }
+    ],
+    "weights": [
+      1.0,
+      0.0
+    ]
+  },
+  {
+    "id": "usr_topicalchat_186",
+    "human_score": 0.8889,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_topicalchat_357",
+    "human_score": 0.6667,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_topicalchat_63",
+    "human_score": 0.7778,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The context is empty and contains no information related to the statement.",
+        "support": "none"
+      },
+      {
+        "verdict": "none",
+        "reason": "The context is empty and contains no information related to the statement.",
+        "support": "none"
+      },
+      {
+        "verdict": "none",
+        "reason": "The context is empty and contains no information related to the statement.",
+        "support": "none"
+      }
+    ],
+    "weights": [
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "id": "usr_topicalchat_20",
+    "human_score": 0.3333,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_topicalchat_2",
+    "human_score": 0.5556,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The context contains no information about Lady Gaga or a white blood drive.",
+        "support": "none"
+      },
+      {
+        "verdict": "none",
+        "reason": "The context contains no information about the president of Spotify or a jazz concert.",
+        "support": "none"
+      }
+    ],
+    "weights": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "id": "usr_personachat_632",
+    "human_score": 0.5556,
+    "tcva_scores": {
+      "T0.2": 1.0,
+      "T0.3": 1.0,
+      "T0.5": 1.0,
+      "T0.7": 1.0,
+      "T0.9": 1.0
+    },
+    "ablation_arithmetic": 1.0,
+    "verdicts": [
+      {
+        "verdict": "fully",
+        "reason": "The context explicitly states 'i live in alabama,' which exactly matches the claim.",
+        "support": "your persona: i live in alabama."
+      }
+    ],
+    "weights": [
+      1.0
+    ]
+  },
+  {
+    "id": "usr_personachat_403",
+    "human_score": 0.3333,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The context does not mention anything about being a student.",
+        "support": "none"
+      }
+    ],
+    "weights": [
+      0.0
+    ]
+  },
+  {
+    "id": "usr_topicalchat_80",
+    "human_score": 0.3333,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_personachat_378",
+    "human_score": 0.3333,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The context does not mention anything about eating habits or preferences related to junk food.",
+        "support": "none"
+      }
+    ],
+    "weights": [
+      0.0
+    ]
+  },
+  {
+    "id": "usr_topicalchat_317",
+    "human_score": 0.8889,
+    "tcva_scores": {
+      "T0.2": 1.0,
+      "T0.3": 1.0,
+      "T0.5": 1.0,
+      "T0.7": 1.0,
+      "T0.9": 1.0
+    },
+    "ablation_arithmetic": 1.0,
+    "verdicts": [
+      {
+        "verdict": "fully",
+        "reason": "The context clearly states that Brad Bird, the film's director, voiced Edna Mode.",
+        "support": "edna mode , the superhero costume designer in the incredibles , is voiced by brad bird , the film 's director ."
+      },
+      {
+        "verdict": "fully",
+        "reason": "The context explicitly says the production team couldn't find an actress who could do the voice better than Brad Bird.",
+        "support": "bird voiced edna during storyboarding sessions , after which the production team could n't find an actress who could do the voice better than him .\""
+      }
+    ],
+    "weights": [
+      1.0,
+      1.0
+    ]
+  },
+  {
+    "id": "usr_personachat_433",
+    "human_score": 0.7778,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_personachat_506",
+    "human_score": 1.0,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_personachat_497",
+    "human_score": 1.0,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_topicalchat_264",
+    "human_score": 0.8889,
+    "tcva_scores": {
+      "T0.2": 0.9,
+      "T0.3": 0.9,
+      "T0.5": 0.9,
+      "T0.7": 0.9,
+      "T0.9": 0.9
+    },
+    "ablation_arithmetic": 0.9,
+    "verdicts": [
+      {
+        "verdict": "mostly",
+        "reason": "The context states that top bowlers made twice as much as top football stars, which supports the claim that bowlers made way more money, though 'way more' is a subjective term.",
+        "support": "in the 1960 's top bowlers made twice as much as top football stars"
+      }
+    ],
+    "weights": [
+      0.9
+    ]
+  },
+  {
+    "id": "usr_topicalchat_68",
+    "human_score": 0.5556,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The context states that 84% of genes associated with human diseases have counterparts in zebrafish, implying similarity but not that the genes used are exactly the same.",
+        "support": "84 per cent of genes known to be associated with human diseases have counterparts in the zebrafish"
+      }
+    ],
+    "weights": [
+      0.7
+    ]
+  },
+  {
+    "id": "usr_personachat_393",
+    "human_score": 0.3333,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The context does not mention any preference for the color red or any color at all.",
+        "support": "none"
+      },
+      {
+        "verdict": "none",
+        "reason": "The context does not mention any preference for the color blue or any color at all.",
+        "support": "none"
+      }
+    ],
+    "weights": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "id": "usr_personachat_411",
+    "human_score": 0.3333,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.25,
+      "T0.7": 0.5063,
+      "T0.9": 0.6156
+    },
+    "ablation_arithmetic": 0.25,
+    "verdicts": [
+      {
+        "verdict": "fully",
+        "reason": "The context states that the favorite color is red, which clearly supports liking red.",
+        "support": "my favorite color is red."
+      },
+      {
+        "verdict": "none",
+        "reason": "There is no information about dyeing hair or hair color in the context.",
+        "support": "none"
+      }
+    ],
+    "weights": [
+      1.0,
+      0.0
+    ]
+  },
+  {
+    "id": "usr_topicalchat_22",
+    "human_score": 0.3333,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The context is empty and contains no information related to the claim.",
+        "support": "none"
+      }
+    ],
+    "weights": [
+      0.0
+    ]
+  },
+  {
+    "id": "usr_topicalchat_231",
+    "human_score": 0.5556,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The context does not mention any character or person being in the movie 13 years before it came out; it only discusses a video game sequel existing 13 years before the movie.",
+        "support": "13 years before the movie \" incredibles ii \" came out , there was a sequel to the first incredibles that exists in a video game form , and is called \" the incredibles : rise of the underminer \" ."
+      }
+    ],
+    "weights": [
+      0.0
+    ]
+  },
+  {
+    "id": "usr_topicalchat_195",
+    "human_score": 0.6667,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_topicalchat_323",
+    "human_score": 1.0,
+    "tcva_scores": {
+      "T0.2": 0.9413,
+      "T0.3": 0.9441,
+      "T0.5": 0.95,
+      "T0.7": 0.9559,
+      "T0.9": 0.9614
+    },
+    "ablation_arithmetic": 0.95,
+    "verdicts": [
+      {
+        "verdict": "mostly",
+        "reason": "The context states that New Orleans Saints cheerleaders are forbidden from eating in the same restaurant as any NFL player, which supports the claim that some NFL teams have such rules, though the context only explicitly mentions one team.",
+        "support": "new orleans saints cheerleaders are forbidden from eating in the same restaurant as any nfl player"
+      },
+      {
+        "verdict": "fully",
+        "reason": "The context clearly states that if cheerleaders are already dining and an NFL player comes in, the cheerleaders are required to leave.",
+        "support": "if they are already dining at a restaurant and an nfl player comes in after , the cheerleaders are required to leave ."
+      }
+    ],
+    "weights": [
+      0.9,
+      1.0
+    ]
+  },
+  {
+    "id": "usr_personachat_659",
+    "human_score": 1.0,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The context states that the persona now lives in the United States but does not specify when they moved, so there is no information about recency.",
+        "support": "your persona: now i live in the united states."
+      },
+      {
+        "verdict": "none",
+        "reason": "There is no information in the context about how many people the persona knows in the United States.",
+        "support": "none"
+      },
+      {
+        "verdict": "none",
+        "reason": "The context does not mention a cat or anything about who the cat knows.",
+        "support": "none"
+      }
+    ],
+    "weights": [
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "id": "usr_personachat_628",
+    "human_score": 0.5556,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The context mentions the motorbike is red with a blue stripe and shiny when racing, implying some positive association with the color red, but it does not explicitly state that the speaker likes the color red.",
+        "support": "its red with blue stripe so it shiny when i race."
+      }
+    ],
+    "weights": [
+      0.7
+    ]
+  },
+  {
+    "id": "usr_personachat_585",
+    "human_score": 0.6667,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The context states that the person speaks Chinese but does not mention anything about how they learned it or if they are teaching themselves.",
+        "support": "your persona: i speak chinese."
+      }
+    ],
+    "weights": [
+      0.0
+    ]
+  },
+  {
+    "id": "usr_topicalchat_299",
+    "human_score": 1.0,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The context contains no information about the person's use of other services.",
+        "support": "none"
+      },
+      {
+        "verdict": "none",
+        "reason": "The context contains no information about the person's use of Netflix.",
+        "support": "none"
+      }
+    ],
+    "weights": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "id": "usr_topicalchat_292",
+    "human_score": 0.5556,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.25,
+      "T0.7": 0.5063,
+      "T0.9": 0.6156
+    },
+    "ablation_arithmetic": 0.25,
+    "verdicts": [
+      {
+        "verdict": "fully",
+        "reason": "The context explicitly states that Taylor Swift walks backwards.",
+        "support": "taylor swift walks backwards to avoid having her photo taken ."
+      },
+      {
+        "verdict": "none",
+        "reason": "The context does not mention anything about whether she should be free or not.",
+        "support": "none"
+      }
+    ],
+    "weights": [
+      1.0,
+      0.0
+    ]
+  },
+  {
+    "id": "usr_topicalchat_129",
+    "human_score": 0.7778,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.25,
+      "T0.7": 0.5063,
+      "T0.9": 0.6156
+    },
+    "ablation_arithmetic": 0.25,
+    "verdicts": [
+      {
+        "verdict": "fully",
+        "reason": "The context states Reggie Miller scored a career high 40 points, indicating he was a great player.",
+        "support": "on january 26 , 1982 , he scored a career high 40 points ."
+      },
+      {
+        "verdict": "none",
+        "reason": "The context mentions Reggie Miller's sister Cheryl, but does not mention Cheryl having a sister or anyone else who was better than him.",
+        "support": "none"
+      }
+    ],
+    "weights": [
+      1.0,
+      0.0
+    ]
+  },
+  {
+    "id": "usr_personachat_638",
+    "human_score": 0.3333,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The context does not mention anything about having or not having a favorite.",
+        "support": "none"
+      },
+      {
+        "verdict": "none",
+        "reason": "The context does not mention liking to go fishing or any related activity.",
+        "support": "none"
+      }
+    ],
+    "weights": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "id": "usr_personachat_558",
+    "human_score": 0.3333,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The context does not mention anything about being a student.",
+        "support": "none"
+      }
+    ],
+    "weights": [
+      0.0
+    ]
+  },
+  {
+    "id": "usr_personachat_567",
+    "human_score": 0.5556,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_topicalchat_143",
+    "human_score": 1.0,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.25,
+      "T0.7": 0.5063,
+      "T0.9": 0.6156
+    },
+    "ablation_arithmetic": 0.25,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The context states Judge Judy is the highest paid celebrity only after LeBron James, implying LeBron James is higher paid, so 'He is the highest paid celebrity' is unsupported and contradicts the context.",
+        "support": "judge judy makes $ 123,000 per episode , making her the highest paid celebrity only after lebron james ."
+      },
+      {
+        "verdict": "fully",
+        "reason": "The context explicitly states Judge Judy makes $123,000 per episode.",
+        "support": "judge judy makes $ 123,000 per episode , making her the highest paid celebrity only after lebron james ."
+      }
+    ],
+    "weights": [
+      0.0,
+      1.0
+    ]
+  },
+  {
+    "id": "usr_personachat_361",
+    "human_score": 0.3333,
+    "tcva_scores": {
+      "T0.2": 0.3,
+      "T0.3": 0.3,
+      "T0.5": 0.3,
+      "T0.7": 0.3,
+      "T0.9": 0.3
+    },
+    "ablation_arithmetic": 0.3,
+    "verdicts": [
+      {
+        "verdict": "minor",
+        "reason": "The context mentions having three dogs but does not mention cuddling them or star watching at night.",
+        "support": "your persona: i've three dogs."
+      }
+    ],
+    "weights": [
+      0.3
+    ]
+  },
+  {
+    "id": "usr_topicalchat_349",
+    "human_score": 0.7778,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_personachat_575",
+    "human_score": 1.0,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_topicalchat_254",
+    "human_score": 0.6667,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_personachat_517",
+    "human_score": 0.4444,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.25,
+      "T0.7": 0.5063,
+      "T0.9": 0.6156
+    },
+    "ablation_arithmetic": 0.25,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The context explicitly states the persona is currently in high school, not college.",
+        "support": "your persona: i am currently in high school."
+      },
+      {
+        "verdict": "fully",
+        "reason": "The context clearly states the persona is currently in high school.",
+        "support": "your persona: i am currently in high school."
+      }
+    ],
+    "weights": [
+      0.0,
+      1.0
+    ]
+  },
+  {
+    "id": "usr_topicalchat_77",
+    "human_score": 1.0,
+    "tcva_scores": {
+      "T0.2": 1.0,
+      "T0.3": 1.0,
+      "T0.5": 1.0,
+      "T0.7": 1.0,
+      "T0.9": 1.0
+    },
+    "ablation_arithmetic": 1.0,
+    "verdicts": [
+      {
+        "verdict": "fully",
+        "reason": "The context explicitly states that until 1805, the runner up in a presidential election automatically became the vice president, which matches the claim that before 1805, the vice president was chosen by taking the runner up.",
+        "support": "until 1805 in the us , the runner up in a presidential election automatically became the vice president"
+      }
+    ],
+    "weights": [
+      1.0
+    ]
+  },
+  {
+    "id": "usr_personachat_401",
+    "human_score": 0.5556,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The context states the person is currently looking for a job at a restaurant, but does not say they wait tables or currently work there.",
+        "support": "i'm currently looking for a job preferably at a restaurant."
+      }
+    ],
+    "weights": [
+      0.0
+    ]
+  },
+  {
+    "id": "usr_personachat_623",
+    "human_score": 0.4444,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The context does not mention anything about going to the gym or listening to music.",
+        "support": "none"
+      }
+    ],
+    "weights": [
+      0.0
+    ]
+  },
+  {
+    "id": "usr_personachat_375",
+    "human_score": 1.0,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_topicalchat_214",
+    "human_score": 0.4444,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_personachat_457",
+    "human_score": 1.0,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_personachat_533",
+    "human_score": 1.0,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The context states ownership of a house in Florida but does not mention Ohio or any other location.",
+        "support": "none"
+      },
+      {
+        "verdict": "none",
+        "reason": "The context does not mention any preferences or activities related to going out to the beach.",
+        "support": "none"
+      }
+    ],
+    "weights": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "id": "usr_topicalchat_190",
+    "human_score": 1.0,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_topicalchat_321",
+    "human_score": 0.6667,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The context does not mention anything about the speaker's opinion or feelings towards the NFL.",
+        "support": "none"
+      }
+    ],
+    "weights": [
+      0.0
+    ]
+  },
+  {
+    "id": "usr_personachat_425",
+    "human_score": 1.0,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_topicalchat_110",
+    "human_score": 0.7778,
+    "tcva_scores": {
+      "T0.2": 1.0,
+      "T0.3": 1.0,
+      "T0.5": 1.0,
+      "T0.7": 1.0,
+      "T0.9": 1.0
+    },
+    "ablation_arithmetic": 1.0,
+    "verdicts": [
+      {
+        "verdict": "fully",
+        "reason": "The context explicitly states that Brad Johnson is the only quarterback in NFL history to throw a touchdown pass to himself, which matches the claim exactly.",
+        "support": "superbowl winning quarterback , brad johnson , is the only quarterback in nfl history to throw a touchdown pass ... to himself ."
+      }
+    ],
+    "weights": [
+      1.0
+    ]
+  },
+  {
+    "id": "usr_topicalchat_82",
+    "human_score": 0.3333,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_personachat_564",
+    "human_score": 1.0,
+    "tcva_scores": {
+      "T0.2": 1.0,
+      "T0.3": 1.0,
+      "T0.5": 1.0,
+      "T0.7": 1.0,
+      "T0.9": 1.0
+    },
+    "ablation_arithmetic": 1.0,
+    "verdicts": [
+      {
+        "verdict": "fully",
+        "reason": "The context indicates the speaker plays several instruments and has a father who played violin professionally, implying a strong musical background.",
+        "support": "your persona: my father played violin professionally.\nyour persona: i play several instruments."
+      },
+      {
+        "verdict": "fully",
+        "reason": "The context explicitly states the speaker plays several instruments.",
+        "support": "your persona: i play several instruments."
+      },
+      {
+        "verdict": "fully",
+        "reason": "The context explicitly states the speaker teaches piano on the side.",
+        "support": "your persona: i am a piano teacher on the side."
+      }
+    ],
+    "weights": [
+      1.0,
+      1.0,
+      1.0
+    ]
+  },
+  {
+    "id": "usr_topicalchat_69",
+    "human_score": 0.6667,
+    "tcva_scores": {
+      "T0.2": 1.0,
+      "T0.3": 1.0,
+      "T0.5": 1.0,
+      "T0.7": 1.0,
+      "T0.9": 1.0
+    },
+    "ablation_arithmetic": 1.0,
+    "verdicts": [
+      {
+        "verdict": "fully",
+        "reason": "The statement matches the context exactly in meaning and percentage.",
+        "support": "84 per cent of genes known to be associated with human diseases have counterparts in the zebrafish"
+      }
+    ],
+    "weights": [
+      1.0
+    ]
+  },
+  {
+    "id": "usr_topicalchat_346",
+    "human_score": 0.6667,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_topicalchat_19",
+    "human_score": 0.4444,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_personachat_397",
+    "human_score": 0.5556,
+    "tcva_scores": {
+      "T0.2": 0.3,
+      "T0.3": 0.3,
+      "T0.5": 0.3,
+      "T0.7": 0.3,
+      "T0.9": 0.3
+    },
+    "ablation_arithmetic": 0.3,
+    "verdicts": [
+      {
+        "verdict": "minor",
+        "reason": "The context states that the persona is a swim coach, which implies involvement with swimming, but does not explicitly mention loving to swim.",
+        "support": "your persona: i'm a swim coach at my local pool."
+      }
+    ],
+    "weights": [
+      0.3
+    ]
+  },
+  {
+    "id": "usr_personachat_367",
+    "human_score": 0.6667,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_topicalchat_79",
+    "human_score": 0.3333,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_personachat_518",
+    "human_score": 0.4444,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.075,
+      "T0.7": 0.1519,
+      "T0.9": 0.1847
+    },
+    "ablation_arithmetic": 0.075,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The context does not mention anything about having or not having pets.",
+        "support": "none"
+      },
+      {
+        "verdict": "minor",
+        "reason": "The context does not mention anything about liking to eat, only unrelated personal goals and achievements.",
+        "support": "none"
+      }
+    ],
+    "weights": [
+      0.0,
+      0.3
+    ]
+  },
+  {
+    "id": "usr_topicalchat_253",
+    "human_score": 0.8889,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_personachat_396",
+    "human_score": 0.3333,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The context does not mention having a brother or his location.",
+        "support": "none"
+      },
+      {
+        "verdict": "none",
+        "reason": "The context does not mention a brother or a timeshare in Mexico.",
+        "support": "none"
+      }
+    ],
+    "weights": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "id": "usr_topicalchat_226",
+    "human_score": 0.3333,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.25,
+      "T0.7": 0.5063,
+      "T0.9": 0.6156
+    },
+    "ablation_arithmetic": 0.25,
+    "verdicts": [
+      {
+        "verdict": "fully",
+        "reason": "The context explicitly states that new Google employees are called 'nooglers'.",
+        "support": "new google employees are called ' nooglers ' and are given a propeller beanie cap to wear on their first friday ."
+      },
+      {
+        "verdict": "none",
+        "reason": "The context does not mention anything about a basketball field or the term 'nooglers' being used there.",
+        "support": "none"
+      }
+    ],
+    "weights": [
+      1.0,
+      0.0
+    ]
+  },
+  {
+    "id": "usr_topicalchat_331",
+    "human_score": 0.7778,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The context does not mention anything about the user's personal Facebook usage.",
+        "support": "none"
+      },
+      {
+        "verdict": "none",
+        "reason": "The context does not mention anything about the user's personal Facebook usage.",
+        "support": "none"
+      },
+      {
+        "verdict": "none",
+        "reason": "The context does not mention anything about the user's personal Facebook usage.",
+        "support": "none"
+      }
+    ],
+    "weights": [
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "id": "usr_personachat_405",
+    "human_score": 0.6667,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_topicalchat_139",
+    "human_score": 0.7778,
+    "tcva_scores": {
+      "T0.2": 0.3384,
+      "T0.3": 0.3642,
+      "T0.5": 0.65,
+      "T0.7": 0.8818,
+      "T0.9": 0.933
+    },
+    "ablation_arithmetic": 0.65,
+    "verdicts": [
+      {
+        "verdict": "minor",
+        "reason": "The context mentions LeBron James as the highest paid celebrity, but does not provide any information about his skills or performance as a player.",
+        "support": "judge judy makes $ 123,000 per episode , making her the highest paid celebrity only after lebron james ."
+      },
+      {
+        "verdict": "fully",
+        "reason": "The context explicitly states that LeBron James is the highest paid celebrity, ranking above Judge Judy.",
+        "support": "judge judy makes $ 123,000 per episode , making her the highest paid celebrity only after lebron james ."
+      }
+    ],
+    "weights": [
+      0.3,
+      1.0
+    ]
+  },
+  {
+    "id": "usr_topicalchat_130",
+    "human_score": 0.4444,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The context does not mention anything about the NBA producing players from Canada or the number of such players.",
+        "support": "none"
+      }
+    ],
+    "weights": [
+      0.0
+    ]
+  },
+  {
+    "id": "usr_personachat_598",
+    "human_score": 0.4444,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_topicalchat_277",
+    "human_score": 0.7778,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.225,
+      "T0.7": 0.4557,
+      "T0.9": 0.554
+    },
+    "ablation_arithmetic": 0.225,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The context does not mention any personal feelings or opinions about the radio.",
+        "support": "none"
+      },
+      {
+        "verdict": "mostly",
+        "reason": "The context states there is a website where you can listen to thousands of episodes of classic radio dramas for free, which supports the claim of a free website to listen to the radio, though it specifies classic radio dramas rather than radio in general.",
+        "support": "there is a website where you can listen to thousands of episodes of classic radio dramas for free"
+      }
+    ],
+    "weights": [
+      0.0,
+      0.9
+    ]
+  },
+  {
+    "id": "usr_topicalchat_164",
+    "human_score": 1.0,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.25,
+      "T0.7": 0.5063,
+      "T0.9": 0.6156
+    },
+    "ablation_arithmetic": 0.25,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The context does not mention the Yankees or any evaluation of their quality as a team.",
+        "support": "none"
+      },
+      {
+        "verdict": "fully",
+        "reason": "The statement matches the context exactly in meaning, explaining that managers wear uniforms because they can play if needed.",
+        "support": "baseball managers wear uniforms because they are technically able to play for their teams if the need arises"
+      }
+    ],
+    "weights": [
+      0.0,
+      1.0
+    ]
+  },
+  {
+    "id": "usr_topicalchat_115",
+    "human_score": 0.3333,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_personachat_516",
+    "human_score": 0.3333,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_topicalchat_76",
+    "human_score": 0.6667,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_personachat_528",
+    "human_score": 0.8889,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The context does not mention being a student or working at a grocery store.",
+        "support": "none"
+      }
+    ],
+    "weights": [
+      0.0
+    ]
+  },
+  {
+    "id": "usr_topicalchat_57",
+    "human_score": 0.3333,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_personachat_499",
+    "human_score": 1.0,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.25,
+      "T0.7": 0.5063,
+      "T0.9": 0.6156
+    },
+    "ablation_arithmetic": 0.25,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The context does not mention anything about the user having math homework.",
+        "support": "none"
+      },
+      {
+        "verdict": "fully",
+        "reason": "The user explicitly states that they hate math class.",
+        "support": "your persona: i hate math class."
+      }
+    ],
+    "weights": [
+      0.0,
+      1.0
+    ]
+  },
+  {
+    "id": "usr_personachat_475",
+    "human_score": 1.0,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_personachat_546",
+    "human_score": 0.4444,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The context does not mention any names or refer to 'Tony' at all.",
+        "support": "none"
+      }
+    ],
+    "weights": [
+      0.0
+    ]
+  },
+  {
+    "id": "usr_personachat_580",
+    "human_score": 1.0,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0625,
+      "T0.7": 0.2564,
+      "T0.9": 0.3789
+    },
+    "ablation_arithmetic": 0.0625,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The context does not mention anything about having or not having pets.",
+        "support": "none"
+      },
+      {
+        "verdict": "fully",
+        "reason": "The context explicitly states that the persona is retired.",
+        "support": "your persona: i am retired and living the great life."
+      },
+      {
+        "verdict": "none",
+        "reason": "There is no mention of loving to travel in the context.",
+        "support": "none"
+      },
+      {
+        "verdict": "none",
+        "reason": "The context does not mention pets slowing the persona down or any related idea.",
+        "support": "none"
+      }
+    ],
+    "weights": [
+      0.0,
+      1.0,
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "id": "usr_topicalchat_44",
+    "human_score": 0.3333,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_topicalchat_220",
+    "human_score": 0.5556,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The context does not mention anything about the letter 't' or its invention related to country music.",
+        "support": "none"
+      },
+      {
+        "verdict": "none",
+        "reason": "The context does not mention anything about introductions or openings of the instrument.",
+        "support": "none"
+      }
+    ],
+    "weights": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "id": "usr_personachat_603",
+    "human_score": 0.5556,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_personachat_651",
+    "human_score": 0.7778,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The context does not mention swimming or its effects on energy.",
+        "support": "none"
+      }
+    ],
+    "weights": [
+      0.0
+    ]
+  },
+  {
+    "id": "usr_personachat_611",
+    "human_score": 1.0,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_topicalchat_353",
+    "human_score": 1.0,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.175,
+      "T0.7": 0.3544,
+      "T0.9": 0.4309
+    },
+    "ablation_arithmetic": 0.175,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The context does not mention anything about the user's purchasing habits or behavior.",
+        "support": "none"
+      },
+      {
+        "verdict": "partial",
+        "reason": "The context states Jeff Bezos built a clock into a mountain that should run for 10,000 years, but it does not specify the purpose as ensuring we can tell time for 10,000 years.",
+        "support": "amazon ceo jeff bezos built a clock into a mountain that should run for 10,000 years ."
+      }
+    ],
+    "weights": [
+      0.0,
+      0.7
+    ]
+  },
+  {
+    "id": "usr_topicalchat_97",
+    "human_score": 0.5556,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The context only discusses baseball managers and their uniforms; it does not mention basketball teams or the Golden State Warriors.",
+        "support": "none"
+      },
+      {
+        "verdict": "none",
+        "reason": "The context does not mention the Philadelphia Brewers or any sports teams by that name.",
+        "support": "none"
+      }
+    ],
+    "weights": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "id": "usr_topicalchat_218",
+    "human_score": 0.6667,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_topicalchat_222",
+    "human_score": 0.6667,
+    "tcva_scores": {
+      "T0.2": 1.0,
+      "T0.3": 1.0,
+      "T0.5": 1.0,
+      "T0.7": 1.0,
+      "T0.9": 1.0
+    },
+    "ablation_arithmetic": 1.0,
+    "verdicts": [
+      {
+        "verdict": "fully",
+        "reason": "The context explicitly states that new Google employees are called 'nooglers'.",
+        "support": "new google employees are called ' nooglers ' and are given a propeller beanie cap to wear on their first friday ."
+      }
+    ],
+    "weights": [
+      1.0
+    ]
+  },
+  {
+    "id": "usr_topicalchat_106",
+    "human_score": 0.3333,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_topicalchat_248",
+    "human_score": 0.3333,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_topicalchat_148",
+    "human_score": 0.4444,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.25,
+      "T0.7": 0.5063,
+      "T0.9": 0.6156
+    },
+    "ablation_arithmetic": 0.25,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The context does not mention the Lions or their feelings toward the Patriots.",
+        "support": "none"
+      },
+      {
+        "verdict": "fully",
+        "reason": "The context states that Bill Belichick is the winningest coach in NFL postseason football, which supports the claim that he is the best coach in the postseason.",
+        "support": "bill belichick is the winningest coach in nfl postseason football with 21 wins . 20 with the new england patriots and 1 with the cleveland browns ."
+      }
+    ],
+    "weights": [
+      0.0,
+      1.0
+    ]
+  },
+  {
+    "id": "usr_topicalchat_279",
+    "human_score": 0.6667,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The context does not mention Shakespeare or any opinion about him.",
+        "support": "none"
+      },
+      {
+        "verdict": "none",
+        "reason": "The context does not mention Shakespeare or any opinion about him being an actor or writer.",
+        "support": "none"
+      }
+    ],
+    "weights": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "id": "usr_personachat_422",
+    "human_score": 0.6667,
+    "tcva_scores": {
+      "T0.2": 1.0,
+      "T0.3": 1.0,
+      "T0.5": 1.0,
+      "T0.7": 1.0,
+      "T0.9": 1.0
+    },
+    "ablation_arithmetic": 1.0,
+    "verdicts": [
+      {
+        "verdict": "fully",
+        "reason": "The context explicitly states that the speaker's favorite colors include red, which fully supports the claim that the speaker loves the color red and it is their favorite color.",
+        "support": "your persona: my favorite colors are red and silver."
+      }
+    ],
+    "weights": [
+      1.0
+    ]
+  },
+  {
+    "id": "usr_topicalchat_343",
+    "human_score": 0.7778,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The context does not provide any information about the band's overall quality or reputation.",
+        "support": "none"
+      },
+      {
+        "verdict": "none",
+        "reason": "The context explicitly states the concert was so bad that attendees filed a lawsuit, contradicting the claim that the show was great.",
+        "support": "in 2002 a creed concert was so bad that four concert goers filed a lawsuit against the band"
+      },
+      {
+        "verdict": "none",
+        "reason": "The context states the 2002 concert was bad, directly contradicting the claim that it was great.",
+        "support": "in 2002 a creed concert was so bad that four concert goers filed a lawsuit against the band"
+      }
+    ],
+    "weights": [
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "id": "usr_personachat_366",
+    "human_score": 0.3333,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_personachat_484",
+    "human_score": 1.0,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_topicalchat_171",
+    "human_score": 0.7778,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_topicalchat_121",
+    "human_score": 0.5556,
+    "tcva_scores": {
+      "T0.2": 1.0,
+      "T0.3": 1.0,
+      "T0.5": 1.0,
+      "T0.7": 1.0,
+      "T0.9": 1.0
+    },
+    "ablation_arithmetic": 1.0,
+    "verdicts": [
+      {
+        "verdict": "fully",
+        "reason": "The context explicitly states the movie Trojan Wars had a budget of $15,000,000, which matches the claim.",
+        "support": "the movie trojan wars with a budget of $ 15,000,000 has earned only $ 309 in box office"
+      }
+    ],
+    "weights": [
+      1.0
+    ]
+  },
+  {
+    "id": "usr_topicalchat_328",
+    "human_score": 0.7778,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_topicalchat_333",
+    "human_score": 0.7778,
+    "tcva_scores": {
+      "T0.2": 0.3,
+      "T0.3": 0.3,
+      "T0.5": 0.3,
+      "T0.7": 0.3,
+      "T0.9": 0.3
+    },
+    "ablation_arithmetic": 0.3,
+    "verdicts": [
+      {
+        "verdict": "minor",
+        "reason": "The context mentions a Facebook promotion but does not provide any information about the speaker's personal Facebook usage.",
+        "support": "burger king had a promotion where if you unfriend 10 people on facebook you get a free whopper ."
+      },
+      {
+        "verdict": "minor",
+        "reason": "The context mentions a Facebook promotion but does not provide any information about the speaker's personal Facebook usage.",
+        "support": "burger king had a promotion where if you unfriend 10 people on facebook you get a free whopper ."
+      }
+    ],
+    "weights": [
+      0.3,
+      0.3
+    ]
+  },
+  {
+    "id": "usr_topicalchat_132",
+    "human_score": 0.8889,
+    "tcva_scores": {
+      "T0.2": 0.3384,
+      "T0.3": 0.3642,
+      "T0.5": 0.65,
+      "T0.7": 0.8818,
+      "T0.9": 0.933
+    },
+    "ablation_arithmetic": 0.65,
+    "verdicts": [
+      {
+        "verdict": "fully",
+        "reason": "The statement matches the context exactly in meaning, only paraphrased.",
+        "support": "if earth ’s entire history was viewed as a 24 hour period , humans would only represent 1 minute and 17 seconds ."
+      },
+      {
+        "verdict": "minor",
+        "reason": "The context mentions humans in relation to Earth's history but does not discuss humans in the context of the universe or their size.",
+        "support": "if earth ’s entire history was viewed as a 24 hour period , humans would only represent 1 minute and 17 seconds ."
+      }
+    ],
+    "weights": [
+      1.0,
+      0.3
+    ]
+  },
+  {
+    "id": "usr_topicalchat_200",
+    "human_score": 0.6667,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.25,
+      "T0.7": 0.5063,
+      "T0.9": 0.6156
+    },
+    "ablation_arithmetic": 0.25,
+    "verdicts": [
+      {
+        "verdict": "fully",
+        "reason": "The context states that hiccups are a holdover from early evolution, which aligns with 'It was from the old days.'",
+        "support": "hiccups are a holdover from early evolution when early land animals had both gills and lungs ."
+      },
+      {
+        "verdict": "none",
+        "reason": "The context does not mention anything about hiccups being considered a fire hazard.",
+        "support": "none"
+      }
+    ],
+    "weights": [
+      1.0,
+      0.0
+    ]
+  },
+  {
+    "id": "usr_topicalchat_316",
+    "human_score": 0.4444,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.25,
+      "T0.7": 0.5063,
+      "T0.9": 0.6156
+    },
+    "ablation_arithmetic": 0.25,
+    "verdicts": [
+      {
+        "verdict": "fully",
+        "reason": "The context clearly states that Brad Bird voiced Edna Mode.",
+        "support": "edna mode , the superhero costume designer in the incredibles , is voiced by brad bird , the film 's director . bird voiced edna during storyboarding sessions , after which the production team could n't find an actress who could do the voice better than him ."
+      },
+      {
+        "verdict": "none",
+        "reason": "The context does not mention Edna Mode being the only costume designer.",
+        "support": "none"
+      }
+    ],
+    "weights": [
+      1.0,
+      0.0
+    ]
+  },
+  {
+    "id": "usr_personachat_398",
+    "human_score": 1.0,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_personachat_385",
+    "human_score": 0.5556,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_personachat_418",
+    "human_score": 0.5556,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_personachat_538",
+    "human_score": 0.5556,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_topicalchat_326",
+    "human_score": 0.5556,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_topicalchat_318",
+    "human_score": 1.0,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_topicalchat_213",
+    "human_score": 0.4444,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_topicalchat_58",
+    "human_score": 0.3333,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_personachat_595",
+    "human_score": 0.8889,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The context states that the persona likes to play chess but does not mention competing in any tournament.",
+        "support": "your persona: i like to play chess."
+      },
+      {
+        "verdict": "none",
+        "reason": "There is no information in the context about competing in a tournament or its effects on focus.",
+        "support": "none"
+      }
+    ],
+    "weights": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "id": "usr_personachat_454",
+    "human_score": 1.0,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.25,
+      "T0.7": 0.5063,
+      "T0.9": 0.6156
+    },
+    "ablation_arithmetic": 0.25,
+    "verdicts": [
+      {
+        "verdict": "fully",
+        "reason": "The speaker explicitly states their age as 56 years old.",
+        "support": "your persona: i'm a 56 year old woman."
+      },
+      {
+        "verdict": "none",
+        "reason": "The context does not mention or imply that the speaker has learned to deal with these things.",
+        "support": "none"
+      }
+    ],
+    "weights": [
+      1.0,
+      0.0
+    ]
+  },
+  {
+    "id": "usr_topicalchat_136",
+    "human_score": 0.3333,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_topicalchat_176",
+    "human_score": 0.3333,
+    "tcva_scores": {
+      "T0.2": 1.0,
+      "T0.3": 1.0,
+      "T0.5": 1.0,
+      "T0.7": 1.0,
+      "T0.9": 1.0
+    },
+    "ablation_arithmetic": 1.0,
+    "verdicts": [
+      {
+        "verdict": "fully",
+        "reason": "The context explicitly states that U2 opened for themselves at a few shows in 1987.",
+        "support": "u2 opened for themselves at a few shows in 1987 ."
+      }
+    ],
+    "weights": [
+      1.0
+    ]
+  },
+  {
+    "id": "usr_topicalchat_9",
+    "human_score": 0.3333,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The context does not mention anything about having friends.",
+        "support": "none"
+      },
+      {
+        "verdict": "none",
+        "reason": "The context does not discuss the speaker's team or fan base.",
+        "support": "none"
+      },
+      {
+        "verdict": "none",
+        "reason": "The context does not express any desire to know reasons behind actions.",
+        "support": "none"
+      }
+    ],
+    "weights": [
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "id": "usr_personachat_631",
+    "human_score": 0.5556,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The context contains no information about the speaker cutting their hair or running.",
+        "support": "none"
+      }
+    ],
+    "weights": [
+      0.0
+    ]
+  },
+  {
+    "id": "usr_personachat_443",
+    "human_score": 0.4444,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_topicalchat_39",
+    "human_score": 0.3333,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_topicalchat_104",
+    "human_score": 0.4444,
+    "tcva_scores": {
+      "T0.2": 0.3384,
+      "T0.3": 0.3642,
+      "T0.5": 0.65,
+      "T0.7": 0.8818,
+      "T0.9": 0.933
+    },
+    "ablation_arithmetic": 0.65,
+    "verdicts": [
+      {
+        "verdict": "fully",
+        "reason": "The context states that four concert goers filed a lawsuit against Creed, which means Creed was sued by 4 people.",
+        "support": "in 2002 a creed concert was so bad that four concert goers filed a lawsuit against the band"
+      },
+      {
+        "verdict": "minor",
+        "reason": "The context mentions the concert was 'so bad' but does not explicitly state that the speaker considers Creed to be bad overall.",
+        "support": "in 2002 a creed concert was so bad that four concert goers filed a lawsuit against the band"
+      }
+    ],
+    "weights": [
+      1.0,
+      0.3
+    ]
+  },
+  {
+    "id": "usr_topicalchat_152",
+    "human_score": 0.3333,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_topicalchat_64",
+    "human_score": 0.5556,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The context is empty and contains no information about the speaker's residence.",
+        "support": "none"
+      },
+      {
+        "verdict": "none",
+        "reason": "The context is empty and contains no information about swimming or the speaker's experiences.",
+        "support": "none"
+      }
+    ],
+    "weights": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "id": "usr_topicalchat_266",
+    "human_score": 0.4444,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_personachat_363",
+    "human_score": 0.3333,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_topicalchat_268",
+    "human_score": 0.7778,
+    "tcva_scores": {
+      "T0.2": 0.3384,
+      "T0.3": 0.3642,
+      "T0.5": 0.65,
+      "T0.7": 0.8818,
+      "T0.9": 0.933
+    },
+    "ablation_arithmetic": 0.65,
+    "verdicts": [
+      {
+        "verdict": "fully",
+        "reason": "The context explicitly mentions the 1960's as the time period.",
+        "support": "in the 1960 's top bowlers made twice as much as top football stars"
+      },
+      {
+        "verdict": "minor",
+        "reason": "The context states that top bowlers made more money than top football stars, but does not mention popularity.",
+        "support": "in the 1960 's top bowlers made twice as much as top football stars"
+      }
+    ],
+    "weights": [
+      1.0,
+      0.3
+    ]
+  },
+  {
+    "id": "usr_personachat_379",
+    "human_score": 0.6667,
+    "tcva_scores": {
+      "T0.2": 1.0,
+      "T0.3": 1.0,
+      "T0.5": 1.0,
+      "T0.7": 1.0,
+      "T0.9": 1.0
+    },
+    "ablation_arithmetic": 1.0,
+    "verdicts": [
+      {
+        "verdict": "fully",
+        "reason": "The context explicitly states that the person attends church every week.",
+        "support": "your persona: i attend church every week."
+      }
+    ],
+    "weights": [
+      1.0
+    ]
+  },
+  {
+    "id": "usr_topicalchat_229",
+    "human_score": 0.7778,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_personachat_554",
+    "human_score": 1.0,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_personachat_561",
+    "human_score": 0.6667,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The context does not mention anything about cow milking or related events.",
+        "support": "none"
+      },
+      {
+        "verdict": "none",
+        "reason": "There is no information in the context about professional competition in cow milking.",
+        "support": "none"
+      }
+    ],
+    "weights": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "id": "usr_personachat_548",
+    "human_score": 0.4444,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The context does not mention anything about going to the gym or listening to music.",
+        "support": "none"
+      }
+    ],
+    "weights": [
+      0.0
+    ]
+  },
+  {
+    "id": "usr_personachat_493",
+    "human_score": 0.4444,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The context mentions liking to watch NHL hockey but does not mention playing soccer or any other sport.",
+        "support": "none"
+      }
+    ],
+    "weights": [
+      0.0
+    ]
+  },
+  {
+    "id": "usr_personachat_444",
+    "human_score": 0.8889,
+    "tcva_scores": {
+      "T0.2": 1.0,
+      "T0.3": 1.0,
+      "T0.5": 1.0,
+      "T0.7": 1.0,
+      "T0.9": 1.0
+    },
+    "ablation_arithmetic": 1.0,
+    "verdicts": [
+      {
+        "verdict": "fully",
+        "reason": "The context explicitly states that the persona is working on building a robot to be their body double.",
+        "support": "i am working on a building a robot to be my body double."
+      }
+    ],
+    "weights": [
+      1.0
+    ]
+  },
+  {
+    "id": "usr_topicalchat_124",
+    "human_score": 0.4444,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.25,
+      "T0.7": 0.5063,
+      "T0.9": 0.6156
+    },
+    "ablation_arithmetic": 0.25,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The context mentions a movie titled 'trojan wars' with a budget of $15 million, but there is no mention of any 'guy' having a budget.",
+        "support": "the movie trojan wars with a budget of $ 15,000,000 has earned only $ 309 in box office"
+      },
+      {
+        "verdict": "fully",
+        "reason": "The movie had a budget of $15 million but earned only $309, indicating a huge financial loss.",
+        "support": "the movie trojan wars with a budget of $ 15,000,000 has earned only $ 309 in box office"
+      }
+    ],
+    "weights": [
+      0.0,
+      1.0
+    ]
+  },
+  {
+    "id": "usr_topicalchat_49",
+    "human_score": 0.7778,
+    "tcva_scores": {
+      "T0.2": 1.0,
+      "T0.3": 1.0,
+      "T0.5": 1.0,
+      "T0.7": 1.0,
+      "T0.9": 1.0
+    },
+    "ablation_arithmetic": 1.0,
+    "verdicts": [
+      {
+        "verdict": "fully",
+        "reason": "The statement matches the context exactly in meaning, with only a slight difference in wording ('hamburger button' vs. 'hamburger').",
+        "support": "the 3 horizontal line menu on apps and websites is called a hamburger button ."
+      }
+    ],
+    "weights": [
+      1.0
+    ]
+  },
+  {
+    "id": "usr_topicalchat_17",
+    "human_score": 1.0,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.1111,
+      "T0.7": 0.3401,
+      "T0.9": 0.4635
+    },
+    "ablation_arithmetic": 0.1111,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The context does not mention anything about Bill Belichick's strategic abilities.",
+        "support": "none"
+      },
+      {
+        "verdict": "none",
+        "reason": "The context does not provide any information about Bill Belichick's decision-making or motivations.",
+        "support": "none"
+      },
+      {
+        "verdict": "fully",
+        "reason": "The context clearly states that the last playoff win for the Cleveland Browns was in 1995 against the Patriots when Bill Belichick was their head coach.",
+        "support": "the cleveland browns ' last playoff win was in 1995 against the new england patriots and their head coach was bill belichick ."
+      }
+    ],
+    "weights": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  {
+    "id": "usr_personachat_446",
+    "human_score": 1.0,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_topicalchat_188",
+    "human_score": 0.8889,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_personachat_491",
+    "human_score": 0.3333,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The context contains no information about the Easter Bunny or anything related to it.",
+        "support": "none"
+      }
+    ],
+    "weights": [
+      0.0
+    ]
+  },
+  {
+    "id": "usr_topicalchat_170",
+    "human_score": 0.7778,
+    "tcva_scores": {
+      "T0.2": 1.0,
+      "T0.3": 1.0,
+      "T0.5": 1.0,
+      "T0.7": 1.0,
+      "T0.9": 1.0
+    },
+    "ablation_arithmetic": 1.0,
+    "verdicts": [
+      {
+        "verdict": "fully",
+        "reason": "The context explicitly states the highest score ever in a football game was 222 - 0.",
+        "support": "that the highest score ever in a football game occurred in 1916 when georgia tech defeated cumberland 222 - 0"
+      }
+    ],
+    "weights": [
+      1.0
+    ]
+  },
+  {
+    "id": "usr_topicalchat_211",
+    "human_score": 0.7778,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_personachat_599",
+    "human_score": 1.0,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The context does not mention protein, brain activity, or any connection to chess matches.",
+        "support": "none"
+      }
+    ],
+    "weights": [
+      0.0
+    ]
+  },
+  {
+    "id": "usr_personachat_368",
+    "human_score": 0.3333,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_topicalchat_112",
+    "human_score": 0.6667,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The context only mentions Brad Johnson as a Superbowl-winning quarterback who threw a touchdown pass to himself; it contains no information about playing football in Halo 3.",
+        "support": "superbowl winning quarterback , brad johnson , is the only quarterback in nfl history to throw a touchdown pass ... to himself ."
+      }
+    ],
+    "weights": [
+      0.0
+    ]
+  },
+  {
+    "id": "usr_topicalchat_175",
+    "human_score": 0.3333,
+    "tcva_scores": {
+      "T0.2": 1.0,
+      "T0.3": 1.0,
+      "T0.5": 1.0,
+      "T0.7": 1.0,
+      "T0.9": 1.0
+    },
+    "ablation_arithmetic": 1.0,
+    "verdicts": [
+      {
+        "verdict": "fully",
+        "reason": "The context explicitly states that U2 opened for themselves at a few shows in 1987.",
+        "support": "u2 opened for themselves at a few shows in 1987 ."
+      }
+    ],
+    "weights": [
+      1.0
+    ]
+  },
+  {
+    "id": "usr_topicalchat_177",
+    "human_score": 0.6667,
+    "tcva_scores": {
+      "T0.2": 0.7732,
+      "T0.3": 0.794,
+      "T0.5": 0.85,
+      "T0.7": 0.9029,
+      "T0.9": 0.9356
+    },
+    "ablation_arithmetic": 0.85,
+    "verdicts": [
+      {
+        "verdict": "fully",
+        "reason": "The context explicitly states that U2 opened for themselves in 1987.",
+        "support": "u2 opened for themselves at a few shows in 1987 ."
+      },
+      {
+        "verdict": "partial",
+        "reason": "The context says U2 were introduced as 'the dalton brothers from galveston, texas' and played country music in disguise, but it does not say they 'were actually opened for themselves and then became' the Dalton Brothers; the phrasing is different and the claim about becoming the Dalton Brothers is not fully supported.",
+        "support": "they were introduced as \" the dalton brothers from galveston , texas , \" and they played country music while disguised in wigs and costumes ."
+      }
+    ],
+    "weights": [
+      1.0,
+      0.7
+    ]
+  },
+  {
+    "id": "usr_topicalchat_184",
+    "human_score": 0.3333,
+    "tcva_scores": {
+      "T0.2": 1.0,
+      "T0.3": 1.0,
+      "T0.5": 1.0,
+      "T0.7": 1.0,
+      "T0.9": 1.0
+    },
+    "ablation_arithmetic": 1.0,
+    "verdicts": [
+      {
+        "verdict": "fully",
+        "reason": "The statement exactly matches the context passage in meaning, with no differences.",
+        "support": "at billy mays ' funeral the pallbearers wore blue shirts and khaki pants"
+      }
+    ],
+    "weights": [
+      1.0
+    ]
+  },
+  {
+    "id": "usr_topicalchat_182",
+    "human_score": 0.3333,
+    "tcva_scores": {
+      "T0.2": 1.0,
+      "T0.3": 1.0,
+      "T0.5": 1.0,
+      "T0.7": 1.0,
+      "T0.9": 1.0
+    },
+    "ablation_arithmetic": 1.0,
+    "verdicts": [
+      {
+        "verdict": "fully",
+        "reason": "The statement exactly matches the context passage.",
+        "support": "at billy mays ' funeral the pallbearers wore blue shirts and khaki pants"
+      }
+    ],
+    "weights": [
+      1.0
+    ]
+  },
+  {
+    "id": "usr_topicalchat_273",
+    "human_score": 0.7778,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_topicalchat_107",
+    "human_score": 1.0,
+    "tcva_scores": {
+      "T0.2": 1.0,
+      "T0.3": 1.0,
+      "T0.5": 1.0,
+      "T0.7": 1.0,
+      "T0.9": 1.0
+    },
+    "ablation_arithmetic": 1.0,
+    "verdicts": [
+      {
+        "verdict": "fully",
+        "reason": "The statement accurately reflects that four people sued Creed due to a bad concert performance in 2002, which matches the context exactly.",
+        "support": "in 2002 a creed concert was so bad that four concert goers filed a lawsuit against the band"
+      }
+    ],
+    "weights": [
+      1.0
+    ]
+  },
+  {
+    "id": "usr_topicalchat_133",
+    "human_score": 0.3333,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_topicalchat_37",
+    "human_score": 0.4444,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_topicalchat_291",
+    "human_score": 0.4444,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The context does not mention anything about allergies or related behavior.",
+        "support": "none"
+      },
+      {
+        "verdict": "none",
+        "reason": "The context does not mention anything about banning music or related actions.",
+        "support": "none"
+      }
+    ],
+    "weights": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "id": "usr_topicalchat_40",
+    "human_score": 0.5556,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_topicalchat_344",
+    "human_score": 0.3333,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_topicalchat_34",
+    "human_score": 0.3333,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_topicalchat_238",
+    "human_score": 0.6667,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_topicalchat_105",
+    "human_score": 0.5556,
+    "tcva_scores": {
+      "T0.2": 1.0,
+      "T0.3": 1.0,
+      "T0.5": 1.0,
+      "T0.7": 1.0,
+      "T0.9": 1.0
+    },
+    "ablation_arithmetic": 1.0,
+    "verdicts": [
+      {
+        "verdict": "fully",
+        "reason": "The statement matches the context exactly in meaning, including the band name, the concert being bad, the number of concert goers, and the lawsuit.",
+        "support": "in 2002 a creed concert was so bad that four concert goers filed a lawsuit against the band"
+      }
+    ],
+    "weights": [
+      1.0
+    ]
+  },
+  {
+    "id": "usr_personachat_648",
+    "human_score": 1.0,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_topicalchat_1",
+    "human_score": 0.3333,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The context does not mention Peter Gabriel or any information about his presence in the US.",
+        "support": "none"
+      },
+      {
+        "verdict": "none",
+        "reason": "The context does not mention Peter Gabriel or any evaluation of his performance skills.",
+        "support": "none"
+      }
+    ],
+    "weights": [
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "id": "usr_topicalchat_26",
+    "human_score": 0.6667,
+    "tcva_scores": {
+      "T0.2": 1.0,
+      "T0.3": 1.0,
+      "T0.5": 1.0,
+      "T0.7": 1.0,
+      "T0.9": 1.0
+    },
+    "ablation_arithmetic": 1.0,
+    "verdicts": [
+      {
+        "verdict": "fully",
+        "reason": "The context explicitly states the highest score ever in a football game was 222 - 0.",
+        "support": "that the highest score ever in a football game occurred in 1916 when georgia tech defeated cumberland 222 - 0"
+      }
+    ],
+    "weights": [
+      1.0
+    ]
+  },
+  {
+    "id": "usr_topicalchat_16",
+    "human_score": 0.7778,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The context does not provide any information about the quality or greatness of the coach.",
+        "support": "none"
+      },
+      {
+        "verdict": "none",
+        "reason": "The context only mentions coaching a playoff win; it does not mention any other roles or activities.",
+        "support": "none"
+      },
+      {
+        "verdict": "none",
+        "reason": "The context does not mention talent or any related concept.",
+        "support": "none"
+      }
+    ],
+    "weights": [
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "id": "usr_personachat_452",
+    "human_score": 0.3333,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_topicalchat_146",
+    "human_score": 0.5556,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.4444,
+      "T0.7": 0.6716,
+      "T0.9": 0.7529
+    },
+    "ablation_arithmetic": 0.4444,
+    "verdicts": [
+      {
+        "verdict": "fully",
+        "reason": "The context states he is the winningest coach in NFL postseason football with 21 wins, which clearly supports that he has a great record.",
+        "support": "bill belichick is the winningest coach in nfl postseason football with 21 wins . 20 with the new england patriots and 1 with the cleveland browns ."
+      },
+      {
+        "verdict": "none",
+        "reason": "The context only mentions coaching achievements and does not mention him being a player.",
+        "support": "none"
+      },
+      {
+        "verdict": "fully",
+        "reason": "The context explicitly states he is the winningest coach in NFL postseason football, which clearly supports that he is a great coach.",
+        "support": "bill belichick is the winningest coach in nfl postseason football with 21 wins . 20 with the new england patriots and 1 with the cleveland browns ."
+      }
+    ],
+    "weights": [
+      1.0,
+      0.0,
+      1.0
+    ]
+  },
+  {
+    "id": "usr_personachat_431",
+    "human_score": 0.3333,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The context does not mention anything about proximity or distance to any location or object.",
+        "support": "none"
+      }
+    ],
+    "weights": [
+      0.0
+    ]
+  },
+  {
+    "id": "usr_topicalchat_8",
+    "human_score": 0.5556,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_topicalchat_168",
+    "human_score": 1.0,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_topicalchat_137",
+    "human_score": 1.0,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.25,
+      "T0.7": 0.5063,
+      "T0.9": 0.6156
+    },
+    "ablation_arithmetic": 0.25,
+    "verdicts": [
+      {
+        "verdict": "fully",
+        "reason": "The statement is a direct restatement of the context sentence with synonymous phrasing.",
+        "support": "if earth ’s entire history was viewed as a 24 hour period , humans would only represent 1 minute and 17 seconds ."
+      },
+      {
+        "verdict": "none",
+        "reason": "The context does not mention humans destroying the planet or any environmental impact.",
+        "support": "none"
+      }
+    ],
+    "weights": [
+      1.0,
+      0.0
+    ]
+  },
+  {
+    "id": "usr_personachat_479",
+    "human_score": 1.0,
+    "tcva_scores": {
+      "T0.2": 0.363,
+      "T0.3": 0.4072,
+      "T0.5": 0.7667,
+      "T0.7": 0.929,
+      "T0.9": 0.9603
+    },
+    "ablation_arithmetic": 0.7667,
+    "verdicts": [
+      {
+        "verdict": "fully",
+        "reason": "The context explicitly states 'i'm a buddhist,' which directly supports the claim.",
+        "support": "i'm a buddhist."
+      },
+      {
+        "verdict": "minor",
+        "reason": "The context mentions liking meditation but does not state that all time is spent meditating.",
+        "support": "your persona: i like meditation."
+      },
+      {
+        "verdict": "fully",
+        "reason": "The context clearly states 'i've not spoken in three months,' directly supporting the claim.",
+        "support": "your persona: i've not spoken in three months."
+      }
+    ],
+    "weights": [
+      1.0,
+      0.3,
+      1.0
+    ]
+  },
+  {
+    "id": "usr_topicalchat_262",
+    "human_score": 0.4444,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_personachat_565",
+    "human_score": 1.0,
+    "tcva_scores": {
+      "T0.2": 0.3384,
+      "T0.3": 0.3642,
+      "T0.5": 0.65,
+      "T0.7": 0.8818,
+      "T0.9": 0.933
+    },
+    "ablation_arithmetic": 0.65,
+    "verdicts": [
+      {
+        "verdict": "fully",
+        "reason": "The context explicitly states 'i'm a buddhist,' which directly supports the claim.",
+        "support": "your persona: i'm a buddhist."
+      },
+      {
+        "verdict": "minor",
+        "reason": "The context mentions liking meditation and pursuing spirituality full time, which may imply relaxation, but it does not explicitly state that the spiritual journey relaxes the person.",
+        "support": "your persona: i quit my job to pursue my spirituality full time.\nyour persona: i like meditation."
+      }
+    ],
+    "weights": [
+      1.0,
+      0.3
+    ]
+  },
+  {
+    "id": "usr_topicalchat_261",
+    "human_score": 0.3333,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_topicalchat_259",
+    "human_score": 0.7778,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_personachat_618",
+    "human_score": 0.3333,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.075,
+      "T0.7": 0.1519,
+      "T0.9": 0.1847
+    },
+    "ablation_arithmetic": 0.075,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The context does not mention anything about being a nurse or working in healthcare.",
+        "support": "none"
+      },
+      {
+        "verdict": "minor",
+        "reason": "The context mentions eating a raw diet, which is related to food but does not specifically mention loving to cook.",
+        "support": "your persona: i eat a raw diet."
+      }
+    ],
+    "weights": [
+      0.0,
+      0.3
+    ]
+  },
+  {
+    "id": "usr_personachat_568",
+    "human_score": 0.6667,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The context does not mention going to the gym or listening to music at all.",
+        "support": "none"
+      }
+    ],
+    "weights": [
+      0.0
+    ]
+  },
+  {
+    "id": "usr_topicalchat_123",
+    "human_score": 0.4444,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  },
+  {
+    "id": "usr_topicalchat_6",
+    "human_score": 1.0,
+    "tcva_scores": {
+      "T0.2": 0.9583,
+      "T0.3": 0.9612,
+      "T0.5": 0.9667,
+      "T0.7": 0.9716,
+      "T0.9": 0.9758
+    },
+    "ablation_arithmetic": 0.9667,
+    "verdicts": [
+      {
+        "verdict": "fully",
+        "reason": "The context states Mack was holding out seeking a high-value contract, indicating he demanded a high salary.",
+        "support": "mack , while still with the raiders , had been holding out , seeking such a deal ."
+      },
+      {
+        "verdict": "fully",
+        "reason": "The context explicitly says Mack is the league's highest-paid defensive player.",
+        "support": "he left little doubt that he is worth the six - year , $ 141 million contract given to him by the bears , making him the league 's highest - paid defensive player ."
+      },
+      {
+        "verdict": "mostly",
+        "reason": "The context says the Raiders have a $125 million quarterback in Carr and a $100 million coach in Gruden, and they did not want to give Mack a big deal to avoid straining their budget or salary cap, implying they had already tied up significant money in Carr and Gruden.",
+        "support": "the raiders did n't want to give it to him . they have a $ 125 million quarterback in carr . they have a $ 100 million coach in gruden . they drew the line at handing out another mammoth deal , not wanting to further strain their budget or push the boundaries of the salary cap ."
+      }
+    ],
+    "weights": [
+      1.0,
+      1.0,
+      0.9
+    ]
+  },
+  {
+    "id": "usr_topicalchat_302",
+    "human_score": 0.8889,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [],
+    "weights": []
+  }
+]

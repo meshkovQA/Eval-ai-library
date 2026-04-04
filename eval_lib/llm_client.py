@@ -2,6 +2,7 @@
 import openai
 import functools
 import anthropic
+import aiohttp
 from abc import ABC, abstractmethod
 from openai import AsyncAzureOpenAI
 from google import genai
@@ -93,6 +94,7 @@ class Provider(str, Enum):
     MISTRAL = "mistral"
     GROQ = "groq"
     GROK = "grok"
+    MLX = "mlx"
     CUSTOM = "custom"
 
 
@@ -241,6 +243,13 @@ def _get_client(provider: Provider):
             base_url="https://api.x.ai/v1",
         )
 
+    if provider == Provider.MLX:
+        base_url = os.getenv("MLX_API_BASE_URL", "http://localhost:8899/v1")
+        return openai.AsyncOpenAI(
+            api_key="mlx",
+            base_url=base_url,
+        )
+
     raise ValueError(f"Unsupported provider: {provider}")
 
 
@@ -352,29 +361,41 @@ async def _ollama_chat_complete(
     messages: list[dict[str, str]],
     temperature: float,
 ):
-    """Ollama (local) chat completion."""
+    """Ollama (local) chat completion via native API (supports think=false)."""
+    base_url = os.getenv("OLLAMA_API_BASE_URL", "http://localhost:11434")
+    # Strip /v1 suffix if present (native API doesn't use it)
+    base_url = base_url.rstrip("/").removesuffix("/v1")
+
+    payload = {
+        "model": llm.model,
+        "messages": messages,
+        "stream": False,
+        "think": False,
+        "options": {"temperature": temperature},
+    }
+
     try:
-        response = await client.chat.completions.create(
-            model=llm.model,
-            messages=messages,
-            temperature=temperature,
+        async with aiohttp.ClientSession() as session:
+            async with session.post(
+                f"{base_url}/api/chat",
+                json=payload,
+                timeout=aiohttp.ClientTimeout(total=300),
+            ) as resp:
+                data = await resp.json()
+
+        text = data.get("message", {}).get("content", "").strip()
+        return text, 0.0
+    except (aiohttp.ClientConnectorError, aiohttp.ClientError, ConnectionError) as e:
+        raise LLMConfigurationError(
+            f"❌ Cannot connect to Ollama server!\n\n"
+            f"Error: {str(e)}\n\n"
+            f"Make sure Ollama is running:\n"
+            f"  1. Install Ollama: https://ollama.ai/download\n"
+            f"  2. Start Ollama: ollama serve\n"
+            f"  3. Pull model: ollama pull {llm.model}\n\n"
+            f"Or set OLLAMA_API_BASE_URL to your Ollama server:\n"
+            f"  export OLLAMA_API_BASE_URL='http://localhost:11434'"
         )
-        text = response.choices[0].message.content.strip()
-        cost = _calculate_cost(llm, response.usage)
-        return text, cost
-    except Exception as e:
-        if "Connection" in str(e) or "refused" in str(e).lower():
-            raise LLMConfigurationError(
-                f"❌ Cannot connect to Ollama server!\n\n"
-                f"Error: {str(e)}\n\n"
-                f"Make sure Ollama is running:\n"
-                f"  1. Install Ollama: https://ollama.ai/download\n"
-                f"  2. Start Ollama: ollama serve\n"
-                f"  3. Pull model: ollama pull {llm.model}\n\n"
-                f"Or set OLLAMA_API_BASE_URL to your Ollama server:\n"
-                f"  export OLLAMA_API_BASE_URL='http://localhost:11434/v1'"
-            )
-        raise
 
 
 async def _anthropic_chat_complete(
@@ -410,6 +431,49 @@ async def _anthropic_chat_complete(
         raise
 
 
+import re as _re
+
+_THINK_RE = _re.compile(r"<think>[\s\S]*?</think>\s*", _re.DOTALL)
+
+
+async def _mlx_chat_complete(
+    client,
+    llm: LLMDescriptor,
+    messages: list[dict[str, str]],
+    temperature: float,
+):
+    """MLX local server chat completion. Prepends /no_think and strips thinking tags."""
+    # Prepend /no_think to the last user message to disable thinking
+    patched = []
+    for msg in messages:
+        if msg["role"] == "user":
+            patched.append({"role": msg["role"], "content": "/no_think\n" + msg["content"]})
+        else:
+            patched.append(msg)
+
+    try:
+        response = await client.chat.completions.create(
+            model=llm.model,
+            messages=patched,
+            temperature=temperature,
+        )
+        text = response.choices[0].message.content.strip()
+        # Strip residual <think>...</think> tags
+        text = _THINK_RE.sub("", text).strip()
+        return text, 0.0
+    except Exception as e:
+        if "Connection" in str(e) or "refused" in str(e).lower():
+            raise LLMConfigurationError(
+                f"❌ Cannot connect to MLX server!\n\n"
+                f"Error: {str(e)}\n\n"
+                f"Make sure MLX server is running:\n"
+                f"  mlx_lm.server --model <model-name> --port 8899\n\n"
+                f"Or set MLX_API_BASE_URL to your MLX server:\n"
+                f"  export MLX_API_BASE_URL='http://localhost:8899/v1'"
+            )
+        raise
+
+
 _HELPERS = {
     Provider.OPENAI: _openai_chat_complete,
     Provider.AZURE: _azure_chat_complete,
@@ -422,6 +486,7 @@ _HELPERS = {
     Provider.MISTRAL: _openai_chat_complete,
     Provider.GROQ: _openai_chat_complete,
     Provider.GROK: _openai_chat_complete,
+    Provider.MLX: _mlx_chat_complete,
 }
 
 

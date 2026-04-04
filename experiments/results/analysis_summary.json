@@ -1,0 +1,218 @@
+[
+  {
+    "dataset": "summeval",
+    "n_samples": 172,
+    "correlations": {
+      "TCVA (T=0.2)": {
+        "n": 169,
+        "spearman_rho": 0.6415,
+        "spearman_p": 5.6826989544368845e-21,
+        "kendall_tau": 0.541,
+        "kendall_p": 5.98586116335555e-18,
+        "mae": 0.2605
+      },
+      "TCVA (T=0.3)": {
+        "n": 169,
+        "spearman_rho": 0.6415,
+        "spearman_p": 5.6826989544368845e-21,
+        "kendall_tau": 0.541,
+        "kendall_p": 5.98586116335555e-18,
+        "mae": 0.2628
+      },
+      "TCVA (T=0.5)": {
+        "n": 169,
+        "spearman_rho": 0.663,
+        "spearman_p": 9.28333453654716e-23,
+        "kendall_tau": 0.524,
+        "kendall_p": 3.940515068149707e-20,
+        "mae": 0.2243
+      },
+      "TCVA (T=0.7)": {
+        "n": 169,
+        "spearman_rho": 0.6638,
+        "spearman_p": 7.867309201035757e-23,
+        "kendall_tau": 0.5227,
+        "kendall_p": 4.727618795408967e-20,
+        "mae": 0.3118
+      },
+      "TCVA (T=0.9)": {
+        "n": 169,
+        "spearman_rho": 0.6669,
+        "spearman_p": 4.2301455489789155e-23,
+        "kendall_tau": 0.5269,
+        "kendall_p": 2.407427987877182e-20,
+        "mae": 0.3561
+      },
+      "5-level + Arith. Mean": {
+        "n": 169,
+        "spearman_rho": 0.663,
+        "spearman_p": 9.28333453654716e-23,
+        "kendall_tau": 0.524,
+        "kendall_p": 3.940515068149707e-20,
+        "mae": 0.2243
+      },
+      "RAGAS (binary)": {
+        "n": 172,
+        "spearman_rho": 0.6762,
+        "spearman_p": 2.5050532131921366e-24,
+        "kendall_tau": 0.5346,
+        "kendall_p": 9.610715360597238e-21,
+        "mae": 0.2593
+      },
+      "DeepEval (ternary)": {
+        "n": 171,
+        "spearman_rho": 0.395,
+        "spearman_p": 8.974703983452566e-08,
+        "kendall_tau": 0.3019,
+        "kendall_p": 1.9923863493917327e-07,
+        "mae": 0.3253
+      }
+    },
+    "best_method": "RAGAS (binary)",
+    "best_rho": 0.6762
+  },
+  {
+    "dataset": "summeval_rel",
+    "n_samples": 196,
+    "correlations": {
+      "TCVA (T=0.2)": {
+        "n": 195,
+        "spearman_rho": 0.4757,
+        "spearman_p": 2.09748538423222e-12,
+        "kendall_tau": 0.3675,
+        "kendall_p": 1.272249395198897e-11,
+        "mae": 0.2241
+      },
+      "TCVA (T=0.3)": {
+        "n": 195,
+        "spearman_rho": 0.4758,
+        "spearman_p": 2.068882666646137e-12,
+        "kendall_tau": 0.3675,
+        "kendall_p": 1.2622453231632398e-11,
+        "mae": 0.2235
+      },
+      "TCVA (T=0.5)": {
+        "n": 195,
+        "spearman_rho": 0.48,
+        "spearman_p": 1.241538222894755e-12,
+        "kendall_tau": 0.3686,
+        "kendall_p": 7.134529696689369e-12,
+        "mae": 0.2112
+      },
+      "TCVA (T=0.7)": {
+        "n": 195,
+        "spearman_rho": 0.4523,
+        "spearman_p": 3.1738073890256046e-11,
+        "kendall_tau": 0.3496,
+        "kendall_p": 7.730841322197973e-11,
+        "mae": 0.2196
+      },
+      "TCVA (T=0.9)": {
+        "n": 195,
+        "spearman_rho": 0.4548,
+        "spearman_p": 2.4135065670430893e-11,
+        "kendall_tau": 0.3518,
+        "kendall_p": 5.87377545351831e-11,
+        "mae": 0.2278
+      },
+      "5-level + Arith. Mean": {
+        "n": 195,
+        "spearman_rho": 0.48,
+        "spearman_p": 1.241538222894755e-12,
+        "kendall_tau": 0.3686,
+        "kendall_p": 7.134529696689369e-12,
+        "mae": 0.2112
+      },
+      "RAGAS (binary)": {
+        "n": 196,
+        "spearman_rho": 0.4108,
+        "spearman_p": 2.2337704855419665e-09,
+        "kendall_tau": 0.3326,
+        "kendall_p": 5.18653283103139e-09,
+        "mae": 0.3645
+      },
+      "DeepEval (ternary)": {
+        "n": 196,
+        "spearman_rho": 0.3149,
+        "spearman_p": 6.968783012391474e-06,
+        "kendall_tau": 0.2394,
+        "kendall_p": 1.6949059426381123e-05,
+        "mae": 0.3516
+      }
+    },
+    "best_method": "TCVA (T=0.5)",
+    "best_rho": 0.48
+  },
+  {
+    "dataset": "usr",
+    "n_samples": 198,
+    "correlations": {
+      "TCVA (T=0.2)": {
+        "n": 198,
+        "spearman_rho": 0.1534,
+        "spearman_p": 0.030956478147695636,
+        "kendall_tau": 0.1315,
+        "kendall_p": 0.030878995870693517,
+        "mae": 0.5555
+      },
+      "TCVA (T=0.3)": {
+        "n": 198,
+        "spearman_rho": 0.1534,
+        "spearman_p": 0.030956478147695636,
+        "kendall_tau": 0.1315,
+        "kendall_p": 0.030878995870693517,
+        "mae": 0.5547
+      },
+      "TCVA (T=0.5)": {
+        "n": 198,
+        "spearman_rho": 0.1679,
+        "spearman_p": 0.018075589480642536,
+        "kendall_tau": 0.1389,
+        "kendall_p": 0.01874635672701121,
+        "mae": 0.5223
+      },
+      "TCVA (T=0.7)": {
+        "n": 198,
+        "spearman_rho": 0.1725,
+        "spearman_p": 0.015088080281093695,
+        "kendall_tau": 0.1427,
+        "kendall_p": 0.015750669579950746,
+        "mae": 0.5027
+      },
+      "TCVA (T=0.9)": {
+        "n": 198,
+        "spearman_rho": 0.1731,
+        "spearman_p": 0.014740721493342481,
+        "kendall_tau": 0.143,
+        "kendall_p": 0.015521172108294836,
+        "mae": 0.501
+      },
+      "5-level + Arith. Mean": {
+        "n": 198,
+        "spearman_rho": 0.1679,
+        "spearman_p": 0.018075589480642536,
+        "kendall_tau": 0.1389,
+        "kendall_p": 0.01874635672701121,
+        "mae": 0.5223
+      },
+      "RAGAS (binary)": {
+        "n": 198,
+        "spearman_rho": 0.1714,
+        "spearman_p": 0.01573739397018354,
+        "kendall_tau": 0.1403,
+        "kendall_p": 0.01729287523064613,
+        "mae": 0.5155
+      },
+      "DeepEval (ternary)": {
+        "n": 198,
+        "spearman_rho": -0.052,
+        "spearman_p": 0.4665741572892277,
+        "kendall_tau": -0.0455,
+        "kendall_p": 0.4629782308213899,
+        "mae": 0.3667
+      }
+    },
+    "best_method": "TCVA (T=0.9)",
+    "best_rho": 0.1731
+  }
+]

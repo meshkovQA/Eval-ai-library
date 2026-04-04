@@ -1,0 +1,992 @@
+[
+  {
+    "id": "usr_topicalchat_165",
+    "human_score": 1.0,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_personachat_647",
+    "human_score": 1.0,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_personachat_560",
+    "human_score": 0.6667,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_65",
+    "human_score": 1.0,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_350",
+    "human_score": 0.6667,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_personachat_523",
+    "human_score": 0.8889,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_337",
+    "human_score": 0.5556,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_94",
+    "human_score": 0.6667,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_personachat_639",
+    "human_score": 1.0,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_260",
+    "human_score": 0.3333,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_290",
+    "human_score": 0.6667,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_personachat_417",
+    "human_score": 0.3333,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_personachat_426",
+    "human_score": 0.5556,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_personachat_441",
+    "human_score": 0.3333,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_personachat_588",
+    "human_score": 0.4444,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_personachat_551",
+    "human_score": 0.7778,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_332",
+    "human_score": 0.6667,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_223",
+    "human_score": 0.3333,
+    "deepeval_score": 0.6666666666666666
+  },
+  {
+    "id": "usr_topicalchat_140",
+    "human_score": 0.4444,
+    "deepeval_score": 0.5
+  },
+  {
+    "id": "usr_personachat_658",
+    "human_score": 0.3333,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_personachat_413",
+    "human_score": 0.4444,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_10",
+    "human_score": 0.5556,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_28",
+    "human_score": 0.6667,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_255",
+    "human_score": 0.3333,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_181",
+    "human_score": 0.3333,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_186",
+    "human_score": 0.8889,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_357",
+    "human_score": 0.6667,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_63",
+    "human_score": 0.7778,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_20",
+    "human_score": 0.3333,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_2",
+    "human_score": 0.5556,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_personachat_632",
+    "human_score": 0.5556,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_personachat_403",
+    "human_score": 0.3333,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_80",
+    "human_score": 0.3333,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_personachat_378",
+    "human_score": 0.3333,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_317",
+    "human_score": 0.8889,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_personachat_433",
+    "human_score": 0.7778,
+    "deepeval_score": 0.5
+  },
+  {
+    "id": "usr_personachat_506",
+    "human_score": 1.0,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_personachat_497",
+    "human_score": 1.0,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_264",
+    "human_score": 0.8889,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_68",
+    "human_score": 0.5556,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_personachat_393",
+    "human_score": 0.3333,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_personachat_411",
+    "human_score": 0.3333,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_22",
+    "human_score": 0.3333,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_231",
+    "human_score": 0.5556,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_195",
+    "human_score": 0.6667,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_323",
+    "human_score": 1.0,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_personachat_659",
+    "human_score": 1.0,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_personachat_628",
+    "human_score": 0.5556,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_personachat_585",
+    "human_score": 0.6667,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_299",
+    "human_score": 1.0,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_292",
+    "human_score": 0.5556,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_129",
+    "human_score": 0.7778,
+    "deepeval_score": 0.5
+  },
+  {
+    "id": "usr_personachat_638",
+    "human_score": 0.3333,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_personachat_558",
+    "human_score": 0.3333,
+    "deepeval_score": 0.0
+  },
+  {
+    "id": "usr_personachat_567",
+    "human_score": 0.5556,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_143",
+    "human_score": 1.0,
+    "deepeval_score": 0.5
+  },
+  {
+    "id": "usr_personachat_361",
+    "human_score": 0.3333,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_349",
+    "human_score": 0.7778,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_personachat_575",
+    "human_score": 1.0,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_254",
+    "human_score": 0.6667,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_personachat_517",
+    "human_score": 0.4444,
+    "deepeval_score": 0.5
+  },
+  {
+    "id": "usr_topicalchat_77",
+    "human_score": 1.0,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_personachat_401",
+    "human_score": 0.5556,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_personachat_623",
+    "human_score": 0.4444,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_personachat_375",
+    "human_score": 1.0,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_214",
+    "human_score": 0.4444,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_personachat_457",
+    "human_score": 1.0,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_personachat_533",
+    "human_score": 1.0,
+    "deepeval_score": 0.5
+  },
+  {
+    "id": "usr_topicalchat_190",
+    "human_score": 1.0,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_321",
+    "human_score": 0.6667,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_personachat_425",
+    "human_score": 1.0,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_110",
+    "human_score": 0.7778,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_82",
+    "human_score": 0.3333,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_personachat_564",
+    "human_score": 1.0,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_69",
+    "human_score": 0.6667,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_346",
+    "human_score": 0.6667,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_19",
+    "human_score": 0.4444,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_personachat_397",
+    "human_score": 0.5556,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_personachat_367",
+    "human_score": 0.6667,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_79",
+    "human_score": 0.3333,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_personachat_518",
+    "human_score": 0.4444,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_253",
+    "human_score": 0.8889,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_personachat_396",
+    "human_score": 0.3333,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_226",
+    "human_score": 0.3333,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_331",
+    "human_score": 0.7778,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_personachat_405",
+    "human_score": 0.6667,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_139",
+    "human_score": 0.7778,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_130",
+    "human_score": 0.4444,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_personachat_598",
+    "human_score": 0.4444,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_277",
+    "human_score": 0.7778,
+    "deepeval_score": 0.5
+  },
+  {
+    "id": "usr_topicalchat_164",
+    "human_score": 1.0,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_115",
+    "human_score": 0.3333,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_personachat_516",
+    "human_score": 0.3333,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_76",
+    "human_score": 0.6667,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_personachat_528",
+    "human_score": 0.8889,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_57",
+    "human_score": 0.3333,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_personachat_499",
+    "human_score": 1.0,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_personachat_475",
+    "human_score": 1.0,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_personachat_546",
+    "human_score": 0.4444,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_personachat_580",
+    "human_score": 1.0,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_44",
+    "human_score": 0.3333,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_220",
+    "human_score": 0.5556,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_personachat_603",
+    "human_score": 0.5556,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_personachat_651",
+    "human_score": 0.7778,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_personachat_611",
+    "human_score": 1.0,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_353",
+    "human_score": 1.0,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_97",
+    "human_score": 0.5556,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_218",
+    "human_score": 0.6667,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_222",
+    "human_score": 0.6667,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_106",
+    "human_score": 0.3333,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_248",
+    "human_score": 0.3333,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_148",
+    "human_score": 0.4444,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_279",
+    "human_score": 0.6667,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_personachat_422",
+    "human_score": 0.6667,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_343",
+    "human_score": 0.7778,
+    "deepeval_score": 0.6666666666666666
+  },
+  {
+    "id": "usr_personachat_366",
+    "human_score": 0.3333,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_personachat_484",
+    "human_score": 1.0,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_171",
+    "human_score": 0.7778,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_121",
+    "human_score": 0.5556,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_328",
+    "human_score": 0.7778,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_333",
+    "human_score": 0.7778,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_132",
+    "human_score": 0.8889,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_200",
+    "human_score": 0.6667,
+    "deepeval_score": 0.0
+  },
+  {
+    "id": "usr_topicalchat_316",
+    "human_score": 0.4444,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_personachat_398",
+    "human_score": 1.0,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_personachat_385",
+    "human_score": 0.5556,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_personachat_418",
+    "human_score": 0.5556,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_personachat_538",
+    "human_score": 0.5556,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_326",
+    "human_score": 0.5556,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_318",
+    "human_score": 1.0,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_213",
+    "human_score": 0.4444,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_58",
+    "human_score": 0.3333,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_personachat_595",
+    "human_score": 0.8889,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_personachat_454",
+    "human_score": 1.0,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_136",
+    "human_score": 0.3333,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_176",
+    "human_score": 0.3333,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_9",
+    "human_score": 0.3333,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_personachat_631",
+    "human_score": 0.5556,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_personachat_443",
+    "human_score": 0.4444,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_39",
+    "human_score": 0.3333,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_104",
+    "human_score": 0.4444,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_152",
+    "human_score": 0.3333,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_64",
+    "human_score": 0.5556,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_266",
+    "human_score": 0.4444,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_personachat_363",
+    "human_score": 0.3333,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_268",
+    "human_score": 0.7778,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_personachat_379",
+    "human_score": 0.6667,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_229",
+    "human_score": 0.7778,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_personachat_554",
+    "human_score": 1.0,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_personachat_561",
+    "human_score": 0.6667,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_personachat_548",
+    "human_score": 0.4444,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_personachat_493",
+    "human_score": 0.4444,
+    "deepeval_score": 0.0
+  },
+  {
+    "id": "usr_personachat_444",
+    "human_score": 0.8889,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_124",
+    "human_score": 0.4444,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_49",
+    "human_score": 0.7778,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_17",
+    "human_score": 1.0,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_personachat_446",
+    "human_score": 1.0,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_188",
+    "human_score": 0.8889,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_personachat_491",
+    "human_score": 0.3333,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_170",
+    "human_score": 0.7778,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_211",
+    "human_score": 0.7778,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_personachat_599",
+    "human_score": 1.0,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_personachat_368",
+    "human_score": 0.3333,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_112",
+    "human_score": 0.6667,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_175",
+    "human_score": 0.3333,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_177",
+    "human_score": 0.6667,
+    "deepeval_score": 0.6666666666666666
+  },
+  {
+    "id": "usr_topicalchat_184",
+    "human_score": 0.3333,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_182",
+    "human_score": 0.3333,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_273",
+    "human_score": 0.7778,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_107",
+    "human_score": 1.0,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_133",
+    "human_score": 0.3333,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_37",
+    "human_score": 0.4444,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_291",
+    "human_score": 0.4444,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_40",
+    "human_score": 0.5556,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_344",
+    "human_score": 0.3333,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_34",
+    "human_score": 0.3333,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_238",
+    "human_score": 0.6667,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_105",
+    "human_score": 0.5556,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_personachat_648",
+    "human_score": 1.0,
+    "deepeval_score": 0.0
+  },
+  {
+    "id": "usr_topicalchat_1",
+    "human_score": 0.3333,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_26",
+    "human_score": 0.6667,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_16",
+    "human_score": 0.7778,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_personachat_452",
+    "human_score": 0.3333,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_146",
+    "human_score": 0.5556,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_personachat_431",
+    "human_score": 0.3333,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_8",
+    "human_score": 0.5556,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_168",
+    "human_score": 1.0,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_137",
+    "human_score": 1.0,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_personachat_479",
+    "human_score": 1.0,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_262",
+    "human_score": 0.4444,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_personachat_565",
+    "human_score": 1.0,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_261",
+    "human_score": 0.3333,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_259",
+    "human_score": 0.7778,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_personachat_618",
+    "human_score": 0.3333,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_personachat_568",
+    "human_score": 0.6667,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_123",
+    "human_score": 0.4444,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_6",
+    "human_score": 1.0,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "usr_topicalchat_302",
+    "human_score": 0.8889,
+    "deepeval_score": 1.0
+  }
+]

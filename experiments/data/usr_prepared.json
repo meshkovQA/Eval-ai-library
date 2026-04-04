@@ -1,0 +1,2378 @@
+[
+  {
+    "id": "usr_topicalchat_165",
+    "question": "good afternoon , hope your day is going well ! \n i hope yours is going well , too . baseball is generally played with a bat and ball . \n baseball is my favorite sport out of the big four - az diamondbacks are my team \n\n",
+    "answer": "i am a fan of the cincinnati bengals .\n",
+    "context": [
+      "baseball managers wear uniforms because they are technically able to play for their teams if the need arises\n"
+    ],
+    "human_score": 1.0,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_647",
+    "question": "i cant believe the news i just got . my sister is a stripper\nsounds like my kids ! ha . . stay at home dad here , have to laugh somewhere .\nwe grew up christian so its out of character .\ni bet i am sorry . it is an interesting job choice .\nwhat do you do for work ?\n",
+    "answer": "i work in the tech industry .\n",
+    "context": [
+      "your persona: i'm a stay at home dad.\nyour persona: i spent a decade working in the human services field.\nyour persona: my father used to work for home depot.\nyour persona: horror movies are my favorites.\n"
+    ],
+    "human_score": 1.0,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_560",
+    "question": "hey there i live on a farm .\n",
+    "answer": "i am a piano teacher on the side\n",
+    "context": [
+      "your persona: i am a piano teacher on the side.\nyour persona: i enjoy exploring new parts of the city.\nyour persona: my father played violin professionally.\nyour persona: i play several instruments.\n"
+    ],
+    "human_score": 0.6667,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_65",
+    "question": "hello , how are you this evening ? do you like sports ? \n i m great , and yeah i do like to watch sports , basketball , hockey , soccer and even swimming , what about you ? \n\n",
+    "answer": "i like hockey and soccer . what teams do you support ?",
+    "context": [
+      "_nofact\n"
+    ],
+    "human_score": 1.0,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_350",
+    "question": "he country \n i think it encourages writers in their country , that 's for sure ! i would love to have that incentive to write and publish a book \n well you should do a children 's book then , because they will buy 1,500 of them instead of just the 1,000 lol \n children 's books require less writing and more illustrations . it would be worth it for the extra 500 copies though \n haha i agree with you . do you ever buy stuff from amazon ? do you know why jeff bezos put a clock into a mountain lol \n\n",
+    "answer": "i think that is pretty cool . i wonder if he ever ordered something from the clock that jeff bezos had built into a mountain that should run for 10,000 years .\n",
+    "context": [
+      "amazon ceo jeff bezos built a clock into a mountain that should run for 10,000 years .\n"
+    ],
+    "human_score": 0.6667,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_523",
+    "question": "is as an author , blogger and affiliate marketer . and you ?\noh interesting ! i work with bees . . as a farmer !\ndo you grow crops too ?\nnop . . i should since i love papaya ! are you married ?\nno , i am single . are you single or are you married ?\ni'm married ! . . my lady is a top model from italy ! i aimed high hehe\nhave you ever been to italy ?\nnot yet , it i love to travel . . have you ?\nno . i'd like to go there someday though .\nyep , i was visiting my sis in spain last month , it is nice\n",
+    "answer": "i love to travel . i love it .\n",
+    "context": [
+      "your persona: i work at a school.\nyour persona: a already have a step children.\nyour persona: i just moved into my first home.\nyour persona: i recently moved to this country.\n"
+    ],
+    "human_score": 0.8889,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_337",
+    "question": "hello , did you know that more than 80 % of the earths forests have been destroyed ? \n that is sad . i hope we can reverse that statistic . \n yeah that is really sad . i recently read that earth will be helium free by the end of the 21st century . \n i also think it is interesting that when earth was formed , a day was only 5.5 hours long . i wonder why that changed ? \n i do n't know , maybe it slowed its rotation eventually ? that 's pretty weird . \n\n",
+    "answer": "i 'm not sure . i wonder if the un has an ambassador to aliens .\n",
+    "context": [
+      "in september of 2010 , the united nations appointed official ambassador to extraterrestrials in they case they would ever make contact with earth\n"
+    ],
+    "human_score": 0.5556,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_94",
+    "question": "morning ! are you a comedy fan ? \n morning ! yes , some of it . have you watched anything good recently ? \n kung fu hustle . ever seen it ? it 's hilarious . \n i have n't ! what is it about ? does it have bruce lee in it ? \n no , it 's much more recent . steven chow directed it . bill murray loved it too . \n\n",
+    "answer": "yeah it 's crazy how far the movie has come in a very long time !\n",
+    "context": [
+      "bill murray thinks kung fu hustle is \" the supreme achievement of the modern age in terms of comedy \" .\n"
+    ],
+    "human_score": 0.6667,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_639",
+    "question": " parents are not supporting my dream to become a musician\nmaybe if you build up a following you'll be able to do that full time\ni really wish they would accept it , but they keep telling me to get a real job .\nyeah its hard when you aren't making money\ni hope i'll make it big one day then i'll show them they are wrong\nthat's a good goal do you have a family\nyeah i got my mother and father and a boyfriend .\nis your boyfriend supportive of your music\nyes he's supportive ! do you have any dreams ?\n",
+    "answer": "not really , i just spend most of my time on facebook when i am not working .\n",
+    "context": [
+      "your persona: i work at a nursing home.\nyour persona: i am overweight and unhappy.\nyour persona: my wife left me and took my children.\nyour persona: i spend most of my time on facebook when i am not working.\nyour persona: i don't believe in god.\n"
+    ],
+    "human_score": 1.0,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_260",
+    "question": "p track of celebrity news by any chance \n no i do n't tend to read much about it unless it is front of me like this article . \n okay . do you believe what is the max sentence and fine should this guy get ? \n i think he should have gotten 20 years and be forced to return every cent he collected . what do you think ? \n completely with you on this . to warn others from carrying out such act . \n yes that would be a deterrent . punishments should be harsher to show the judicial system is serious . \n\n",
+    "answer": "i would have to be in the mood . i would be able to work with a baby .\n",
+    "context": [
+      "_nofact\n"
+    ],
+    "human_score": 0.3333,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_290",
+    "question": "ently was fdr \n the wealthiest presidents are jfk , washington , jefferson . i thought trump would be lol \n that surprised me too . where did they get their money from \n inheritance probably . at least their name is not banana like the first president of zimbabwe \n 1 \n yah and the president of indonesia has released 3 pop albums while in office \n is it real ? by the way , are you a fan of taylor swift \n i was until i knew she removed her music from spotify because \" music should not be free \" \n\n",
+    "answer": "i agree . i like her a lot more than her husband and she seems like a great artist .\n",
+    "context": [
+      "taylor swift walks backwards to avoid having her photo taken .\n"
+    ],
+    "human_score": 0.6667,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_417",
+    "question": "ions ! i do not have any kids . the musician lifestyle is too hard for that .\noh that sounds exciting . i just became a pa 3 months ago . my job is boring .\ni'm sorry to hear that . is there something you would rather be doing ?\nmaking documentaries because i love them .\nwow . that sounds pretty interesting . what subjects would you focus on ?\nmy husband and his job\nwow . he must be a pretty interesting guy if you are going to do a documentary .\nhe is the best that's why i let him impregnate me\n",
+    "answer": "i am not sure . i am a musician .\n",
+    "context": [
+      "your persona: my favorite spanish word is trabajo.\nyour persona: i also study languages.\nyour persona: my next language to study is french.\nyour persona: i am a musician.\nyour persona: one of the languages that i am currently studying is spanish.\n"
+    ],
+    "human_score": 0.3333,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_426",
+    "question": "hello hope your having a good night tonight ? i know i am .\nthat is good ! i am watching football highlights .\nreally what teams . and who are you rooting for .\ni'm a green bay packer fan . do you like football ?\nno i am not a fan but my son is .\nhow many kids do you have ?\n2 children both fully grow . they never drop by .\ni have kids too . i also have a couple pets .\npets ? what kind dogs cats fish or birds ?\n",
+    "answer": "what kind of dogs do you have .\n",
+    "context": [
+      "your persona: i have a children and a dogs.\nyour persona: i own a house in florida.\nyour persona: i enjoy american sports.\nyour persona: i am a male.\n"
+    ],
+    "human_score": 0.5556,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_441",
+    "question": "here ?\nyes , but i am allergic to water . this is very unfortunate .\nit is . how do you keep clean ?\ni don't go outside much . i stay clean this way .\ni want to go outside . i managed to break my arm skateboarding so i m stuck indoors .\ni only stream to my 100 , 000 subscribers on twitch . i do not play real sports\n100k is very impressive . how long did it take to get that many ?\nsince i helped make starcraft , my name was already out there . 6 months .\nmade as in developed ? that s very cool .\n",
+    "answer": "just give me a couple fish and some cheeseburgers to grill and i am happy\n",
+    "context": [
+      "your persona: i helped design the game starcraft.\nyour persona: i've an allergy to water.\nyour persona: i am a recluse.\nyour persona: i'm a famous twitch streamer.\nyour persona: i am working on a building a robot to be my body double.\n"
+    ],
+    "human_score": 0.3333,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_588",
+    "question": "ing or baking ? or both ?\nneither , i just like to eat . for example i like hummus\nmy go to snack is chocolate bars\nme too ! i am vegan but still love chocolate\nwhat other hobbies do you have ? i play violin and guitar\ni like extreme sensations , like sky diving and rollercoasters\nyikes i hate roller coasters . they are so scary .\ni am afraid of water , i am not good at swimming\nwhat do you do for work ? i am an electrician just like my dad .\ni like electricity and electronics . i'm a bartender\n",
+    "answer": "i like to eat too much junk food .\n",
+    "context": [
+      "your persona: my father is an electrician.\nyour persona: i play the violin and the guitar.\nyour persona: i love chocolate bars.\nyour persona: i speak chinese.\n"
+    ],
+    "human_score": 0.4444,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_551",
+    "question": " do you have nay hobbies ?\nyes , i like to cook too . but i'm not a pro like you\neven though i love cooking , i also like fishing . do you like to fish ?\nyes , i fly fish . i love it . i wish i could invite my family\nwhy can you not invite your family ?\ni've no family close to me\nthat's a shame . i am sorry . do you enjoy comic books ?\ni like spawn and the x men\ni love spiderman , myself . he is my favorite .\nhe is a good character for sure\nmaybe we should trade comics and go fishing sometime !\n",
+    "answer": "i love to fish ! my parents have a pond on their farm in kentucky .\n",
+    "context": [
+      "your persona: i've zero family that i'm close to.\nyour persona: my favorite food is papaya.\nyour persona: i am a bee farmer.\nyour persona: my name is george.\n"
+    ],
+    "human_score": 0.7778,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_332",
+    "question": "hey , ever use facebook ? \n i do , it is the primary source of news for 30 % of american adults . do you use facebook your self ? \n\n",
+    "answer": "i have , i ve been using it a few times , but i never joined it .\n",
+    "context": [
+      "burger king had a promotion where if you unfriend 10 people on facebook you get a free whopper .\n"
+    ],
+    "human_score": 0.6667,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_223",
+    "question": "lidity to it so that 's interesting . another science fact is that when earth was formed a day was only 5.5 hours long . \n i did n't know that . i wonder why . there is a place on earth where there is less gravity than the rest of the planet . it is the hudson bay region of canada . \n i wonder how much affect that has ? is it enough to change weights in any way ? i wonder . i do also know that we are running out of helium and will essentially be out of the gas by the end of the 21st century . \n\n",
+    "answer": "i wonder if google is still around . i wonder if the employees who wear a propeller hat to new employees are called nooglers .\n",
+    "context": [
+      "new google employees are called ' nooglers ' and are given a propeller beanie cap to wear on their first friday .\n"
+    ],
+    "human_score": 0.3333,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_140",
+    "question": "obably will continue to be . \n lebron is about jordan 's only shoe competitor . did you hear that he has signed a deal with warner bros for a new \" space jam \" sequel ? \n no , i did n't see that . i wonder when it will be released ? \n i 'm not really sure . maybe it will be as good as the original . lebron has a good character about him though . he raised $ 6 million for charity by televising \" the decision . \" \n he is a really good person , i know he has donated a ton of money back to ohio . \n\n",
+    "answer": "yeah , i 'm sure he 's in the top 10 . i ca n't believe she 's the highest paid celebrity .\n",
+    "context": [
+      "judge judy makes $ 123,000 per episode , making her the highest paid celebrity only after lebron james .\n"
+    ],
+    "human_score": 0.4444,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_658",
+    "question": "hi , i produce rap music for artists , i mostly like rap music .\nhi , i also like rap music . mostly somalian rap .\nyeah , my cat likes rap music too , his name is charlie\ni got a cat named ziggy when i moved to the united states . he likes reggae music .\nlooks like my cat and your cat should introduce themselves\n",
+    "answer": "i do not know how to play the guitar .\n",
+    "context": [
+      "your persona: i was born in somalia.\nyour persona: now i live in the united states.\nyour persona: i was forced to marry when i was a.\nyour persona: my aunt helped me escape when i was of.\n"
+    ],
+    "human_score": 0.3333,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_413",
+    "question": " , do you like camping ?\ni do ! i am very different from my sister . she is a pole dancer in a club .\nthat is a big difference . when you camp , how do you cook ?\nwith a campfire and cast iron pans .\ni will love relaxing in nature .\ni just purchased a beautiful red sweater . red is my absolute favorite color .\nthat's perfect for the holidays . i love to sew sweaters and hoodies .\ni love to crochet ! it is time to start thinking about the holidays !\nyes , i sometimes use a loom for crochet too .\n",
+    "answer": "i like to eat fish .\n",
+    "context": [
+      "your persona: i can drive a tractor.\nyour persona: i enjoy listening to classical music.\nyour persona: my favorite color is red.\nyour persona: i'm a christian.\nyour persona: my sister is a pole dancer.\n"
+    ],
+    "human_score": 0.4444,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_10",
+    "question": "miserable season . are you familiar with the nfl ? \n oh i see , i guess i m confusing him with a player of the team , what was his name i think it was khalil mack , and i do follow some games what about you ? \n football is one of my favorite sports and i follow all 32 teams . khalil mack was traded to the bears by john gruden for some picks . they definitely felt his absence . i do n't know why they did n't just resign him . \n maybe he demanded a high salary ? what is your favorite nfl team ? \n\n",
+    "answer": "i think they are more about the third quarter back , it 's like a mini super bowl bowl for a reason\n",
+    "context": [
+      "the raiders sacked goff only once , on a play during which bruce irvin forced a fumble . other than that , the oakland defense could put almost no pressure on goff . the absence of mack , the former nfl defensive player of the year , was glaring . in the first half sunday night , mack had a sack , a forced fumble , a fumble recovery , an interception and a touchdown on defense . he and the bears could not sustain that , and they succumbed to the second - half exploits of packers quarterback aaron rodgers . but mack reinforced what a game - changing , difference - making player he is . he left little doubt that he is worth the six - year , $ 141 million contract given to him by the bears , making him the league 's highest - paid defensive player . [ the nfl teams that have serious reasons to worry , versus the ones that do n't ] mack , while still with the raiders , had been holding out , seeking such a deal . the raiders did n't want to give it to him . they have a $ 125 million quarterback in carr . they have a $ 100 million coach in gruden . they drew the line at handing out another mammoth deal , not wanting to further strain their budget or push the boundaries of the salary cap . they regarded the king 's ransom of draft picks put forth by the bears , including a pair of first - rounders , as an offer they could n't refuse . in truth , they could have refused it .\n"
+    ],
+    "human_score": 0.5556,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_28",
+    "question": "w that works . \n i ve done it traveling , you ve got to really know the team and all of the players names . it was so much harder . \n do you have a favorite nfl team . like i said , i lived in dc for a while so kind of follow them . now in northern ohio , the browns are a difficult team to support . \n i feel you there , living in florida here . dolphins are hard to root for and feel proud . \n it could be worse , i read about this team that lost 220 - 0 . it would be hard to watch to the end . \n\n",
+    "answer": "i 'm surprised georgia tech cumberland was still on that day . i do n't think i 'd ever doubt it .\n",
+    "context": [
+      "- that the highest score ever in a football game occurred in 1916 when georgia tech defeated cumberland 222 - 0\n"
+    ],
+    "human_score": 0.6667,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_255",
+    "question": "college basketball for over a decade . \n kareem abdul - jabbar is an american retired professional basketball player who played 20 seasons in the national basketball association for the milwaukee bucks and the los angeles lakers . \n james naismith , the inventor of basketball , is the only losing coach in the university of kansas 's history \n james naismith wrote and developed the game 's original thirteen rules and , through the ymca network , quickly spread the news throughout the country . \n\n",
+    "answer": "yeah i guess so , i wonder if they share it for the state or if it is\n",
+    "context": [
+      "in 39 out of 50 states , the highest paid state employee is either a college football or basketball coach .\n"
+    ],
+    "human_score": 0.3333,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_181",
+    "question": " impossible to separate two of them with their pages fully overlapped \n lol i never tried but i believe you . do you like clothing ? did you know polo shirts were actually meant for tennis players ? \n i did nt know that , always thought it was meant for the polo sport or maybe that the polo brand created them \n same here , yeah a tennis player created them \n i looks like polo player took the credit then , did you hear about the cultural revolution in china ? \n no i have nt what s that about ? \n\n",
+    "answer": "i think it was the pallbearers at billy mays funeral , i think that was a great funeral\n",
+    "context": [
+      "at billy mays ' funeral the pallbearers wore blue shirts and khaki pants\n"
+    ],
+    "human_score": 0.3333,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_186",
+    "question": "eat . \n can you imagine the movie speed on that bus ! ! ! ! holy smokes ! \n ha ha , yes that would change that movie quite a bit . back to iceland , most do n't have cars and travel between towns by flight ! \n really . seems a little overkill but what do i know ... i want to go there and see the northern lights some day . \n that would be a beautiful sight . off topic but how do you feel about sharks ? \n i 'm for em ! \n they are very interesting . did you know that they do n't have rib cages ? \n\n",
+    "answer": "really ? i think they are all cariledge , no ? \n",
+    "context": [
+      "_nofact\n"
+    ],
+    "human_score": 0.8889,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_357",
+    "question": "do you know much about the presidents ? \n some stuff . do you know who the three wealthiest ones in the us are ? \n yes that us jfk , washington and jefferson \n yeah . do you know what the first president of zimbabwe was called ? \n he was called president banana \n did you know the white house is smaller than the guest house ? \n wow cool . do you know how the vp used to be elected ? \n yes that was the runner up during elections \n\n",
+    "answer": "yeah i guess that means we are not the ones that are elected to be honest\n",
+    "context": [
+      "the president of indonesia has released 3 pop albums while in office\n"
+    ],
+    "human_score": 0.6667,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_63",
+    "question": "hello , how are you this evening ? do you like sports ? \n i m great , and yeah i do like to watch sports , basketball , hockey , soccer and even swimming , what about you ? \n\n",
+    "answer": "i do not but i am more into swimming myself . i do n't like sports , but i do know there are some really boring swimming competitions\n",
+    "context": [
+      "_nofact\n"
+    ],
+    "human_score": 0.7778,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_20",
+    "question": "'t know the english would want with it . i bet the english do n't collect \" rounders \" cards the way we collect baseball cards . \n right ? i wonder if they have cricket cards lol ? i think they have stickers for soccer . \n some guy found $ 3 million dollars of baseball cards from the 1900s . i wonder what he did with the money . \n yeah . that 's an amazing find . i heard they had been hidden since the 40s . \n thanks , grandpa ! i bet grandpa wishes he had cashed them in before he cashed out . \n\n",
+    "answer": "i wonder if he was a fan of his music ?\n",
+    "context": [
+      "_nofact\n"
+    ],
+    "human_score": 0.3333,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_2",
+    "question": "n like animated movies , but they 're worth checking out . \n i do n't watch them very often . apparently there was a showing of the recent film in a park in d.c . that 's one u.s . city i have n't been to \n sadly , i have n't been to dc either , although i 've always wanted to visit there . apparently there 's a lot of interesting going down this summer . they 're having a crab feast at the navy - marine corps stadium . they 'll have 100 gallons of crab soup ! can you imagine that much soup ? \n\n",
+    "answer": "i have n't but i have heard that a lady gaga has a white blood drive . i think it 's interesting that the president of spotify has a jazz concert .\n",
+    "context": [
+      "from left , emma baker , daniel saperstein and taylor mulitz of flasher will perform this summer 's final fort reno concert . ( jared soares for the washington post ) monday , july 30 25th birthday celebration at national postal museum : celebrate 25 years of this institution devoted to the long history of the u.s . postal service with daytime festivities that include cupcakes , birthday postcards , a photo booth and a special scavenger hunt with prizes . 11 a.m. to 2 p.m. free . tuesday , july 31 \" the color purple \" at kennedy center : the tony award - winning musical revival , based on the pulitzer prize - winning alice walker novel of the same name , features jazz , ragtime , gospel and blues with a story about an african american woman named celie surviving poverty in the south during the 1930s . through aug . 26 . $ 69-$149 . ask a harry potter scholar at southeast neighborhood library : come to this talk from tolanda henderson , a librarian from george washington university , who has used the j.k . rowling book series as a text in academia . commune with other muggles who prove that it 's not just kids and young adults who obsess about the boy who lived . 7 p.m. free . wednesday , aug . 1 rico nasty at the fillmore silver spring : two summers ago , rico nasty was a teenage loudmouth from the maryland suburbs , generating buzz on youtube for spitting surly , rainbow - tinted rhymes . now , after signing a deal with atlantic records , the 21-year - old singer is on her way to becoming one of the brightest voices in rap music .\n"
+    ],
+    "human_score": 0.5556,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_632",
+    "question": "team , won saturday night .\ni'm an ohio state fan . do you skate ?\nno . too busy with all of my 19 dogs and 3 sisters .\noh wow . that is a lot of dogs .\nyes love them almost as my tacos . no i love my dogs more .\nmy fiance makes a killer fish taco with cilantro lime slaw .\nwow . my sisters and i love chicken tacos .\nthose are good too , i live in cali . along the ocean .\ni live in middle of alabama . do not get to ocean much .\ni could not stand to live inland , the ocean runs through my veins .\n",
+    "answer": "i live in alabama . i live in alabama .\n",
+    "context": [
+      "your persona: i love dogs.\nyour persona: i live in alabama.\nyour persona: i have three sisters.\nyour persona: i like tacos.\n"
+    ],
+    "human_score": 0.5556,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_403",
+    "question": "ng for jobs , i want to work in a restaurant .\nthat is amazing . good luck . i do not like fashion though .\ni get you , my favorite rapper is pretty stylish , travis scott .\ni totally like travis . i liked doing chemistry too\nawesome . my mom wanted to be a chemist , but ended up a dentist ! go figure !\nit seems to be hard to be a chemist . what do you do ?\nunemployed at the moment , i really want to work at a snazzy restaurant .\nyou will get it . do not worry . i now work in a nice bookstore .\n",
+    "answer": "i am a student , but i am a student .\n",
+    "context": [
+      "your persona: my mother is a dentist.\nyour persona: my favourite artist is travis scott.\nyour persona: i like playing basketball.\nyour persona: i'm currently looking for a job preferably at a restaurant.\n"
+    ],
+    "human_score": 0.3333,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_80",
+    "question": "sports i would rather play than watch . the japanese are such big fans of baseball that they would probably take the name \" national pastime \" from the americans if they could \n yea they are usually surprised to find so many americans like it too . \n enough that people used to collect baseball cards . one man found a collection in his grandfather 's attic that was worth three million dollars \n that s a lot of money . are any managers cards worth anything ? they do wear the uniform after all . \n\n",
+    "answer": "i would have to agree with you . i do n't know much about the baseball cards , but i know a lot about it .\n",
+    "context": [
+      "doug harvey , a major league baseball umpire for 31 years whose calls of balls or strikes , fair or foul , safe or out were delivered with such gusto and authority that he was known as \" god \" to thousands of ballplayers , died jan . 13 in visalia , calif . he was 87 . major league baseball announced the death but did not disclose the cause . according to media accounts , he had battled throat cancer in the 1990s and later had several strokes . mr . harvey worked 4,673 ballgames from 1962 to 1992 , mlb said , including five world series , nine national league championship series and six all - star games . for 18 years , he was an umpiring crew chief . hundreds of thousands of times he made on - the - spot calls on whether a runner had reached base a millisecond before a throw from a fielder , or whether a pitched ball traveling 90 mph had grazed the veneer of a loosely defined strike zone or missed altogether . the outcome of baseball championships rested on such rulings . players and fans held strong and differing opinions on what the umpire saw , and they were not shy about telling him when they saw it differently . in 2009 , doug harvey , right , jokes about throwing former st . louis cardinals manager whitey herzog out of a game . ( michael conroy / ap ) to mr . harvey , arguments with the umpires were a part of the game , but there were limits and there could be no doubt about who was boss . \" i would listen for 20 seconds , \" he once told the new york times . \" i would count to 20 to myself . and i would listen to everything you had to say . \"\n"
+    ],
+    "human_score": 0.3333,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_378",
+    "question": " own two of them .\ni volunteer at a shelter , they are adorable . what do you do ?\ni'm a teacher and i love children .\nkids are great . i donate a lot of my income to several childrens programs .\ni would do that more often too if i had a larger income .\ni do not have a large income , just believe in helping others .\ndo you like gardening ? i own a garden .\ni do love gardening . i work in a shipyard .\ni love the smell of the flowers in the air .\ni do too , it is one of lifes greatest pleasures .\n",
+    "answer": "i like to eat too much junk food .\n",
+    "context": [
+      "your persona: i'm a woman.\nyour persona: i work as a school teacher.\nyour persona: i attend church every week.\nyour persona: i enjoy gardening and walking outdoors.\nyour persona: i have a dogs.\n"
+    ],
+    "human_score": 0.3333,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_317",
+    "question": "good morning ! have you seen the incredibles 2 movie ? \n yes . i love everything pixar is a part of doing ! \n the director for the 2nd movie actually used artists who were either likely to quit or get fired from pixar . \n cool . do you know who wrote that movie ? \n\n",
+    "answer": "i 'm not sure . i know that the director actually voiced one of the characters , because the production team could n't find anybody better than him !",
+    "context": [
+      "edna mode , the superhero costume designer in the incredibles , is voiced by brad bird , the film 's director . bird voiced edna during storyboarding sessions , after which the production team could n't find an actress who could do the voice better than him .\n"
+    ],
+    "human_score": 0.8889,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_433",
+    "question": "my name is joan , and i live in illinois . i'm a kindergarten teacher .\nhello joan ! i'm chrissy from minnesota . i'm building a robot for my work .\nthat sounds exciting ! i'm clumsy with electronics .\n",
+    "answer": "i am sorry to hear that . i am a nurse .\n",
+    "context": [
+      "your persona: i helped design the game starcraft.\nyour persona: i'm working on a building a robot to be my body double.\nyour persona: i have an allergy to water.\nyour persona: i am a famous twitch streamer.\nyour persona: i am a recluse.\n"
+    ],
+    "human_score": 0.7778,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_506",
+    "question": "hello , how are you doing today ?\n",
+    "answer": "i am well , how are you ?\n",
+    "context": [
+      "your persona: i just broke up with boyfriend two months ago.\nyour persona: i have a pet fish.\nyour persona: my favorite color is orange.\nyour persona: i turned 18 years old yesterday.\n"
+    ],
+    "human_score": 1.0,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_497",
+    "question": "good evening . how are you ?\n",
+    "answer": "i am doing well . how are you ?\n",
+    "context": [
+      "your persona: my brother is older than me.\nyour persona: i hate math class.\nyour persona: i ride the bus to school.\nyour persona: i'm on the soccer team.\nyour persona: i am 13 years old.\n"
+    ],
+    "human_score": 1.0,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_264",
+    "question": "do you like football ? \n i love it . do you know what color is the u of iowa visitor locker room ? \n yes it is pink but i a not sure why they chose that color \n i wonder if it is supposed to have some effect on them \n i wonder too . bowling was more popular than football in the 60s \n\n",
+    "answer": "yes that is why bowlers made way more than them \n",
+    "context": [
+      "in the 1960 's top bowlers made twice as much as top football stars\n"
+    ],
+    "human_score": 0.8889,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_68",
+    "question": "likes to bite \n i envy that fish 's ability to eat . that is a glorious spectacle . i would go to the buffet everyday . \n buffet is my favorite kind of restaurant so yea , did you hear about that breed of jellyfish , the one that is immortal ! \n i did not . i wonder what it does all day with its unending life . must get kinda boring . who does it talk to ? what celebrities does it follow ? \n i agree , must be a really boring life , still , interesting species might be worthwhile to study them \n\n",
+    "answer": "i think it 's because of the genes that are used to the same as the zebrafish .\n",
+    "context": [
+      "84 per cent of genes known to be associated with human diseases have counterparts in the zebrafish\n"
+    ],
+    "human_score": 0.5556,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_393",
+    "question": "hey . where are you from ? i'm from a farm in wisconsin\ni love ice cream what is your favorite ? mine is chocolate\nmine is mint chocolate chip\n",
+    "answer": "i like the color red . i like the color blue .\n",
+    "context": [
+      "your persona: my wife and kids are the best.\nyour persona: my favorite ice cream flavor is chocolate.\nyour persona: i've three children.\nyour persona: i'm a plumber.\nyour persona: i love going to the park with my three children and my wife.\n"
+    ],
+    "human_score": 0.3333,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_411",
+    "question": " , do you like camping ?\ni do ! i am very different from my sister . she is a pole dancer in a club .\nthat is a big difference . when you camp , how do you cook ?\nwith a campfire and cast iron pans .\ni will love relaxing in nature .\ni just purchased a beautiful red sweater . red is my absolute favorite color .\nthat's perfect for the holidays . i love to sew sweaters and hoodies .\ni love to crochet ! it is time to start thinking about the holidays !\nyes , i sometimes use a loom for crochet too .\n",
+    "answer": "i like red . i dyed my hair red .\n",
+    "context": [
+      "your persona: i can drive a tractor.\nyour persona: i enjoy listening to classical music.\nyour persona: my favorite color is red.\nyour persona: i'm a christian.\nyour persona: my sister is a pole dancer.\n"
+    ],
+    "human_score": 0.3333,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_22",
+    "question": "'t know the english would want with it . i bet the english do n't collect \" rounders \" cards the way we collect baseball cards . \n right ? i wonder if they have cricket cards lol ? i think they have stickers for soccer . \n some guy found $ 3 million dollars of baseball cards from the 1900s . i wonder what he did with the money . \n yeah . that 's an amazing find . i heard they had been hidden since the 40s . \n thanks , grandpa ! i bet grandpa wishes he had cashed them in before he cashed out . \n\n",
+    "answer": "he was an all star and did the money . i think it 's interesting . i wonder how many albums he had .\n",
+    "context": [
+      "_nofact\n"
+    ],
+    "human_score": 0.3333,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_231",
+    "question": "en either or both of them ? \n i have seen both and i must say i liked the first one better althought the cast of the 2nd part got an upgrade \n i 'm not familiar with the cast of the second one . are they big name actors / actresses ? \n yeah have you watched breaking bad ? well the actor that played saul is one of the new voices \n oh okay ! say , i heard that the director did one of the voices too . i think he did edna mode . \n yeah he did , its interesting how he picked the cast for the movie \n\n",
+    "answer": "yes , he was , and was also in the movie 13 years before the movie came out , i think it was pretty good .\n",
+    "context": [
+      "13 years before the movie \" incredibles ii \" came out , there was a sequel to the first incredibles that exists in a video game form , and is called \" the incredibles : rise of the underminer \" .\n"
+    ],
+    "human_score": 0.5556,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_195",
+    "question": "f you are left handed as a qb \n yeah . and baker mayfield once considered quitting to become a competitive gamer \n i also think brady johnson is impressive as well since he has even thrown a touchdown pass to himself \n that i would like to see . do you know who created the circular huddle ? \n i do n't know his name , but i think he was deaf right ? what is his name ? \n yeah he was deaf . his name was paul hubbard \n in any case , i like following players like tom brady , brady jonson , and etc \n\n",
+    "answer": "yeah i guess so . did you know women can play too ?\n",
+    "context": [
+      "the nfl has no written rule against female players ; women would in fact be allowed if they met the league 's eligibility requirements .\n"
+    ],
+    "human_score": 0.6667,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_323",
+    "question": "are you a fan of the nfl ? \n i definitely am . watching the super bowl has become a family tradition . what about you ? \n\n",
+    "answer": "i watch a few games here and there . did you know some teams do n't allow cheerleaders to eat in the same restauraunts as nfl players ? they actually have to leave if any nfl players walk in . ",
+    "context": [
+      "new orleans saints cheerleaders are forbidden from eating in the same restaurant as any nfl player and if they are already dining at a restaurant and an nfl player comes in after , the cheerleaders are required to leave .\n"
+    ],
+    "human_score": 1.0,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_659",
+    "question": "hi , i produce rap music for artists , i mostly like rap music .\nhi , i also like rap music . mostly somalian rap .\nyeah , my cat likes rap music too , his name is charlie\ni got a cat named ziggy when i moved to the united states . he likes reggae music .\nlooks like my cat and your cat should introduce themselves\n",
+    "answer": "good idea ! i've only recently moved to the united states , so i don't know many people . neither does my cat .\n",
+    "context": [
+      "your persona: i was born in somalia.\nyour persona: now i live in the united states.\nyour persona: i was forced to marry when i was a.\nyour persona: my aunt helped me escape when i was of.\n"
+    ],
+    "human_score": 1.0,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_628",
+    "question": "hi ! do you have a house in the clouds ?\nno but i'd love to get one\ni do . do you have any superpowers ?\nnice ! when i wear my motorbike helmet i do feel like a super hero sometimes\ncan you make time stop while wearing your helmet ?\ni wish i could but i cant . do you have a motorbike ?\nno , i have a pink bike though .\n",
+    "answer": "i like the color red . i like red .\n",
+    "context": [
+      "your persona: i wear a motorbike helmet to protect my head.\nyour persona: my main transportation is my motorbike.\nyour persona: i've light skin with big brown eyes.\nyour persona: its red with blue stripe so it shiny when i race.\n"
+    ],
+    "human_score": 0.5556,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_585",
+    "question": "ing or baking ? or both ?\nneither , i just like to eat . for example i like hummus\nmy go to snack is chocolate bars\nme too ! i am vegan but still love chocolate\nwhat other hobbies do you have ? i play violin and guitar\ni like extreme sensations , like sky diving and rollercoasters\nyikes i hate roller coasters . they are so scary .\ni am afraid of water , i am not good at swimming\nwhat do you do for work ? i am an electrician just like my dad .\ni like electricity and electronics . i'm a bartender\n",
+    "answer": "do you speak any languages ? i'm teaching myself chinese\n",
+    "context": [
+      "your persona: my father is an electrician.\nyour persona: i play the violin and the guitar.\nyour persona: i love chocolate bars.\nyour persona: i speak chinese.\n"
+    ],
+    "human_score": 0.6667,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_299",
+    "question": " likely to watch documentaries or movies \n same here . i like hbo for some of the other things they air but not got . \n i do nt even know what else they air , i truly do nt watch much tv at all . maybe the simpsons once a while \n i have watched the simpsons since i was a kid ; bart himself has only missed one episode this whole time ; amazing ! \n i know right , seems crazy to have him in almost every one then to forget him completely in that one \n do you still watch things on traditional tv ? \n\n",
+    "answer": "rarely . i usually just use netflix .",
+    "context": [
+      "_nofact\n"
+    ],
+    "human_score": 1.0,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_292",
+    "question": "ently was fdr \n the wealthiest presidents are jfk , washington , jefferson . i thought trump would be lol \n that surprised me too . where did they get their money from \n inheritance probably . at least their name is not banana like the first president of zimbabwe \n 1 \n yah and the president of indonesia has released 3 pop albums while in office \n is it real ? by the way , are you a fan of taylor swift \n i was until i knew she removed her music from spotify because \" music should not be free \" \n\n",
+    "answer": "yeah i guess she walks backwards so maybe that she should not be free .\n",
+    "context": [
+      "taylor swift walks backwards to avoid having her photo taken .\n"
+    ],
+    "human_score": 0.5556,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_129",
+    "question": "ucks and jabari parker > \n no i did n't . what did he say ? \n that they should n't consider signing him . i agree . \n what made him such a bad player last year ? \n he did n't do much for the team and was overpaid . \n has he been injured ? i think they are all over paid personally . i mean they make millions of dollars . \n for sure , he had to acl injuries so he is definitely injury prone . you know who is better , reggie miller ! \n i 'm not familiar with him . does he play for the bucks too ? \n\n",
+    "answer": "yeah i think he was a great player , he was a great player , his sister had a sister who was always better than him\n",
+    "context": [
+      "reggie miller , nba hall of famer , could n't escape his older sister cheryl 's shadow while in high school . on january 26 , 1982 , he scored a career high 40 points . he tried bragging about it on the car ride home , only to find out cheryl scored 105 points and broken 8 national records !\n"
+    ],
+    "human_score": 0.7778,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_638",
+    "question": " parents are not supporting my dream to become a musician\nmaybe if you build up a following you'll be able to do that full time\ni really wish they would accept it , but they keep telling me to get a real job .\nyeah its hard when you aren't making money\ni hope i'll make it big one day then i'll show them they are wrong\nthat's a good goal do you have a family\nyeah i got my mother and father and a boyfriend .\nis your boyfriend supportive of your music\nyes he's supportive ! do you have any dreams ?\n",
+    "answer": "i do not really have a favorite . i like to go fishing .\n",
+    "context": [
+      "your persona: i work at a nursing home.\nyour persona: i am overweight and unhappy.\nyour persona: my wife left me and took my children.\nyour persona: i spend most of my time on facebook when i am not working.\nyour persona: i don't believe in god.\n"
+    ],
+    "human_score": 0.3333,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_558",
+    "question": "how are you doing today\nhello , how are you today ?\ni'm doing really well\ni'm doing great , it is rainy here .\nwhat are you doing with your day\n",
+    "answer": "i am a student , i am a student .\n",
+    "context": [
+      "your persona: i'm an animal activist.\nyour persona: i have rainbow hair.\nyour persona: i spend my time bird watching with my cats.\nyour persona: my age is too old to say.\nyour persona: the holidays make me depressed.\n"
+    ],
+    "human_score": 0.3333,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_567",
+    "question": "i just got back from my salsa dance lessons\nthat sounds like a really fun time . i was just meditating\nthat is so relaxing . my lite brite patterns are relaxing too\n",
+    "answer": "i love to eat it with my family\n",
+    "context": [
+      "your persona: i quit my job to pursue my spirituality full time.\nyour persona: i'm a buddhist.\nyour persona: i have not spoken in three months.\nyour persona: i like meditation.\nyour persona: i live in alaska.\n"
+    ],
+    "human_score": 0.5556,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_143",
+    "question": "obably will continue to be . \n lebron is about jordan 's only shoe competitor . did you hear that he has signed a deal with warner bros for a new \" space jam \" sequel ? \n no , i did n't see that . i wonder when it will be released ? \n i 'm not really sure . maybe it will be as good as the original . lebron has a good character about him though . he raised $ 6 million for charity by televising \" the decision . \" \n he is a really good person , i know he has donated a ton of money back to ohio . \n\n",
+    "answer": "he 's the highest paid celebrity , followed by judge judy who makes $ 123,000 per episode !",
+    "context": [
+      "judge judy makes $ 123,000 per episode , making her the highest paid celebrity only after lebron james .\n"
+    ],
+    "human_score": 1.0,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_361",
+    "question": " open relationship !\niol well i wish i was brave enough to do that\nmy father was a salesman , helps my dog walking business now\nthat is nice i've a motorbike don't know what car to get for winter\nvery very cool . sounds fun\nyes i had them put red with blue stripes to be shinny for when racing\nso is my dog , wow so cool\nso what do you do in your spare time ?\nlead singer for a band , music teacher\nwow nice are you really good ?\nmillions of plays on soundcloud\nreally would you share or are you shy\n",
+    "answer": "i know what you mean spend most nights cuddling my dog and star watching\n",
+    "context": [
+      "your persona: i also have a dog walking business.\nyour persona: i've three dogs.\nyour persona: my father was a door to door salesman.\nyour persona: i am in an open polyamorous relationship.\nyour persona: i like to watch the olympics.\n"
+    ],
+    "human_score": 0.3333,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_349",
+    "question": "he country \n i think it encourages writers in their country , that 's for sure ! i would love to have that incentive to write and publish a book \n well you should do a children 's book then , because they will buy 1,500 of them instead of just the 1,000 lol \n children 's books require less writing and more illustrations . it would be worth it for the extra 500 copies though \n haha i agree with you . do you ever buy stuff from amazon ? do you know why jeff bezos put a clock into a mountain lol \n\n",
+    "answer": "i think he is a great ceo , he is a great ceo and a genius\n",
+    "context": [
+      "amazon ceo jeff bezos built a clock into a mountain that should run for 10,000 years .\n"
+    ],
+    "human_score": 0.7778,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_575",
+    "question": "hi . i just got done eating vanilla ice cream . no self control with it . you ?\ni'm the same way with rap\nrap is cool . my cats like it , both of them .\ni produce rap for people .\nmaybe you could make a rap about my 1000 hats . i'm a collector .\nsure while riding in my honda civic\nwhen you finish that you could make a rap about my 1992 olympic gold .\nthen we can celebrate with pizza\nyum ! and vanilla ice cream .\n",
+    "answer": "right is it not the best ?\n",
+    "context": [
+      "your persona: my pets name is charlie.\nyour persona: i drive a 2015 honda civic.\nyour persona: i listen to rap music.\nyour persona: i produce music for artists.\nyour persona: my favourite food is pizza.\n"
+    ],
+    "human_score": 1.0,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_254",
+    "question": "college basketball for over a decade . \n kareem abdul - jabbar is an american retired professional basketball player who played 20 seasons in the national basketball association for the milwaukee bucks and the los angeles lakers . \n james naismith , the inventor of basketball , is the only losing coach in the university of kansas 's history \n james naismith wrote and developed the game 's original thirteen rules and , through the ymca network , quickly spread the news throughout the country . \n\n",
+    "answer": "i wonder if the highest paid employees are college football or basketball coaches ?\n",
+    "context": [
+      "in 39 out of 50 states , the highest paid state employee is either a college football or basketball coach .\n"
+    ],
+    "human_score": 0.6667,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_517",
+    "question": " just won homecoming queen !\ngreat ! i love anything red especially tractors . wink wink !\ni enjoy running do you ? i hope to run a 5k this year .\ni had to run for my life one time . you ever danced to bach ?\ni listen to classical music , when i do my homework . i am currently a straight a student !\nwow ! i get paid to pole dance . do you get paid to run ?\nno i do track and field in school and i want to start racing for charity .\ni see . you own a tractor ? i like driving tractors . wink wink .\n",
+    "answer": "i am a college student . i am in high school .\n",
+    "context": [
+      "your persona: my current goal is to run a k.\nyour persona: i make straight as in school.\nyour persona: i won homecoming queen this year.\nyour persona: when i grow up i want to be a physical therapist.\nyour persona: i am currently in high school.\n"
+    ],
+    "human_score": 0.4444,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_77",
+    "question": "hi . i heard an interesting fact recently . did you know that the three richest presidents ever were washington , jefferson , and jfk ? \n hello , they must have accomplished to people 's satisfactions . \n i guess so . you know , in different countries a president has different roles and functions . \n i bet they do . the first president was named president banana in zimbabwe . \n\n",
+    "answer": "i wonder whether he liked bananas ! before 1805 , the vice president was chosen by taking the runner up in the election . imagine that !",
+    "context": [
+      "until 1805 in the us , the runner up in a presidential election automatically became the vice president\n"
+    ],
+    "human_score": 1.0,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_401",
+    "question": "ng for jobs , i want to work in a restaurant .\nthat is amazing . good luck . i do not like fashion though .\ni get you , my favorite rapper is pretty stylish , travis scott .\ni totally like travis . i liked doing chemistry too\nawesome . my mom wanted to be a chemist , but ended up a dentist ! go figure !\nit seems to be hard to be a chemist . what do you do ?\nunemployed at the moment , i really want to work at a snazzy restaurant .\nyou will get it . do not worry . i now work in a nice bookstore .\n",
+    "answer": "i actually wait tables in a restaurant , you ?\n",
+    "context": [
+      "your persona: my mother is a dentist.\nyour persona: my favourite artist is travis scott.\nyour persona: i like playing basketball.\nyour persona: i'm currently looking for a job preferably at a restaurant.\n"
+    ],
+    "human_score": 0.5556,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_623",
+    "question": "ere for when i work !\nmy goal is to run a k !\nwow ! that's very impressive to me\ni want to become a physical therapist\nthat'sn't a bad idea ! make a lot of money\nwhat is your dream job ?\nmy dream job is professional baseball . i currently play baseball at lsu\ni think that sounds pretty cool\ni am excited ! i am expected to be drafted this year !\nthat's cool ! i won homecoming queen\nwow ! that's impressive ! i bet you are good looking !\nyes i am quite beautiful\nadd me on snapchat ! i love the app\n",
+    "answer": "i like to go to the gym and listen to music .\n",
+    "context": [
+      "your persona: my current goal is to run a k.\nyour persona: i make straight as in school.\nyour persona: i won homecoming queen this year.\nyour persona: i'm currently in high school.\nyour persona: when i grow up i want to be a physical therapist.\n"
+    ],
+    "human_score": 0.4444,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_375",
+    "question": " own two of them .\ni volunteer at a shelter , they are adorable . what do you do ?\ni'm a teacher and i love children .\nkids are great . i donate a lot of my income to several childrens programs .\ni would do that more often too if i had a larger income .\ni do not have a large income , just believe in helping others .\ndo you like gardening ? i own a garden .\ni do love gardening . i work in a shipyard .\ni love the smell of the flowers in the air .\ni do too , it is one of lifes greatest pleasures .\n",
+    "answer": "you life is so short . some time you forget about the little things .\n",
+    "context": [
+      "your persona: i'm a woman.\nyour persona: i work as a school teacher.\nyour persona: i attend church every week.\nyour persona: i enjoy gardening and walking outdoors.\nyour persona: i have a dogs.\n"
+    ],
+    "human_score": 1.0,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_214",
+    "question": "movie \n that 's cool ! did you also know that there is a deaf rapper who rhymes in sign language . that is awesome \n some rappers have a sign language translator on stage with them . i 've seen it on youtube ! \n that 's great ! the world 's fastest rapper noclue raps 14.1 syllables per second \n korean rappers invented a new type of freestyle , it 's called \" compliment battle \" . \n really , do they do compliments ? \n i do nt know , but i am visiting korea in a few , so maybe i will find out . \n\n",
+    "answer": "that sounds about right , that sounds really annoying lol , i love how it can translate into sound like the sun and the sun\n",
+    "context": [
+      "there is a radio station that translates solar activity into sound and you can listen live to the sun 's music\n"
+    ],
+    "human_score": 0.4444,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_457",
+    "question": "hi my name is jill how are you today ?\n",
+    "answer": "i'm great . how are you ?\n",
+    "context": [
+      "your persona: i am 19 and i cannot wait to move out 19 my parents home.\nyour persona: i just want to have fun with my friends.\nyour persona: i do not drink or do drugs or anything.\nyour persona: i work took i've a part time job at burger king.\n"
+    ],
+    "human_score": 1.0,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_533",
+    "question": "hello , tell me about yourself while i take a break from my programming studies .\nno kidding ! i am in it ! same gig for 15 years !\nnice ! right now i coach swimming while i finish up school . do you like music ?\ni enjoy country like any real man .\ni not invite you to see blood spot with me then . where are you from ?\n",
+    "answer": "i'm from ohio . i love to go out to the beach .\n",
+    "context": [
+      "your persona: i own a house in florida.\nyour persona: i work in it and have been at the same company for 15 years.\nyour persona: i have a children and a dogs.\nyour persona: i'm a male.\n"
+    ],
+    "human_score": 1.0,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_190",
+    "question": "eat . \n can you imagine the movie speed on that bus ! ! ! ! holy smokes ! \n ha ha , yes that would change that movie quite a bit . back to iceland , most do n't have cars and travel between towns by flight ! \n really . seems a little overkill but what do i know ... i want to go there and see the northern lights some day . \n that would be a beautiful sight . off topic but how do you feel about sharks ? \n i 'm for em ! \n they are very interesting . did you know that they do n't have rib cages ? \n\n",
+    "answer": "i have no clue , they are really strong creatures\n",
+    "context": [
+      "_nofact\n"
+    ],
+    "human_score": 1.0,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_321",
+    "question": "are you a fan of the nfl ? \n i definitely am . watching the super bowl has become a family tradition . what about you ? \n\n",
+    "answer": "yeah , i 'm a fan of the nfl .\n",
+    "context": [
+      "new orleans saints cheerleaders are forbidden from eating in the same restaurant as any nfl player and if they are already dining at a restaurant and an nfl player comes in after , the cheerleaders are required to leave .\n"
+    ],
+    "human_score": 0.6667,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_425",
+    "question": "hello hope your having a good night tonight ? i know i am .\nthat is good ! i am watching football highlights .\nreally what teams . and who are you rooting for .\ni'm a green bay packer fan . do you like football ?\nno i am not a fan but my son is .\nhow many kids do you have ?\n2 children both fully grow . they never drop by .\ni have kids too . i also have a couple pets .\npets ? what kind dogs cats fish or birds ?\n",
+    "answer": "i've two dogs . what about you ?\n",
+    "context": [
+      "your persona: i have a children and a dogs.\nyour persona: i own a house in florida.\nyour persona: i enjoy american sports.\nyour persona: i am a male.\n"
+    ],
+    "human_score": 1.0,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_110",
+    "question": "in fantasy football . i am sure that moore has had some good games and some poor ones . alex smith took so many ap tests in high school that entered college as a junior . \n he 's pretty smart . it would take a lot of ap courses to knock out the first two years of college like that \n it sure would . of course , qbs need to be somewhat smart . baker mayfield who won the heisman at oklahoma university almost quite football to go into competitive gaming . he could beat the entire team in halo 3 . \n\n",
+    "answer": "i think he would have done well in halo 3 . he is the only qb in history to throw a touchdown pass to himself .\n",
+    "context": [
+      "superbowl winning quarterback , brad johnson , is the only quarterback in nfl history to throw a touchdown pass ... to himself .\n"
+    ],
+    "human_score": 0.7778,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_82",
+    "question": "sports i would rather play than watch . the japanese are such big fans of baseball that they would probably take the name \" national pastime \" from the americans if they could \n yea they are usually surprised to find so many americans like it too . \n enough that people used to collect baseball cards . one man found a collection in his grandfather 's attic that was worth three million dollars \n that s a lot of money . are any managers cards worth anything ? they do wear the uniform after all . \n\n",
+    "answer": "that is crazy , maybe if the guy who worked for his grandpa was a lawyer they could have and all worked on the d.c election .\n",
+    "context": [
+      "doug harvey , a major league baseball umpire for 31 years whose calls of balls or strikes , fair or foul , safe or out were delivered with such gusto and authority that he was known as \" god \" to thousands of ballplayers , died jan . 13 in visalia , calif . he was 87 . major league baseball announced the death but did not disclose the cause . according to media accounts , he had battled throat cancer in the 1990s and later had several strokes . mr . harvey worked 4,673 ballgames from 1962 to 1992 , mlb said , including five world series , nine national league championship series and six all - star games . for 18 years , he was an umpiring crew chief . hundreds of thousands of times he made on - the - spot calls on whether a runner had reached base a millisecond before a throw from a fielder , or whether a pitched ball traveling 90 mph had grazed the veneer of a loosely defined strike zone or missed altogether . the outcome of baseball championships rested on such rulings . players and fans held strong and differing opinions on what the umpire saw , and they were not shy about telling him when they saw it differently . in 2009 , doug harvey , right , jokes about throwing former st . louis cardinals manager whitey herzog out of a game . ( michael conroy / ap ) to mr . harvey , arguments with the umpires were a part of the game , but there were limits and there could be no doubt about who was boss . \" i would listen for 20 seconds , \" he once told the new york times . \" i would count to 20 to myself . and i would listen to everything you had to say . \"\n"
+    ],
+    "human_score": 0.3333,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_564",
+    "question": "hey there i live on a farm .\n",
+    "answer": "cool , do you have animals ? i'm very musical , i play several instruments and teach piano on the side .\n",
+    "context": [
+      "your persona: i am a piano teacher on the side.\nyour persona: i enjoy exploring new parts of the city.\nyour persona: my father played violin professionally.\nyour persona: i play several instruments.\n"
+    ],
+    "human_score": 1.0,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_69",
+    "question": "likes to bite \n i envy that fish 's ability to eat . that is a glorious spectacle . i would go to the buffet everyday . \n buffet is my favorite kind of restaurant so yea , did you hear about that breed of jellyfish , the one that is immortal ! \n i did not . i wonder what it does all day with its unending life . must get kinda boring . who does it talk to ? what celebrities does it follow ? \n i agree , must be a really boring life , still , interesting species might be worthwhile to study them \n\n",
+    "answer": "that is true . 84 % of genes associated with human diseases have counterparts in the zebrafish .\n",
+    "context": [
+      "84 per cent of genes known to be associated with human diseases have counterparts in the zebrafish\n"
+    ],
+    "human_score": 0.6667,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_346",
+    "question": " got ta remember , they did n't have the internet back then , so they had to do something for entertainment . :) so , what was the last concert you ever attended ? \n now that i think about it , i went to one a little over a year ago around christmastime , so most of the songs were christmas songs . the venue was fairly big , but not as big as ones like where the big name artists perform . it was good still , unlike the 2002 creed concert that was bad enough for concert goers to file a lawsuit \n\n",
+    "answer": "i wonder how the concert became so bad , and how the audience did that ? it 's been great chatting with you . have a good day !\n",
+    "context": [
+      "in 2002 a creed concert was so bad that four concert goers filed a lawsuit against the band\n"
+    ],
+    "human_score": 0.6667,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_19",
+    "question": "'t know the english would want with it . i bet the english do n't collect \" rounders \" cards the way we collect baseball cards . \n right ? i wonder if they have cricket cards lol ? i think they have stickers for soccer . \n some guy found $ 3 million dollars of baseball cards from the 1900s . i wonder what he did with the money . \n yeah . that 's an amazing find . i heard they had been hidden since the 40s . \n thanks , grandpa ! i bet grandpa wishes he had cashed them in before he cashed out . \n\n",
+    "answer": "i bet he was a great player . nice chat\n",
+    "context": [
+      "_nofact\n"
+    ],
+    "human_score": 0.4444,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_397",
+    "question": "tallica , i never heard them in india .\ni love the rolling stones . i see their concert every year .\nthey are great too . so are the chili peppers .\nyes . they're . what do you do ?\ni am in college , studying it .\ni'm too . economics major .\nvery nice . i'd love to travel .\nthat would be great ! we just bought a house so no travel soon\ni am looking at a house as well .\ni'm married and have two kids . we needed more space .\ni'd like children and a husband one day .\ni follow a raw diet . do you ?\n",
+    "answer": "i do . i love to swim .\n",
+    "context": [
+      "your persona: i'm a swim coach at my local pool.\nyour persona: my family and i are from india.\nyour persona: i'm studying to be a computer programmer.\nyour persona: my mother is very traditional while i prefer to be more free spirited.\n"
+    ],
+    "human_score": 0.5556,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_367",
+    "question": "n paradise .\nfunny thing is i came from farm life\ni was named after a horse . my boyfriend likes to may nay sounds at me .\nsounds like the crazy medicine i take\njust do not mix with alcohol or can get crazy around here .\ni used to be an alcoholic so no can do\ni tend to stick to my water only . soda is worse !\nthat's what everyone should strive for\nas long as i have my french fries !\nwell everyone can cheat once in a while\nof course . now all of this has made me hungry .\nyou can go for some grub\n",
+    "answer": "i will try that . i am a bit of a tea person .\n",
+    "context": [
+      "your persona: i like to take walks.\nyour persona: i don't drink soda.\nyour persona: i've a boyfriend.\nyour persona: i like to eat hamburgers and french fries.\n"
+    ],
+    "human_score": 0.6667,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_79",
+    "question": "sports i would rather play than watch . the japanese are such big fans of baseball that they would probably take the name \" national pastime \" from the americans if they could \n yea they are usually surprised to find so many americans like it too . \n enough that people used to collect baseball cards . one man found a collection in his grandfather 's attic that was worth three million dollars \n that s a lot of money . are any managers cards worth anything ? they do wear the uniform after all . \n\n",
+    "answer": "i think he was a great player , he was a great player and also a great player , he was a great player , i think he was a great player , he had a great player\n",
+    "context": [
+      "doug harvey , a major league baseball umpire for 31 years whose calls of balls or strikes , fair or foul , safe or out were delivered with such gusto and authority that he was known as \" god \" to thousands of ballplayers , died jan . 13 in visalia , calif . he was 87 . major league baseball announced the death but did not disclose the cause . according to media accounts , he had battled throat cancer in the 1990s and later had several strokes . mr . harvey worked 4,673 ballgames from 1962 to 1992 , mlb said , including five world series , nine national league championship series and six all - star games . for 18 years , he was an umpiring crew chief . hundreds of thousands of times he made on - the - spot calls on whether a runner had reached base a millisecond before a throw from a fielder , or whether a pitched ball traveling 90 mph had grazed the veneer of a loosely defined strike zone or missed altogether . the outcome of baseball championships rested on such rulings . players and fans held strong and differing opinions on what the umpire saw , and they were not shy about telling him when they saw it differently . in 2009 , doug harvey , right , jokes about throwing former st . louis cardinals manager whitey herzog out of a game . ( michael conroy / ap ) to mr . harvey , arguments with the umpires were a part of the game , but there were limits and there could be no doubt about who was boss . \" i would listen for 20 seconds , \" he once told the new york times . \" i would count to 20 to myself . and i would listen to everything you had to say . \"\n"
+    ],
+    "human_score": 0.3333,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_518",
+    "question": " just won homecoming queen !\ngreat ! i love anything red especially tractors . wink wink !\ni enjoy running do you ? i hope to run a 5k this year .\ni had to run for my life one time . you ever danced to bach ?\ni listen to classical music , when i do my homework . i am currently a straight a student !\nwow ! i get paid to pole dance . do you get paid to run ?\nno i do track and field in school and i want to start racing for charity .\ni see . you own a tractor ? i like driving tractors . wink wink .\n",
+    "answer": "i do not have any pets , but i do like to eat .\n",
+    "context": [
+      "your persona: my current goal is to run a k.\nyour persona: i make straight as in school.\nyour persona: i won homecoming queen this year.\nyour persona: when i grow up i want to be a physical therapist.\nyour persona: i am currently in high school.\n"
+    ],
+    "human_score": 0.4444,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_253",
+    "question": "college basketball for over a decade . \n kareem abdul - jabbar is an american retired professional basketball player who played 20 seasons in the national basketball association for the milwaukee bucks and the los angeles lakers . \n james naismith , the inventor of basketball , is the only losing coach in the university of kansas 's history \n james naismith wrote and developed the game 's original thirteen rules and , through the ymca network , quickly spread the news throughout the country . \n\n",
+    "answer": "i think that is a great invention , i wonder if they are paid more than the highest paid employees in most states\n",
+    "context": [
+      "in 39 out of 50 states , the highest paid state employee is either a college football or basketball coach .\n"
+    ],
+    "human_score": 0.8889,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_396",
+    "question": "tallica , i never heard them in india .\ni love the rolling stones . i see their concert every year .\nthey are great too . so are the chili peppers .\nyes . they're . what do you do ?\ni am in college , studying it .\ni'm too . economics major .\nvery nice . i'd love to travel .\nthat would be great ! we just bought a house so no travel soon\ni am looking at a house as well .\ni'm married and have two kids . we needed more space .\ni'd like children and a husband one day .\ni follow a raw diet . do you ?\n",
+    "answer": "i have a brother who lives in england , but sometimes he goes to my timeshare in mexico\n",
+    "context": [
+      "your persona: i'm a swim coach at my local pool.\nyour persona: my family and i are from india.\nyour persona: i'm studying to be a computer programmer.\nyour persona: my mother is very traditional while i prefer to be more free spirited.\n"
+    ],
+    "human_score": 0.3333,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_226",
+    "question": "lidity to it so that 's interesting . another science fact is that when earth was formed a day was only 5.5 hours long . \n i did n't know that . i wonder why . there is a place on earth where there is less gravity than the rest of the planet . it is the hudson bay region of canada . \n i wonder how much affect that has ? is it enough to change weights in any way ? i wonder . i do also know that we are running out of helium and will essentially be out of the gas by the end of the 21st century . \n\n",
+    "answer": "yeah , and what 's funny is that new employees employees are called \" nooglers \" on their basketball field .\n",
+    "context": [
+      "new google employees are called ' nooglers ' and are given a propeller beanie cap to wear on their first friday .\n"
+    ],
+    "human_score": 0.3333,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_331",
+    "question": "hey , ever use facebook ? \n i do , it is the primary source of news for 30 % of american adults . do you use facebook your self ? \n\n",
+    "answer": "i do n't use facebook , but i do use it a lot . i do n't use it as much anymore .\n",
+    "context": [
+      "burger king had a promotion where if you unfriend 10 people on facebook you get a free whopper .\n"
+    ],
+    "human_score": 0.7778,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_405",
+    "question": "hello . do you speak another language ?\nhi , i love sports because my parents are athletic\nmy dad is works with electronics . i love the guitar and the violin\n",
+    "answer": "i do speak another language and you ?\n",
+    "context": [
+      "your persona: my parents were both very athletic.\nyour persona: i got a new job just yesterday to be a life coach.\nyour persona: i love running and preparing for marathons.\nyour persona: i'm a clean eater.\n"
+    ],
+    "human_score": 0.6667,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_139",
+    "question": "obably will continue to be . \n lebron is about jordan 's only shoe competitor . did you hear that he has signed a deal with warner bros for a new \" space jam \" sequel ? \n no , i did n't see that . i wonder when it will be released ? \n i 'm not really sure . maybe it will be as good as the original . lebron has a good character about him though . he raised $ 6 million for charity by televising \" the decision . \" \n he is a really good person , i know he has donated a ton of money back to ohio . \n\n",
+    "answer": "i think he is a great player . he is the highest paid celebrity right ?\n",
+    "context": [
+      "judge judy makes $ 123,000 per episode , making her the highest paid celebrity only after lebron james .\n"
+    ],
+    "human_score": 0.7778,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_130",
+    "question": "ucks and jabari parker > \n no i did n't . what did he say ? \n that they should n't consider signing him . i agree . \n what made him such a bad player last year ? \n he did n't do much for the team and was overpaid . \n has he been injured ? i think they are all over paid personally . i mean they make millions of dollars . \n for sure , he had to acl injuries so he is definitely injury prone . you know who is better , reggie miller ! \n i 'm not familiar with him . does he play for the bucks too ? \n\n",
+    "answer": "well , it 's really impressive , and the nba only produced one in canada .\n",
+    "context": [
+      "reggie miller , nba hall of famer , could n't escape his older sister cheryl 's shadow while in high school . on january 26 , 1982 , he scored a career high 40 points . he tried bragging about it on the car ride home , only to find out cheryl scored 105 points and broken 8 national records !\n"
+    ],
+    "human_score": 0.4444,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_598",
+    "question": "yours ?\nright now i listen to a lot of mumford and sons .\ndo you have a weight problem like me ?\ni am a little self conscious . thirty is not as easy as i remember twenty being .\nwhat do you like to eat ? i diet all the time .\ni tend to stay in and cook for myself since i quit drinking a few years ago .\nthat is probably a lot healthier and saves you money . i eat out all the time .\nmy dad had me hooked on high protein foods like fish and chicken when i was training .\nwhat are you training for ?\n",
+    "answer": "i am a student , i am a student .\n",
+    "context": [
+      "your persona: i'm in my thirties.\nyour persona: i love taking bubble baths.\nyour persona: i like to play chess.\nyour persona: i do not drink alcohol.\n"
+    ],
+    "human_score": 0.4444,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_277",
+    "question": "one of the phrases he coined was brave new world , so that fits , lol ! \n it does fit lol , its been a long time since he was alive he was born in the year 1564 and there s a lot we do nt know about him \n yeah apparently him and pocahontas were a live at the same time . \n pocahontas was a real person ? i though she was a character in a movie , turns out its based on a true story , \n yeah i know , right . well another one of his words is laughing stock , haha . \n yeah so do you like to dance ? \n\n",
+    "answer": "i do , i love the radio , i love the radio , there is a free website where you can listen to them for free\n",
+    "context": [
+      "there is a website where you can listen to thousands of episodes of classic radio dramas for free\n"
+    ],
+    "human_score": 0.7778,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_164",
+    "question": "good afternoon , hope your day is going well ! \n i hope yours is going well , too . baseball is generally played with a bat and ball . \n baseball is my favorite sport out of the big four - az diamondbacks are my team \n\n",
+    "answer": "i like the yankees , they are a great team . i think it 's cool that the managers wear uniforms because they can actually play for their team if needed .\n",
+    "context": [
+      "baseball managers wear uniforms because they are technically able to play for their teams if the need arises\n"
+    ],
+    "human_score": 1.0,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_115",
+    "question": "hi , how are you today ? staying warm ? \n trying just watching some netflix .. kyle kinane is hilarious .. one of my favorite comedies . \n he is funny i know ! lol \n\n",
+    "answer": "i do n't know . i do n't know if i would like to visit the kinane pool .\n",
+    "context": [
+      "kyle kinane will stretch out his two or three jokes at the 9:30 club on thursday . ( ap ) kyle kinane knows he does n't have all the answers . in fact , he does n't really have any of them . if he did , he would n't be in stand - up comedy . \" i do n't like listening to comedians tell me how the world works , \" kinane says . \" if you knew how the world works , you 'd be a stockbroker , or you 'd be a banker or a ceo . comedians are comedians because they 're not good at other things . \" that 's why the gruff - voiced comic 's sets are anchored by anecdotes about the mundane that play as delightfully absurd . when kinane did tackle politically relevant material in his set for the netflix series \" the standups \" earlier this year , it came in a farcical bit about how ku klux klan members surely partake in cuisine from the cultures they oppress . \" there 's no way that kkk members are only eating eastern european - based foods , \" he jokes . on thursday , the 41-year - old comedian and voice - over artist brings his act to d.c . 9:30 club , 815 v st . nw ; thu . , 7 p.m. , $ 25 .\n"
+    ],
+    "human_score": 0.3333,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_516",
+    "question": " just won homecoming queen !\ngreat ! i love anything red especially tractors . wink wink !\ni enjoy running do you ? i hope to run a 5k this year .\ni had to run for my life one time . you ever danced to bach ?\ni listen to classical music , when i do my homework . i am currently a straight a student !\nwow ! i get paid to pole dance . do you get paid to run ?\nno i do track and field in school and i want to start racing for charity .\ni see . you own a tractor ? i like driving tractors . wink wink .\n",
+    "answer": "lots of stuff . i went to a christian high school so i am pretty tame though .\n",
+    "context": [
+      "your persona: my current goal is to run a k.\nyour persona: i make straight as in school.\nyour persona: i won homecoming queen this year.\nyour persona: when i grow up i want to be a physical therapist.\nyour persona: i am currently in high school.\n"
+    ],
+    "human_score": 0.3333,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_76",
+    "question": "hi . i heard an interesting fact recently . did you know that the three richest presidents ever were washington , jefferson , and jfk ? \n hello , they must have accomplished to people 's satisfactions . \n i guess so . you know , in different countries a president has different roles and functions . \n i bet they do . the first president was named president banana in zimbabwe . \n\n",
+    "answer": "yes . i did n't know that . do you know how the vp used to be elected ?\n",
+    "context": [
+      "until 1805 in the us , the runner up in a presidential election automatically became the vice president\n"
+    ],
+    "human_score": 0.6667,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_528",
+    "question": "hi , how are you doing ?\nhi , i am doing well , how are you ?\ncan't complain . i had a wonderful afternoon in the park .\noh , that is nice . i like being in parks especially in nice weather\nyes . the weather is perfect here now . what do you like to do ?\ni like to watch nascar racing and sometimes ufc\nthat sounds fun ! i've time to do that since i'm out of work right now .\n",
+    "answer": "i am a student , but i work at a grocery store .\n",
+    "context": [
+      "your persona: i have been working since i was sixteen years old.\nyour persona: in my free time i like to watch nascar racing and ufc.\nyour persona: my favorite band is aerosmith.\nyour persona: my favorite food is mexican food.\n"
+    ],
+    "human_score": 0.8889,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_57",
+    "question": "b on sesame street . \n it was the 70s , she was the star at that time , it makes sense . i wonder if youtube will have a lasting impact on the star system or this youtubers thing is just a phase . \n it is definitely here to stay if not expanding . in the early days , you needed a good freestanding camera to make a good video . today , most cell phones have a good enough camera to make a youtube videos . some high end phones can shoot videos almost indistinguishable from freestanding cameras . \n\n",
+    "answer": "hello , i do nt know , i do nt think i have ever seen that movie , i do nt know about it , what s it about you ?\n",
+    "context": [
+      "pixar studio has a secret room that is visited often by celebrities\n"
+    ],
+    "human_score": 0.3333,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_499",
+    "question": "good evening . how are you ?\n",
+    "answer": "i'm annoyed at how much math homework i have . i hate math class !\n",
+    "context": [
+      "your persona: my brother is older than me.\nyour persona: i hate math class.\nyour persona: i ride the bus to school.\nyour persona: i'm on the soccer team.\nyour persona: i am 13 years old.\n"
+    ],
+    "human_score": 1.0,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_475",
+    "question": "good morning to you how are you today\ni'm well , glad to type to you . how are you ?\ni'm great i'm in school and i'm the queen of homecoming\n",
+    "answer": "that's good . i'm a spiritual person , are you ?\n",
+    "context": [
+      "your persona: i like meditation.\nyour persona: i've not spoken in three months.\nyour persona: i quit my job to pursue my spirituality full time.\nyour persona: i'm a buddhist.\n"
+    ],
+    "human_score": 1.0,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_546",
+    "question": "there'sn'thing i like more than a late night ice cream run\nhey share the cream ! haha\ndo you have a flavor preference ? mine is vanilla\nvanilla is my fav as well\nmy two cats love to lick the bowl when i am done haha\n",
+    "answer": "his name is tony . do you have pets ?\n",
+    "context": [
+      "your persona: my current goal is to run a k.\nyour persona: when i grow up i want to be a physical therapist.\nyour persona: i'm currently in high school.\nyour persona: i make straight as in school.\nyour persona: i won homecoming queen this year.\n"
+    ],
+    "human_score": 0.4444,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_580",
+    "question": "good morning how old are you i am 34\ni am much older than that . my grandchildren are in their thirties\ndo you have any pets ? my two dogs are my everything .\n",
+    "answer": "no pets . i am retired so i love to travel . pets would slow me down\n",
+    "context": [
+      "your persona: i have amazing children and grandchildren.\nyour persona: i had cancer but its gone now.\nyour persona: i do not have a smartphone.\nyour persona: i am retired and living the great life.\n"
+    ],
+    "human_score": 1.0,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_44",
+    "question": " machine ! but he needs a better stage name . maybe president banana ? \n i do not think the president of zimbabwe would be happy about that \n he could be the artist formerly known as president banana ? i do n't really care as long as i can listen to him on the radio ! i love two things on my radio : indonesian pop music and electromagnetic storms from jupiter . those are my go to listening pleasures ! \n yeah that is so cool that if you turn your radio to am , you may capture jupiter 's storms \n\n",
+    "answer": "i 'm not sure . i wonder if it 's still around in canada ?\n",
+    "context": [
+      "according to canadian law , all radios are required to have at least 40 % of the music played be canadian .\n"
+    ],
+    "human_score": 0.3333,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_220",
+    "question": "'m not sure . does n't make sense to me . cell phones have been around longer than we thought . in the 1930 's , an actress named hedy lamarr helped to invent wifi , the cellphone and gigs . that s surprising ! \n actress ? i wonder how she did that ... \n pretty amazing , huh ? almost as amazing as the world record for the price of a violin bow is over $ 182,000 . it was made out of gold and tortoiseshell ! \n probably some celebrity bought it ;) regular person would n't be able to afford it ;) \n\n",
+    "answer": "the \" t \" was invented for country music . they were introduced as the opening of the instrument .\n",
+    "context": [
+      "the fiddle and the violin are the exact same instrument . the difference is the type of music you play with one or the other .\n"
+    ],
+    "human_score": 0.5556,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_603",
+    "question": "hi i love cooking and fishing ! and reading comic books\noh , i just like gardening .\nif i am not in the kitchen , i am on my boat in the water\nthat is cool , i got a job just now in a gas station\ncool , i got a spiderman comic at a gas station\n",
+    "answer": "oh , i am sorry to hear that . i am a big fan of the walking dead .\n",
+    "context": [
+      "your persona: i enjoy working with my hands and love gardening.\nyour persona: i just got a job working in a gas station.\nyour persona: i was adopted at a young age to an older couple.\nyour persona: i am terrified of clowns due to childhood trauma.\nyour persona: my father keeps trying to set me up on blind dates.\n"
+    ],
+    "human_score": 0.5556,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_651",
+    "question": "i got a big house with 7 rooms\nnice , majority of my time i am on facebook\none time i saw a man fly to the moon\nlike on tv ? i'm obese and unhappy\nwhen i worked in the cia i used facebook to spy on people , handy tool\ni'd love to hear more i work at a retirement home\nobesity is a state of mind , not of body\nthank you for that , you are what you believe ?\nlook energy isn't physical , only spiritual\n",
+    "answer": "do you do any sports ? swimming helps me keep my energy up .\n",
+    "context": [
+      "your persona: my wife left me and took my children.\nyour persona: i don't believe in god.\nyour persona: i'm overweight and unhappy.\nyour persona: i work at a nursing home.\nyour persona: i spend most of my time on facebook when i'm not working.\n"
+    ],
+    "human_score": 0.7778,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_611",
+    "question": "hi there how are you ?\n",
+    "answer": "i am well how are you\n",
+    "context": [
+      "your persona: my family has raised horses for a generations.\nyour persona: i want to be a lawyer.\nyour persona: i was raised on a horse farm.\nyour persona: i am from a small town.\n"
+    ],
+    "human_score": 1.0,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_353",
+    "question": "he country \n i think it encourages writers in their country , that 's for sure ! i would love to have that incentive to write and publish a book \n well you should do a children 's book then , because they will buy 1,500 of them instead of just the 1,000 lol \n children 's books require less writing and more illustrations . it would be worth it for the extra 500 copies though \n haha i agree with you . do you ever buy stuff from amazon ? do you know why jeff bezos put a clock into a mountain lol \n\n",
+    "answer": "i do buy a lot from amazon . jeff bezos probably built a clock into a mountain to make sure that we would be able to tell time for 10,000 years .",
+    "context": [
+      "amazon ceo jeff bezos built a clock into a mountain that should run for 10,000 years .\n"
+    ],
+    "human_score": 1.0,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_97",
+    "question": "nst the dodgers ( who i hate more than braun ) ! \n yeah i was so disappointed with the whole braun thing , i was like just admit you messed up , and get on with it . the lying and blaming others is just the worst ! thanks though , game 7 just sucked ! i do like the dbacks though , craig counsel your old hero ! ! \n yep - craig is the man , glad he 's having success with the brewers . even your bench coach ( murphy ) has arizona ties ( asu ) . i really like your corner infielders shaw / aguilar \n\n",
+    "answer": "i love the golden state warriors . i love the philadelphia brewers .\n",
+    "context": [
+      "baseball managers wear uniforms because they are technically able to play for their teams if the need arises\n"
+    ],
+    "human_score": 0.5556,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_218",
+    "question": "'m not sure . does n't make sense to me . cell phones have been around longer than we thought . in the 1930 's , an actress named hedy lamarr helped to invent wifi , the cellphone and gigs . that s surprising ! \n actress ? i wonder how she did that ... \n pretty amazing , huh ? almost as amazing as the world record for the price of a violin bow is over $ 182,000 . it was made out of gold and tortoiseshell ! \n probably some celebrity bought it ;) regular person would n't be able to afford it ;) \n\n",
+    "answer": "i 'm not sure . i 'm sure there are some violin out there .\n",
+    "context": [
+      "the fiddle and the violin are the exact same instrument . the difference is the type of music you play with one or the other .\n"
+    ],
+    "human_score": 0.6667,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_222",
+    "question": "lidity to it so that 's interesting . another science fact is that when earth was formed a day was only 5.5 hours long . \n i did n't know that . i wonder why . there is a place on earth where there is less gravity than the rest of the planet . it is the hudson bay region of canada . \n i wonder how much affect that has ? is it enough to change weights in any way ? i wonder . i do also know that we are running out of helium and will essentially be out of the gas by the end of the 21st century . \n\n",
+    "answer": "really , i hope that is ok for us ? i 'm also a big tech guy , how about you ? did you know new google employees are called \" nooglers \" . \n",
+    "context": [
+      "new google employees are called ' nooglers ' and are given a propeller beanie cap to wear on their first friday .\n"
+    ],
+    "human_score": 0.6667,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_106",
+    "question": "frequency concert for dogs . what an odd thing to do . \n oh wow ! really , did the dogs like it ? was it recorded ? \n i have no idea . i 'm sure that someone has video of it . do you enjoy the music of the foo fighters \n oh yes , i love them . i love the video of all the drummers and other instruments playing at the same time . people came from all over the world to be in that . \n they are pretty amazing . they performed a concert so loud that it showed up on new zealand 's seismic monitors ! \n\n",
+    "answer": "do you like creed ?\n",
+    "context": [
+      "in 2002 a creed concert was so bad that four concert goers filed a lawsuit against the band\n"
+    ],
+    "human_score": 0.3333,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_248",
+    "question": "you know that there are cat cafes in japan and taiwan where people can pay hourly to play with cats and have drinks ! \n lol yeah , there s all sorts of cafes like that , i ve been to a meerkat cafe , a bird cafe and a raccoon cafe before . \n that is really interesting . i would like that . i wish i slept as much as cats . when a cat reaches 15 years old it has usually spent 10 years of its life sleeping . \n that s a lot of sleeping ! there s is a cat named stubbs in alaska that is a mayor lol \n\n",
+    "answer": "that is a very strange name . i wonder if he ever got a cat named stubbs .\n",
+    "context": [
+      "the town of talkeetna , alaska has had a cat named stubbs as its mayor since 1997 .\n"
+    ],
+    "human_score": 0.3333,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_148",
+    "question": "hool but rather heavy emphasis on sports so to see him go on to get his master 's degree , is very surprising to me . \n i agree but some are both jocks and academics . i wonder if brady was ? i do admire him he 's seen hard times like to 41 - 33 loss to the eagles . \n i definitely think that his leadership and tenacity and the so called \" patriot way \" can really shape people and lead them to their championships but his wife makes more than double brady 's salary ! i thought she was retired ! \n\n",
+    "answer": "the lions love the patriots ! ! ! bill belichick is the best coach in postseason .\n",
+    "context": [
+      "bill belichick is the winningest coach in nfl postseason football with 21 wins . 20 with the new england patriots and 1 with the cleveland browns .\n"
+    ],
+    "human_score": 0.4444,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_279",
+    "question": "one of the phrases he coined was brave new world , so that fits , lol ! \n it does fit lol , its been a long time since he was alive he was born in the year 1564 and there s a lot we do nt know about him \n yeah apparently him and pocahontas were a live at the same time . \n pocahontas was a real person ? i though she was a character in a movie , turns out its based on a true story , \n yeah i know , right . well another one of his words is laughing stock , haha . \n yeah so do you like to dance ? \n\n",
+    "answer": "i do ! i love shakespeare . i think he is a great actor and also a great writer\n",
+    "context": [
+      "there is a website where you can listen to thousands of episodes of classic radio dramas for free\n"
+    ],
+    "human_score": 0.6667,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_422",
+    "question": "o live with my girlfriend before i went into the navy\nthe navy sounds tough . i teach elementary school .\ni only joined because i love the color . i much prefer working with the bunny rescue , now .\ni would like to take pictures of the bunnies . do you help alot of rabbits ?\nyes , by volunteering and donating to them each month . what do take pictures of ?\ni just enjoy photography and the colors red and silver .\ni've a silver eared bunny you would love , with a red , white , and navy blue bow .\n",
+    "answer": "i love the color red and my favorite color is red\n",
+    "context": [
+      "your persona: i am fluent in english spanish and french.\nyour persona: my favorite colors are red and silver.\nyour persona: i'm interested in photography and like taking pictures.\nyour persona: my boyfriend and i are moving into an apartment together next week.\nyour persona: i'm an elementary school teacher.\n"
+    ],
+    "human_score": 0.6667,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_343",
+    "question": " got ta remember , they did n't have the internet back then , so they had to do something for entertainment . :) so , what was the last concert you ever attended ? \n now that i think about it , i went to one a little over a year ago around christmastime , so most of the songs were christmas songs . the venue was fairly big , but not as big as ones like where the big name artists perform . it was good still , unlike the 2002 creed concert that was bad enough for concert goers to file a lawsuit \n\n",
+    "answer": "i think that the band was a great band , i think it was a great show , i liked creed , i think its a great band , i like the band creed , they had a great concert back in 2002\n",
+    "context": [
+      "in 2002 a creed concert was so bad that four concert goers filed a lawsuit against the band\n"
+    ],
+    "human_score": 0.7778,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_366",
+    "question": "n paradise .\nfunny thing is i came from farm life\ni was named after a horse . my boyfriend likes to may nay sounds at me .\nsounds like the crazy medicine i take\njust do not mix with alcohol or can get crazy around here .\ni used to be an alcoholic so no can do\ni tend to stick to my water only . soda is worse !\nthat's what everyone should strive for\nas long as i have my french fries !\nwell everyone can cheat once in a while\nof course . now all of this has made me hungry .\nyou can go for some grub\n",
+    "answer": "i will win , i am telling you . then i will drive my sx into the stars .\n",
+    "context": [
+      "your persona: i like to take walks.\nyour persona: i don't drink soda.\nyour persona: i've a boyfriend.\nyour persona: i like to eat hamburgers and french fries.\n"
+    ],
+    "human_score": 0.3333,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_484",
+    "question": "hi . how is everything going ?\nhi . everything is going well on this end .\nwhere are you from ? i am originally from somalia .\ni am from detroit , mi . what do you like to do for fun ?\ni love dancing and singing .\nthat is interesting . i'd consider myself a gamer .\ni like gaming now that i am in the us .\n",
+    "answer": "what games do you play ? i enjoy call of duty !\n",
+    "context": [
+      "your persona: my favorite band is the insane clown posse.\nyour persona: i like donuts.\nyour persona: i play a lot of call of duty.\nyour persona: on weekends i do live action roleplaying events.\n"
+    ],
+    "human_score": 1.0,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_171",
+    "question": "ll ? \n i 'm a huge football fan . how about yourself ? \n i love football both college and nfl , do you have a favorite nfl team of the 32 ? \n i 'm a new england patriots fan and huge fan of tom brady how about you ? \n nice i am a vikings fan , not doing so hot as of late . i also like the university of iowa hawkeyes , did you know they paint their opponents locker room pink ? \n no i did n't know this . did you know that in the 60 's top bowlers made twice as much as the top football players ? \n\n",
+    "answer": "i did n't know that ! do you know what the highest score in college football was ?\n",
+    "context": [
+      "- that the highest score ever in a football game occurred in 1916 when georgia tech defeated cumberland 222 - 0\n"
+    ],
+    "human_score": 0.7778,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_121",
+    "question": "was such a great movie . i heard they are making a second one . \n animated film are contribute biggest in box office collection . mostly kids liked movie have very high box office . \n yes for sure . disney once considered shutting down their animation studio because sleeping beauty was a flop at the box office . \n the projection and analysis of these earnings is very important for the movie industries and knowing the interest of the fans . so only they are promoting the films in various way . \n\n",
+    "answer": "i think that is a great movie . i think it 's great that the movie trojan wars had a budget of 15 million dollars .\n",
+    "context": [
+      "the movie trojan wars with a budget of $ 15,000,000 has earned only $ 309 in box office\n"
+    ],
+    "human_score": 0.5556,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_328",
+    "question": "are you a game of thrones fan ? \n no not really . i do nt have hbo so i do nt watch , you ? \n i think i have only watch about a few minutes of it ; i do n't get it or like the genre \n i tried to read one of the books and it was crazy to follow , i m more likely to watch documentaries or movies \n same here . i like hbo for some of the other things they air but not got . \n\n",
+    "answer": "i do too , i also really enjoy series , it has been a really successful cast though\n",
+    "context": [
+      "_nofact\n"
+    ],
+    "human_score": 0.7778,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_333",
+    "question": "hey , ever use facebook ? \n i do , it is the primary source of news for 30 % of american adults . do you use facebook your self ? \n\n",
+    "answer": "i do n't really use facebook , but i do n't use it much anymore .\n",
+    "context": [
+      "burger king had a promotion where if you unfriend 10 people on facebook you get a free whopper .\n"
+    ],
+    "human_score": 0.7778,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_132",
+    "question": "hello did you know that 80 percent of the earths natural forests have already been destroyed ? \n i heard it but i 'm skeptical . that sounds far too high and what 's the definition of \" natural . \n not sure in this case . when the earth was formed the days were only 5.5 hours long ! \n that was 5.5 hours of sunlit hell in magma and lava . bummer , they are saying we will be out of helium by the end of the century . \n\n",
+    "answer": "yeah that would be crazy . if earths history was represented as a 24 hour period , humans would only represent 1 min and 17 seconds lol its sometimes so surprising how small we are in the universe . \n",
+    "context": [
+      "if earth ’s entire history was viewed as a 24 hour period , humans would only represent 1 minute and 17 seconds .\n"
+    ],
+    "human_score": 0.8889,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_200",
+    "question": ", nickleback and avril lavigne ... and sorry , that was not about jupiter ... \n it was about radios though which is very interesting . did you know that soldiers in world war ii made radios from razorblades and pencils ? \n i did not . i thought it would have been more sophisticated than that . there is a website where you can listen to thousands of episodes of classic radio dramas for free \n wow . i hope no one hiccups on the radio . do you know why we hiccup ? \n i do not , why do we hiccup ? \n\n",
+    "answer": "yeah i think it is because it was from the old days of a fire hazard .\n",
+    "context": [
+      "- hiccups are a holdover from early evolution when early land animals had both gills and lungs .\n"
+    ],
+    "human_score": 0.6667,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_316",
+    "question": "good morning ! have you seen the incredibles 2 movie ? \n yes . i love everything pixar is a part of doing ! \n the director for the 2nd movie actually used artists who were either likely to quit or get fired from pixar . \n cool . do you know who wrote that movie ? \n\n",
+    "answer": "he voiced edna mode , and yes , she is the only costume designer\n",
+    "context": [
+      "edna mode , the superhero costume designer in the incredibles , is voiced by brad bird , the film 's director . bird voiced edna during storyboarding sessions , after which the production team could n't find an actress who could do the voice better than him .\n"
+    ],
+    "human_score": 0.4444,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_398",
+    "question": "tallica , i never heard them in india .\ni love the rolling stones . i see their concert every year .\nthey are great too . so are the chili peppers .\nyes . they're . what do you do ?\ni am in college , studying it .\ni'm too . economics major .\nvery nice . i'd love to travel .\nthat would be great ! we just bought a house so no travel soon\ni am looking at a house as well .\ni'm married and have two kids . we needed more space .\ni'd like children and a husband one day .\ni follow a raw diet . do you ?\n",
+    "answer": "i do not , but i do like to eat .\n",
+    "context": [
+      "your persona: i'm a swim coach at my local pool.\nyour persona: my family and i are from india.\nyour persona: i'm studying to be a computer programmer.\nyour persona: my mother is very traditional while i prefer to be more free spirited.\n"
+    ],
+    "human_score": 1.0,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_385",
+    "question": " like death metal music ?\nno , not really . i'm more into stuff from the eighties .\ni see , i'm from india and you ?\nohio . pretty boring , really . just me and my 5 cats . do you have pets ?\ndo you like eighties music ? i love it .\nyep . absolutely . great stuff . bon jovi , poison , journey . . . all the hair bands\nno , i had a dog and a turtle in the past\nthat is cool . why don't you have pets now ?\nyeah , i love those bands , you like hard stuff ?\nlike metallica ? they are definitely cool .\n",
+    "answer": "i do not want to talk about my pets\n",
+    "context": [
+      "your persona: i am studying to be a computer programmer.\nyour persona: i am a swim coach at my local pool.\nyour persona: my favorite music genre is death metal.\nyour persona: my family and i are from india.\n"
+    ],
+    "human_score": 0.5556,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_418",
+    "question": "ions ! i do not have any kids . the musician lifestyle is too hard for that .\noh that sounds exciting . i just became a pa 3 months ago . my job is boring .\ni'm sorry to hear that . is there something you would rather be doing ?\nmaking documentaries because i love them .\nwow . that sounds pretty interesting . what subjects would you focus on ?\nmy husband and his job\nwow . he must be a pretty interesting guy if you are going to do a documentary .\nhe is the best that's why i let him impregnate me\n",
+    "answer": "i am sorry to hear that . do you have any hobbies ?\n",
+    "context": [
+      "your persona: my favorite spanish word is trabajo.\nyour persona: i also study languages.\nyour persona: my next language to study is french.\nyour persona: i am a musician.\nyour persona: one of the languages that i am currently studying is spanish.\n"
+    ],
+    "human_score": 0.5556,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_538",
+    "question": "good morning ! how are you ?\npretty good and yourself ? i like to try different coffees as a hobby\ngreat here ! just finished a cup of coffee .\nwow that's good . i also played football in college\npretty cool ! i played volleyball in high school .\n",
+    "answer": "i love to cook , and i love to cook .\n",
+    "context": [
+      "your persona: i try various coffees as a hobby.\nyour persona: i played football for a division a college.\nyour persona: i enjoy poetry.\nyour persona: i am a huge star wars fan.\n"
+    ],
+    "human_score": 0.5556,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_326",
+    "question": "are you a game of thrones fan ? \n no not really . i do nt have hbo so i do nt watch , you ? \n i think i have only watch about a few minutes of it ; i do n't get it or like the genre \n i tried to read one of the books and it was crazy to follow , i m more likely to watch documentaries or movies \n same here . i like hbo for some of the other things they air but not got . \n\n",
+    "answer": "i do n't really watch it , but i do n't really like it , i like it , what about you ?\n",
+    "context": [
+      "_nofact\n"
+    ],
+    "human_score": 0.5556,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_318",
+    "question": "are you a fan of the nfl ? \n i definitely am . watching the super bowl has become a family tradition . what about you ? \n\n",
+    "answer": "the same i like watching both college and nfl . do you have a favorite team ? \n",
+    "context": [
+      "new orleans saints cheerleaders are forbidden from eating in the same restaurant as any nfl player and if they are already dining at a restaurant and an nfl player comes in after , the cheerleaders are required to leave .\n"
+    ],
+    "human_score": 1.0,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_213",
+    "question": "movie \n that 's cool ! did you also know that there is a deaf rapper who rhymes in sign language . that is awesome \n some rappers have a sign language translator on stage with them . i 've seen it on youtube ! \n that 's great ! the world 's fastest rapper noclue raps 14.1 syllables per second \n korean rappers invented a new type of freestyle , it 's called \" compliment battle \" . \n really , do they do compliments ? \n i do nt know , but i am visiting korea in a few , so maybe i will find out . \n\n",
+    "answer": "i agree , that s funny ! i wonder how it works .\n",
+    "context": [
+      "there is a radio station that translates solar activity into sound and you can listen live to the sun 's music\n"
+    ],
+    "human_score": 0.4444,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_58",
+    "question": "b on sesame street . \n it was the 70s , she was the star at that time , it makes sense . i wonder if youtube will have a lasting impact on the star system or this youtubers thing is just a phase . \n it is definitely here to stay if not expanding . in the early days , you needed a good freestanding camera to make a good video . today , most cell phones have a good enough camera to make a youtube videos . some high end phones can shoot videos almost indistinguishable from freestanding cameras . \n\n",
+    "answer": "what 's their first thing about the celebrities ?\n",
+    "context": [
+      "pixar studio has a secret room that is visited often by celebrities\n"
+    ],
+    "human_score": 0.3333,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_595",
+    "question": "yours ?\nright now i listen to a lot of mumford and sons .\ndo you have a weight problem like me ?\ni am a little self conscious . thirty is not as easy as i remember twenty being .\nwhat do you like to eat ? i diet all the time .\ni tend to stay in and cook for myself since i quit drinking a few years ago .\nthat is probably a lot healthier and saves you money . i eat out all the time .\nmy dad had me hooked on high protein foods like fish and chicken when i was training .\nwhat are you training for ?\n",
+    "answer": "i am competing for a national chess tournament . it helps me keep focus\n",
+    "context": [
+      "your persona: i'm in my thirties.\nyour persona: i love taking bubble baths.\nyour persona: i like to play chess.\nyour persona: i do not drink alcohol.\n"
+    ],
+    "human_score": 0.8889,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_454",
+    "question": "hello , how are you doing today ?\ni am okay . i wish my children would visit more , though .\ni am sorry to hear that . i turn to my spouse in times like that .\ni do , as well . though my husband liked me more when i was younger and prettier .\nthat's unfortunate . have you talked to anyone about this ?\n",
+    "answer": "i haven't . i'm 56 years old so i've learned to deal with these things by now .\n",
+    "context": [
+      "your persona: i have two grown children who never visit.\nyour persona: i used to be pretty but time has not been kind.\nyour persona: i'm a 56 year old woman.\nyour persona: i used to be a painter but now i'm a housekeeper.\n"
+    ],
+    "human_score": 1.0,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_136",
+    "question": "hello did you know that 80 percent of the earths natural forests have already been destroyed ? \n i heard it but i 'm skeptical . that sounds far too high and what 's the definition of \" natural . \n not sure in this case . when the earth was formed the days were only 5.5 hours long ! \n that was 5.5 hours of sunlit hell in magma and lava . bummer , they are saying we will be out of helium by the end of the century . \n\n",
+    "answer": "i think you could say you 're right , do you think they will go bankrupt or if it 's for the rest of the day ?\n",
+    "context": [
+      "if earth ’s entire history was viewed as a 24 hour period , humans would only represent 1 minute and 17 seconds .\n"
+    ],
+    "human_score": 0.3333,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_176",
+    "question": "now ? \n that 's interesting . i would be curious . there is only 2 african americans in the country music hall of fame . i wonder who they are ? \n i 'm not sure either . i do n't recall any african american artists in country music . do you know what the fender stratocaster is ? \n i remember charley pride . he might be one . ... and yes ! it 's a guitar . i think a lot jazz and some blues musicians use it . \n oh ! fender , i see that now ! thanks for clarifying ! do you play any instruments ? \n\n",
+    "answer": "i do n't know if i ever heard it . i do know that u2 opened up for themselves in 1987 .\n",
+    "context": [
+      "u2 opened for themselves at a few shows in 1987 . they were introduced as \" the dalton brothers from galveston , texas , \" and they played country music while disguised in wigs and costumes .\n"
+    ],
+    "human_score": 0.3333,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_9",
+    "question": "miserable season . are you familiar with the nfl ? \n oh i see , i guess i m confusing him with a player of the team , what was his name i think it was khalil mack , and i do follow some games what about you ? \n football is one of my favorite sports and i follow all 32 teams . khalil mack was traded to the bears by john gruden for some picks . they definitely felt his absence . i do n't know why they did n't just resign him . \n maybe he demanded a high salary ? what is your favorite nfl team ? \n\n",
+    "answer": "i like a little bit . i have a lot of friends . i do nt have a team that great fans are a fan . i would like to know why they would do that .\n",
+    "context": [
+      "the raiders sacked goff only once , on a play during which bruce irvin forced a fumble . other than that , the oakland defense could put almost no pressure on goff . the absence of mack , the former nfl defensive player of the year , was glaring . in the first half sunday night , mack had a sack , a forced fumble , a fumble recovery , an interception and a touchdown on defense . he and the bears could not sustain that , and they succumbed to the second - half exploits of packers quarterback aaron rodgers . but mack reinforced what a game - changing , difference - making player he is . he left little doubt that he is worth the six - year , $ 141 million contract given to him by the bears , making him the league 's highest - paid defensive player . [ the nfl teams that have serious reasons to worry , versus the ones that do n't ] mack , while still with the raiders , had been holding out , seeking such a deal . the raiders did n't want to give it to him . they have a $ 125 million quarterback in carr . they have a $ 100 million coach in gruden . they drew the line at handing out another mammoth deal , not wanting to further strain their budget or push the boundaries of the salary cap . they regarded the king 's ransom of draft picks put forth by the bears , including a pair of first - rounders , as an offer they could n't refuse . in truth , they could have refused it .\n"
+    ],
+    "human_score": 0.3333,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_631",
+    "question": "team , won saturday night .\ni'm an ohio state fan . do you skate ?\nno . too busy with all of my 19 dogs and 3 sisters .\noh wow . that is a lot of dogs .\nyes love them almost as my tacos . no i love my dogs more .\nmy fiance makes a killer fish taco with cilantro lime slaw .\nwow . my sisters and i love chicken tacos .\nthose are good too , i live in cali . along the ocean .\ni live in middle of alabama . do not get to ocean much .\ni could not stand to live inland , the ocean runs through my veins .\n",
+    "answer": "are you an avid runner ? i cut my hair short so i could run better\n",
+    "context": [
+      "your persona: i love dogs.\nyour persona: i live in alabama.\nyour persona: i have three sisters.\nyour persona: i like tacos.\n"
+    ],
+    "human_score": 0.5556,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_443",
+    "question": "here ?\nyes , but i am allergic to water . this is very unfortunate .\nit is . how do you keep clean ?\ni don't go outside much . i stay clean this way .\ni want to go outside . i managed to break my arm skateboarding so i m stuck indoors .\ni only stream to my 100 , 000 subscribers on twitch . i do not play real sports\n100k is very impressive . how long did it take to get that many ?\nsince i helped make starcraft , my name was already out there . 6 months .\nmade as in developed ? that s very cool .\n",
+    "answer": "i do not know what to say .\n",
+    "context": [
+      "your persona: i helped design the game starcraft.\nyour persona: i've an allergy to water.\nyour persona: i am a recluse.\nyour persona: i'm a famous twitch streamer.\nyour persona: i am working on a building a robot to be my body double.\n"
+    ],
+    "human_score": 0.4444,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_39",
+    "question": "e name of a genus of bat . \n that is so neat ! those are details that make you enjoy the movies even more . did you watch tron , ? it has a unique soundtrack ! \n i have not seen it . tell me about the soundtrack . \n it is very sci fi , and super inspiring . it is made by daft punk , i love that duo ! \n i love that they negotiated with their robot helmets on . seems like something they would do . \n incognito style ! ! and very simple , they just needed a good breakfast with pancakes to say yes \n\n",
+    "answer": "you know what else are the odds of that ?\n",
+    "context": [
+      "_nofact\n"
+    ],
+    "human_score": 0.3333,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_104",
+    "question": "frequency concert for dogs . what an odd thing to do . \n oh wow ! really , did the dogs like it ? was it recorded ? \n i have no idea . i 'm sure that someone has video of it . do you enjoy the music of the foo fighters \n oh yes , i love them . i love the video of all the drummers and other instruments playing at the same time . people came from all over the world to be in that . \n they are pretty amazing . they performed a concert so loud that it showed up on new zealand 's seismic monitors ! \n\n",
+    "answer": "i know , i do n't know how i feel about creed being so bad , they were sued by 4 people !\n",
+    "context": [
+      "in 2002 a creed concert was so bad that four concert goers filed a lawsuit against the band\n"
+    ],
+    "human_score": 0.4444,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_152",
+    "question": "put out some tunes instead . \n what nickname has trump earned ? ? until 1805 , the runner - up in a presidential election became vp . i think this system should be reinstated . the entertainment factor would be tremendous for a public starved for diversion . there 's not much getting done in government anyway . seems like a missed opportunity for some laugh 's \n they may not appear to get anything done but they do own 86 % of the land of nevada , so they obviously did something right , haha . \n\n",
+    "answer": "i think that is a good idea . i wonder if it 's true in the us .\n",
+    "context": [
+      "86 % of the land in nevada is owned by the us government\n"
+    ],
+    "human_score": 0.3333,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_64",
+    "question": "hello , how are you this evening ? do you like sports ? \n i m great , and yeah i do like to watch sports , basketball , hockey , soccer and even swimming , what about you ? \n\n",
+    "answer": "yes . i think that 's why i live in the usa . i 've seen some swimming around the world where i live .\n",
+    "context": [
+      "_nofact\n"
+    ],
+    "human_score": 0.5556,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_266",
+    "question": "do you like football ? \n i love it . do you know what color is the u of iowa visitor locker room ? \n yes it is pink but i a not sure why they chose that color \n i wonder if it is supposed to have some effect on them \n i wonder too . bowling was more popular than football in the 60s \n\n",
+    "answer": "i think it was back in the 60s , but i do n't know much about it\n",
+    "context": [
+      "in the 1960 's top bowlers made twice as much as top football stars\n"
+    ],
+    "human_score": 0.4444,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_363",
+    "question": " open relationship !\niol well i wish i was brave enough to do that\nmy father was a salesman , helps my dog walking business now\nthat is nice i've a motorbike don't know what car to get for winter\nvery very cool . sounds fun\nyes i had them put red with blue stripes to be shinny for when racing\nso is my dog , wow so cool\nso what do you do in your spare time ?\nlead singer for a band , music teacher\nwow nice are you really good ?\nmillions of plays on soundcloud\nreally would you share or are you shy\n",
+    "answer": "i am not . i am a student .\n",
+    "context": [
+      "your persona: i also have a dog walking business.\nyour persona: i've three dogs.\nyour persona: my father was a door to door salesman.\nyour persona: i am in an open polyamorous relationship.\nyour persona: i like to watch the olympics.\n"
+    ],
+    "human_score": 0.3333,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_268",
+    "question": "do you like football ? \n i love it . do you know what color is the u of iowa visitor locker room ? \n yes it is pink but i a not sure why they chose that color \n i wonder if it is supposed to have some effect on them \n i wonder too . bowling was more popular than football in the 60s \n\n",
+    "answer": "it was in the 1960s and the difference . i guess football was not as popular as top bowlers back in the 1960s\n",
+    "context": [
+      "in the 1960 's top bowlers made twice as much as top football stars\n"
+    ],
+    "human_score": 0.7778,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_379",
+    "question": " own two of them .\ni volunteer at a shelter , they are adorable . what do you do ?\ni'm a teacher and i love children .\nkids are great . i donate a lot of my income to several childrens programs .\ni would do that more often too if i had a larger income .\ni do not have a large income , just believe in helping others .\ndo you like gardening ? i own a garden .\ni do love gardening . i work in a shipyard .\ni love the smell of the flowers in the air .\ni do too , it is one of lifes greatest pleasures .\n",
+    "answer": "one of my greatest pleasures is going to church every week . \n",
+    "context": [
+      "your persona: i'm a woman.\nyour persona: i work as a school teacher.\nyour persona: i attend church every week.\nyour persona: i enjoy gardening and walking outdoors.\nyour persona: i have a dogs.\n"
+    ],
+    "human_score": 0.6667,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_229",
+    "question": "en either or both of them ? \n i have seen both and i must say i liked the first one better althought the cast of the 2nd part got an upgrade \n i 'm not familiar with the cast of the second one . are they big name actors / actresses ? \n yeah have you watched breaking bad ? well the actor that played saul is one of the new voices \n oh okay ! say , i heard that the director did one of the voices too . i think he did edna mode . \n yeah he did , its interesting how he picked the cast for the movie \n\n",
+    "answer": "i think it was a great movie , i think it was a great movie , i liked it a lot more than the movie , you should watch it again\n",
+    "context": [
+      "13 years before the movie \" incredibles ii \" came out , there was a sequel to the first incredibles that exists in a video game form , and is called \" the incredibles : rise of the underminer \" .\n"
+    ],
+    "human_score": 0.7778,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_554",
+    "question": " do you have nay hobbies ?\nyes , i like to cook too . but i'm not a pro like you\neven though i love cooking , i also like fishing . do you like to fish ?\nyes , i fly fish . i love it . i wish i could invite my family\nwhy can you not invite your family ?\ni've no family close to me\nthat's a shame . i am sorry . do you enjoy comic books ?\ni like spawn and the x men\ni love spiderman , myself . he is my favorite .\nhe is a good character for sure\nmaybe we should trade comics and go fishing sometime !\n",
+    "answer": "yes ! i would really enjoy that . i could show you my bees as well !\n",
+    "context": [
+      "your persona: i've zero family that i'm close to.\nyour persona: my favorite food is papaya.\nyour persona: i am a bee farmer.\nyour persona: my name is george.\n"
+    ],
+    "human_score": 1.0,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_561",
+    "question": "hey there i live on a farm .\n",
+    "answer": "i want to qualify for an event or professionally compete at cow milking someday\n",
+    "context": [
+      "your persona: i am a piano teacher on the side.\nyour persona: i enjoy exploring new parts of the city.\nyour persona: my father played violin professionally.\nyour persona: i play several instruments.\n"
+    ],
+    "human_score": 0.6667,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_548",
+    "question": "there'sn'thing i like more than a late night ice cream run\nhey share the cream ! haha\ndo you have a flavor preference ? mine is vanilla\nvanilla is my fav as well\nmy two cats love to lick the bowl when i am done haha\n",
+    "answer": "i like to go to the gym and listen to music .\n",
+    "context": [
+      "your persona: my current goal is to run a k.\nyour persona: when i grow up i want to be a physical therapist.\nyour persona: i'm currently in high school.\nyour persona: i make straight as in school.\nyour persona: i won homecoming queen this year.\n"
+    ],
+    "human_score": 0.4444,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_493",
+    "question": " recently .\nwow , great . my artistic ability is limited to coloring books . lol\nmy favorite word in spanish is trabajo . i plan to study french next .\nneat . my husband was adopted and he's spanish .\ndoes he speak spanish fluently ?\nyes , but i do not . i am limited to spanish food names like taco . lol\nare tacos your favorite food ?\nyes , i eat them while i watch hockey . do you like hockey ?\ni like baseball better . go yankees !\nwhat instrument do you play ?\ni play the piano and the violin .\n",
+    "answer": "i like to play soccer , but i like to play soccer .\n",
+    "context": [
+      "your persona: i like to watch nhl hockey.\nyour persona: i live is a rural farming community.\nyour persona: my husband is adopted.\nyour persona: i enjoy coloring books.\nyour persona: i've a german shepherd dog.\n"
+    ],
+    "human_score": 0.4444,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_444",
+    "question": "here ?\nyes , but i am allergic to water . this is very unfortunate .\nit is . how do you keep clean ?\ni don't go outside much . i stay clean this way .\ni want to go outside . i managed to break my arm skateboarding so i m stuck indoors .\ni only stream to my 100 , 000 subscribers on twitch . i do not play real sports\n100k is very impressive . how long did it take to get that many ?\nsince i helped make starcraft , my name was already out there . 6 months .\nmade as in developed ? that s very cool .\n",
+    "answer": "thank you . now i'm building a robot to be my body double !\n",
+    "context": [
+      "your persona: i helped design the game starcraft.\nyour persona: i've an allergy to water.\nyour persona: i am a recluse.\nyour persona: i'm a famous twitch streamer.\nyour persona: i am working on a building a robot to be my body double.\n"
+    ],
+    "human_score": 0.8889,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_124",
+    "question": "was such a great movie . i heard they are making a second one . \n animated film are contribute biggest in box office collection . mostly kids liked movie have very high box office . \n yes for sure . disney once considered shutting down their animation studio because sleeping beauty was a flop at the box office . \n the projection and analysis of these earnings is very important for the movie industries and knowing the interest of the fans . so only they are promoting the films in various way . \n\n",
+    "answer": "the guy that had a budget of $ 15 million that was a huge loss .\n",
+    "context": [
+      "the movie trojan wars with a budget of $ 15,000,000 has earned only $ 309 in box office\n"
+    ],
+    "human_score": 0.4444,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_49",
+    "question": "hi , do you know much about the internet ? \n i know a lot about different sites and some website design , how about you ? \n\n",
+    "answer": "i do n't know , i do know that the 3 horizontal line menu on apps and websites is called a hamburger .\n",
+    "context": [
+      "the 3 horizontal line menu on apps and websites is called a hamburger button .\n"
+    ],
+    "human_score": 0.7778,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_17",
+    "question": ". would a coach like bill belichick hire a woman if she could help him win the super bowl ? \n this is going to come off sounding bad , but it is n't meant to . i think anyone in the front office would look at it from the perspective of generating revenue and views . the sponsors would love the coverage . \n belichick has done well in the post season , so i think he 's looking at it from a strategic point of view . the sponsors would tie her presence into a bunch of social issues and products . \n\n",
+    "answer": "i think belichick is very strategic and he would n't do something if it would n't help his team win . the last time cleveland won a game in the playoffs was when belichick was their coach . shows how lucky teams are to have him .",
+    "context": [
+      "the cleveland browns ' last playoff win was in 1995 against the new england patriots and their head coach was bill belichick . this was bill 's first playoff win as head coach and the only playoff win as head coach outside the patriots .\n"
+    ],
+    "human_score": 1.0,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_446",
+    "question": "hello how are you today\n",
+    "answer": "i am doing great , watching a little basketball . what are you up to ?\n",
+    "context": [
+      "your persona: i have three children.\nyour persona: i'm a plumber.\nyour persona: my wife and kids are the best.\nyour persona: my favorite ice cream flavor is chocolate.\n"
+    ],
+    "human_score": 1.0,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_188",
+    "question": "eat . \n can you imagine the movie speed on that bus ! ! ! ! holy smokes ! \n ha ha , yes that would change that movie quite a bit . back to iceland , most do n't have cars and travel between towns by flight ! \n really . seems a little overkill but what do i know ... i want to go there and see the northern lights some day . \n that would be a beautiful sight . off topic but how do you feel about sharks ? \n i 'm for em ! \n they are very interesting . did you know that they do n't have rib cages ? \n\n",
+    "answer": "i did not know that . i wonder if they ever had that rule ?\n",
+    "context": [
+      "_nofact\n"
+    ],
+    "human_score": 0.8889,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_491",
+    "question": " recently .\nwow , great . my artistic ability is limited to coloring books . lol\nmy favorite word in spanish is trabajo . i plan to study french next .\nneat . my husband was adopted and he's spanish .\ndoes he speak spanish fluently ?\nyes , but i do not . i am limited to spanish food names like taco . lol\nare tacos your favorite food ?\nyes , i eat them while i watch hockey . do you like hockey ?\ni like baseball better . go yankees !\nwhat instrument do you play ?\ni play the piano and the violin .\n",
+    "answer": "i saw the easter bunny behind my closet door\n",
+    "context": [
+      "your persona: i like to watch nhl hockey.\nyour persona: i live is a rural farming community.\nyour persona: my husband is adopted.\nyour persona: i enjoy coloring books.\nyour persona: i've a german shepherd dog.\n"
+    ],
+    "human_score": 0.3333,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_170",
+    "question": "ll ? \n i 'm a huge football fan . how about yourself ? \n i love football both college and nfl , do you have a favorite nfl team of the 32 ? \n i 'm a new england patriots fan and huge fan of tom brady how about you ? \n nice i am a vikings fan , not doing so hot as of late . i also like the university of iowa hawkeyes , did you know they paint their opponents locker room pink ? \n no i did n't know this . did you know that in the 60 's top bowlers made twice as much as the top football players ? \n\n",
+    "answer": "that is crazy , also crazy that the highest scoring football game ever was 222 - 0 , i wonder how much it was actually made\n",
+    "context": [
+      "- that the highest score ever in a football game occurred in 1916 when georgia tech defeated cumberland 222 - 0\n"
+    ],
+    "human_score": 0.7778,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_211",
+    "question": "movie \n that 's cool ! did you also know that there is a deaf rapper who rhymes in sign language . that is awesome \n some rappers have a sign language translator on stage with them . i 've seen it on youtube ! \n that 's great ! the world 's fastest rapper noclue raps 14.1 syllables per second \n korean rappers invented a new type of freestyle , it 's called \" compliment battle \" . \n really , do they do compliments ? \n i do nt know , but i am visiting korea in a few , so maybe i will find out . \n\n",
+    "answer": "i think that is a great idea , i would like to listen to that one , i wonder how it sounds like\n",
+    "context": [
+      "there is a radio station that translates solar activity into sound and you can listen live to the sun 's music\n"
+    ],
+    "human_score": 0.7778,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_599",
+    "question": "yours ?\nright now i listen to a lot of mumford and sons .\ndo you have a weight problem like me ?\ni am a little self conscious . thirty is not as easy as i remember twenty being .\nwhat do you like to eat ? i diet all the time .\ni tend to stay in and cook for myself since i quit drinking a few years ago .\nthat is probably a lot healthier and saves you money . i eat out all the time .\nmy dad had me hooked on high protein foods like fish and chicken when i was training .\nwhat are you training for ?\n",
+    "answer": "chess tournaments ! protein makes your brain more activate for intense chess matches .\n",
+    "context": [
+      "your persona: i'm in my thirties.\nyour persona: i love taking bubble baths.\nyour persona: i like to play chess.\nyour persona: i do not drink alcohol.\n"
+    ],
+    "human_score": 1.0,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_368",
+    "question": "n paradise .\nfunny thing is i came from farm life\ni was named after a horse . my boyfriend likes to may nay sounds at me .\nsounds like the crazy medicine i take\njust do not mix with alcohol or can get crazy around here .\ni used to be an alcoholic so no can do\ni tend to stick to my water only . soda is worse !\nthat's what everyone should strive for\nas long as i have my french fries !\nwell everyone can cheat once in a while\nof course . now all of this has made me hungry .\nyou can go for some grub\n",
+    "answer": "i do not know what to say .\n",
+    "context": [
+      "your persona: i like to take walks.\nyour persona: i don't drink soda.\nyour persona: i've a boyfriend.\nyour persona: i like to eat hamburgers and french fries.\n"
+    ],
+    "human_score": 0.3333,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_112",
+    "question": "in fantasy football . i am sure that moore has had some good games and some poor ones . alex smith took so many ap tests in high school that entered college as a junior . \n he 's pretty smart . it would take a lot of ap courses to knock out the first two years of college like that \n it sure would . of course , qbs need to be somewhat smart . baker mayfield who won the heisman at oklahoma university almost quite football to go into competitive gaming . he could beat the entire team in halo 3 . \n\n",
+    "answer": "yeah , but i 'm not sure how much he did in halo 3 , he played football for halo 3\n",
+    "context": [
+      "superbowl winning quarterback , brad johnson , is the only quarterback in nfl history to throw a touchdown pass ... to himself .\n"
+    ],
+    "human_score": 0.6667,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_175",
+    "question": "now ? \n that 's interesting . i would be curious . there is only 2 african americans in the country music hall of fame . i wonder who they are ? \n i 'm not sure either . i do n't recall any african american artists in country music . do you know what the fender stratocaster is ? \n i remember charley pride . he might be one . ... and yes ! it 's a guitar . i think a lot jazz and some blues musicians use it . \n oh ! fender , i see that now ! thanks for clarifying ! do you play any instruments ? \n\n",
+    "answer": "i do n't know much about u2 . i do know that u2 opened for themselves in 1987 .\n",
+    "context": [
+      "u2 opened for themselves at a few shows in 1987 . they were introduced as \" the dalton brothers from galveston , texas , \" and they played country music while disguised in wigs and costumes .\n"
+    ],
+    "human_score": 0.3333,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_177",
+    "question": "now ? \n that 's interesting . i would be curious . there is only 2 african americans in the country music hall of fame . i wonder who they are ? \n i 'm not sure either . i do n't recall any african american artists in country music . do you know what the fender stratocaster is ? \n i remember charley pride . he might be one . ... and yes ! it 's a guitar . i think a lot jazz and some blues musicians use it . \n oh ! fender , i see that now ! thanks for clarifying ! do you play any instruments ? \n\n",
+    "answer": "i do n't know . i love country music . i think i 've heard that u2 once opened for themselves in 1987 . they were actually opened for themselves and then became the dalton brothers from galveston tx .\n",
+    "context": [
+      "u2 opened for themselves at a few shows in 1987 . they were introduced as \" the dalton brothers from galveston , texas , \" and they played country music while disguised in wigs and costumes .\n"
+    ],
+    "human_score": 0.6667,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_184",
+    "question": " impossible to separate two of them with their pages fully overlapped \n lol i never tried but i believe you . do you like clothing ? did you know polo shirts were actually meant for tennis players ? \n i did nt know that , always thought it was meant for the polo sport or maybe that the polo brand created them \n same here , yeah a tennis player created them \n i looks like polo player took the credit then , did you hear about the cultural revolution in china ? \n no i have nt what s that about ? \n\n",
+    "answer": "yes , they wore blue shirts and khaki pants in the billy mays funeral\n",
+    "context": [
+      "at billy mays ' funeral the pallbearers wore blue shirts and khaki pants\n"
+    ],
+    "human_score": 0.3333,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_182",
+    "question": " impossible to separate two of them with their pages fully overlapped \n lol i never tried but i believe you . do you like clothing ? did you know polo shirts were actually meant for tennis players ? \n i did nt know that , always thought it was meant for the polo sport or maybe that the polo brand created them \n same here , yeah a tennis player created them \n i looks like polo player took the credit then , did you hear about the cultural revolution in china ? \n no i have nt what s that about ? \n\n",
+    "answer": "i have not , i know that the pallbearers wore blue shirts and khaki pants\n",
+    "context": [
+      "at billy mays ' funeral the pallbearers wore blue shirts and khaki pants\n"
+    ],
+    "human_score": 0.3333,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_273",
+    "question": "y much . did you know women are allowed to play in the nfl ? \n that is pretty cool that there is no written rule against them and hope to see them in the field soon \n yeah i hope so too . did you know engineers make more int heir lifetime ? \n yeah and i wonder if that fact that they have longer careers has anything to do with that \n that makes sense . the nfl is using tracking chips on the players now . \n yes they are and they are collecting many stats such as velocity and rotation and others \n\n",
+    "answer": "i know . do you know who benjarvus green - ellis is ?\n",
+    "context": [
+      "former partiots rb benjarvus green - ellis has never fumbled the football in his nfl career .\n"
+    ],
+    "human_score": 0.7778,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_107",
+    "question": "frequency concert for dogs . what an odd thing to do . \n oh wow ! really , did the dogs like it ? was it recorded ? \n i have no idea . i 'm sure that someone has video of it . do you enjoy the music of the foo fighters \n oh yes , i love them . i love the video of all the drummers and other instruments playing at the same time . people came from all over the world to be in that . \n they are pretty amazing . they performed a concert so loud that it showed up on new zealand 's seismic monitors ! \n\n",
+    "answer": "wow i wonder if anybody sued them . four people sued creed for performing very badly at a concert in 2002 .",
+    "context": [
+      "in 2002 a creed concert was so bad that four concert goers filed a lawsuit against the band\n"
+    ],
+    "human_score": 1.0,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_133",
+    "question": "hello did you know that 80 percent of the earths natural forests have already been destroyed ? \n i heard it but i 'm skeptical . that sounds far too high and what 's the definition of \" natural . \n not sure in this case . when the earth was formed the days were only 5.5 hours long ! \n that was 5.5 hours of sunlit hell in magma and lava . bummer , they are saying we will be out of helium by the end of the century . \n\n",
+    "answer": "i would love to see that one ! i would love to see it !\n",
+    "context": [
+      "if earth ’s entire history was viewed as a 24 hour period , humans would only represent 1 minute and 17 seconds .\n"
+    ],
+    "human_score": 0.3333,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_37",
+    "question": "e name of a genus of bat . \n that is so neat ! those are details that make you enjoy the movies even more . did you watch tron , ? it has a unique soundtrack ! \n i have not seen it . tell me about the soundtrack . \n it is very sci fi , and super inspiring . it is made by daft punk , i love that duo ! \n i love that they negotiated with their robot helmets on . seems like something they would do . \n incognito style ! ! and very simple , they just needed a good breakfast with pancakes to say yes \n\n",
+    "answer": "i think that is a great idea . i think it is a great way to keep track of things .\n",
+    "context": [
+      "_nofact\n"
+    ],
+    "human_score": 0.4444,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_291",
+    "question": "ently was fdr \n the wealthiest presidents are jfk , washington , jefferson . i thought trump would be lol \n that surprised me too . where did they get their money from \n inheritance probably . at least their name is not banana like the first president of zimbabwe \n 1 \n yah and the president of indonesia has released 3 pop albums while in office \n is it real ? by the way , are you a fan of taylor swift \n i was until i knew she removed her music from spotify because \" music should not be free \" \n\n",
+    "answer": "yeah she does nt seem to be allergic to her , i wonder why she has not banned her music\n",
+    "context": [
+      "taylor swift walks backwards to avoid having her photo taken .\n"
+    ],
+    "human_score": 0.4444,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_40",
+    "question": "e name of a genus of bat . \n that is so neat ! those are details that make you enjoy the movies even more . did you watch tron , ? it has a unique soundtrack ! \n i have not seen it . tell me about the soundtrack . \n it is very sci fi , and super inspiring . it is made by daft punk , i love that duo ! \n i love that they negotiated with their robot helmets on . seems like something they would do . \n incognito style ! ! and very simple , they just needed a good breakfast with pancakes to say yes \n\n",
+    "answer": "so true . nice chatting with you !\n",
+    "context": [
+      "_nofact\n"
+    ],
+    "human_score": 0.5556,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_344",
+    "question": " got ta remember , they did n't have the internet back then , so they had to do something for entertainment . :) so , what was the last concert you ever attended ? \n now that i think about it , i went to one a little over a year ago around christmastime , so most of the songs were christmas songs . the venue was fairly big , but not as big as ones like where the big name artists perform . it was good still , unlike the 2002 creed concert that was bad enough for concert goers to file a lawsuit \n\n",
+    "answer": "i agree . i wonder if they were still around when they were playing ?\n",
+    "context": [
+      "in 2002 a creed concert was so bad that four concert goers filed a lawsuit against the band\n"
+    ],
+    "human_score": 0.3333,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_34",
+    "question": "is 212 . \n ya i think it was because that was the fastest number that you could dial with a rotary phone ? crazy how that stuff carries over until even today ! ! \n it is ! there s a lot things we need to discover still though , i 'm kind of worried the cables carrying phone and internet are underwater , at least some of them . \n ya it 's only about 3 inches thick , i wonder how it is protected ? is it just a cable or are there safeguards in place in case like a ship sinks and crushes it , etc \n\n",
+    "answer": "yes , i wonder if they have tested on the backs in the 1800s\n",
+    "context": [
+      "[ # 26 score:167 comments:24 ] - til - the trunk of your car is called that because old cars used to have wooden trunks on the back .\n"
+    ],
+    "human_score": 0.3333,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_238",
+    "question": "hello , do you like swimming ? \n hi there ! i do ! i love watching the olympic events . how about you ? \n same here . i do not swim that much but i occasionally go to the pool every once and a while . i also enjoy watching swimming in the olympics ; \n did you know cornell students are actually required to pass a basic swim test before they can graduate ? \n i think that that is a good idea ! native americans also introduced the british to the front crawl . \n\n",
+    "answer": "do you know how the british only got breaststroke before ?\n",
+    "context": [
+      "native americans introduced the front crawl swimming stroke to the west when they beat the british who only used the breaststroke .\n"
+    ],
+    "human_score": 0.6667,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_105",
+    "question": "frequency concert for dogs . what an odd thing to do . \n oh wow ! really , did the dogs like it ? was it recorded ? \n i have no idea . i 'm sure that someone has video of it . do you enjoy the music of the foo fighters \n oh yes , i love them . i love the video of all the drummers and other instruments playing at the same time . people came from all over the world to be in that . \n they are pretty amazing . they performed a concert so loud that it showed up on new zealand 's seismic monitors ! \n\n",
+    "answer": "yeah i bet they did . i think creed should have a concert that was so bad that 4 concert goers filed a lawsuit against them .\n",
+    "context": [
+      "in 2002 a creed concert was so bad that four concert goers filed a lawsuit against the band\n"
+    ],
+    "human_score": 0.5556,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_648",
+    "question": "i cant believe the news i just got . my sister is a stripper\nsounds like my kids ! ha . . stay at home dad here , have to laugh somewhere .\nwe grew up christian so its out of character .\ni bet i am sorry . it is an interesting job choice .\nwhat do you do for work ?\n",
+    "answer": "i am a student , but i am a student .\n",
+    "context": [
+      "your persona: i'm a stay at home dad.\nyour persona: i spent a decade working in the human services field.\nyour persona: my father used to work for home depot.\nyour persona: horror movies are my favorites.\n"
+    ],
+    "human_score": 1.0,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_1",
+    "question": "n like animated movies , but they 're worth checking out . \n i do n't watch them very often . apparently there was a showing of the recent film in a park in d.c . that 's one u.s . city i have n't been to \n sadly , i have n't been to dc either , although i 've always wanted to visit there . apparently there 's a lot of interesting going down this summer . they 're having a crab feast at the navy - marine corps stadium . they 'll have 100 gallons of crab soup ! can you imagine that much soup ? \n\n",
+    "answer": "i think it 's interesting that peter gabriel has been in the us , he is a great performer .\n",
+    "context": [
+      "from left , emma baker , daniel saperstein and taylor mulitz of flasher will perform this summer 's final fort reno concert . ( jared soares for the washington post ) monday , july 30 25th birthday celebration at national postal museum : celebrate 25 years of this institution devoted to the long history of the u.s . postal service with daytime festivities that include cupcakes , birthday postcards , a photo booth and a special scavenger hunt with prizes . 11 a.m. to 2 p.m. free . tuesday , july 31 \" the color purple \" at kennedy center : the tony award - winning musical revival , based on the pulitzer prize - winning alice walker novel of the same name , features jazz , ragtime , gospel and blues with a story about an african american woman named celie surviving poverty in the south during the 1930s . through aug . 26 . $ 69-$149 . ask a harry potter scholar at southeast neighborhood library : come to this talk from tolanda henderson , a librarian from george washington university , who has used the j.k . rowling book series as a text in academia . commune with other muggles who prove that it 's not just kids and young adults who obsess about the boy who lived . 7 p.m. free . wednesday , aug . 1 rico nasty at the fillmore silver spring : two summers ago , rico nasty was a teenage loudmouth from the maryland suburbs , generating buzz on youtube for spitting surly , rainbow - tinted rhymes . now , after signing a deal with atlantic records , the 21-year - old singer is on her way to becoming one of the brightest voices in rap music .\n"
+    ],
+    "human_score": 0.3333,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_26",
+    "question": "w that works . \n i ve done it traveling , you ve got to really know the team and all of the players names . it was so much harder . \n do you have a favorite nfl team . like i said , i lived in dc for a while so kind of follow them . now in northern ohio , the browns are a difficult team to support . \n i feel you there , living in florida here . dolphins are hard to root for and feel proud . \n it could be worse , i read about this team that lost 220 - 0 . it would be hard to watch to the end . \n\n",
+    "answer": "i 'm not sure . i think it 's crazy that the highest scoring football game ever was 222 - 0 .\n",
+    "context": [
+      "- that the highest score ever in a football game occurred in 1916 when georgia tech defeated cumberland 222 - 0\n"
+    ],
+    "human_score": 0.6667,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_16",
+    "question": ". would a coach like bill belichick hire a woman if she could help him win the super bowl ? \n this is going to come off sounding bad , but it is n't meant to . i think anyone in the front office would look at it from the perspective of generating revenue and views . the sponsors would love the coverage . \n belichick has done well in the post season , so i think he 's looking at it from a strategic point of view . the sponsors would tie her presence into a bunch of social issues and products . \n\n",
+    "answer": "yes , he was a great coach ! well i m guessing he did a lot more than pro football players , i think there s a lot of talent in it all\n",
+    "context": [
+      "the cleveland browns ' last playoff win was in 1995 against the new england patriots and their head coach was bill belichick . this was bill 's first playoff win as head coach and the only playoff win as head coach outside the patriots .\n"
+    ],
+    "human_score": 0.7778,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_452",
+    "question": "hello , how are you doing today ?\ni am okay . i wish my children would visit more , though .\ni am sorry to hear that . i turn to my spouse in times like that .\ni do , as well . though my husband liked me more when i was younger and prettier .\nthat's unfortunate . have you talked to anyone about this ?\n",
+    "answer": "i was a little too . i was a very good painter .\n",
+    "context": [
+      "your persona: i have two grown children who never visit.\nyour persona: i used to be pretty but time has not been kind.\nyour persona: i'm a 56 year old woman.\nyour persona: i used to be a painter but now i'm a housekeeper.\n"
+    ],
+    "human_score": 0.3333,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_146",
+    "question": "hool but rather heavy emphasis on sports so to see him go on to get his master 's degree , is very surprising to me . \n i agree but some are both jocks and academics . i wonder if brady was ? i do admire him he 's seen hard times like to 41 - 33 loss to the eagles . \n i definitely think that his leadership and tenacity and the so called \" patriot way \" can really shape people and lead them to their championships but his wife makes more than double brady 's salary ! i thought she was retired ! \n\n",
+    "answer": "i think he has a great record , i think he is a great player , he is a great coach and also a great player , he has a great record\n",
+    "context": [
+      "bill belichick is the winningest coach in nfl postseason football with 21 wins . 20 with the new england patriots and 1 with the cleveland browns .\n"
+    ],
+    "human_score": 0.5556,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_431",
+    "question": "my name is joan , and i live in illinois . i'm a kindergarten teacher .\nhello joan ! i'm chrissy from minnesota . i'm building a robot for my work .\nthat sounds exciting ! i'm clumsy with electronics .\n",
+    "answer": "the nearest one to me is a long drive a away , but i do not mind .\n",
+    "context": [
+      "your persona: i helped design the game starcraft.\nyour persona: i'm working on a building a robot to be my body double.\nyour persona: i have an allergy to water.\nyour persona: i am a famous twitch streamer.\nyour persona: i am a recluse.\n"
+    ],
+    "human_score": 0.3333,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_8",
+    "question": "miserable season . are you familiar with the nfl ? \n oh i see , i guess i m confusing him with a player of the team , what was his name i think it was khalil mack , and i do follow some games what about you ? \n football is one of my favorite sports and i follow all 32 teams . khalil mack was traded to the bears by john gruden for some picks . they definitely felt his absence . i do n't know why they did n't just resign him . \n maybe he demanded a high salary ? what is your favorite nfl team ? \n\n",
+    "answer": "i think he 's a great player . i think he 's a great player .\n",
+    "context": [
+      "the raiders sacked goff only once , on a play during which bruce irvin forced a fumble . other than that , the oakland defense could put almost no pressure on goff . the absence of mack , the former nfl defensive player of the year , was glaring . in the first half sunday night , mack had a sack , a forced fumble , a fumble recovery , an interception and a touchdown on defense . he and the bears could not sustain that , and they succumbed to the second - half exploits of packers quarterback aaron rodgers . but mack reinforced what a game - changing , difference - making player he is . he left little doubt that he is worth the six - year , $ 141 million contract given to him by the bears , making him the league 's highest - paid defensive player . [ the nfl teams that have serious reasons to worry , versus the ones that do n't ] mack , while still with the raiders , had been holding out , seeking such a deal . the raiders did n't want to give it to him . they have a $ 125 million quarterback in carr . they have a $ 100 million coach in gruden . they drew the line at handing out another mammoth deal , not wanting to further strain their budget or push the boundaries of the salary cap . they regarded the king 's ransom of draft picks put forth by the bears , including a pair of first - rounders , as an offer they could n't refuse . in truth , they could have refused it .\n"
+    ],
+    "human_score": 0.5556,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_168",
+    "question": "ll ? \n i 'm a huge football fan . how about yourself ? \n i love football both college and nfl , do you have a favorite nfl team of the 32 ? \n i 'm a new england patriots fan and huge fan of tom brady how about you ? \n nice i am a vikings fan , not doing so hot as of late . i also like the university of iowa hawkeyes , did you know they paint their opponents locker room pink ? \n no i did n't know this . did you know that in the 60 's top bowlers made twice as much as the top football players ? \n\n",
+    "answer": "that is crazy to think , i wonder what the difference in salary is now , probably substantial \n",
+    "context": [
+      "- that the highest score ever in a football game occurred in 1916 when georgia tech defeated cumberland 222 - 0\n"
+    ],
+    "human_score": 1.0,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_137",
+    "question": "hello did you know that 80 percent of the earths natural forests have already been destroyed ? \n i heard it but i 'm skeptical . that sounds far too high and what 's the definition of \" natural . \n not sure in this case . when the earth was formed the days were only 5.5 hours long ! \n that was 5.5 hours of sunlit hell in magma and lava . bummer , they are saying we will be out of helium by the end of the century . \n\n",
+    "answer": "wow , i ca n't believe we 're destroying the world . if we viewed the earth 's history as a 24 hour period , humans would only have existed for 1 minute and 17 seconds . and in that time , we 've managed to completely destroy the planet .",
+    "context": [
+      "if earth ’s entire history was viewed as a 24 hour period , humans would only represent 1 minute and 17 seconds .\n"
+    ],
+    "human_score": 1.0,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_479",
+    "question": "good morning to you how are you today\ni'm well , glad to type to you . how are you ?\ni'm great i'm in school and i'm the queen of homecoming\n",
+    "answer": "i hope you enjoy that . i'm a buddhist and i spend all my time meditating . i haven't spoken in three months .\n",
+    "context": [
+      "your persona: i like meditation.\nyour persona: i've not spoken in three months.\nyour persona: i quit my job to pursue my spirituality full time.\nyour persona: i'm a buddhist.\n"
+    ],
+    "human_score": 1.0,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_262",
+    "question": "p track of celebrity news by any chance \n no i do n't tend to read much about it unless it is front of me like this article . \n okay . do you believe what is the max sentence and fine should this guy get ? \n i think he should have gotten 20 years and be forced to return every cent he collected . what do you think ? \n completely with you on this . to warn others from carrying out such act . \n yes that would be a deterrent . punishments should be harsher to show the judicial system is serious . \n\n",
+    "answer": "that 's true . maybe we should do a chat like that .\n",
+    "context": [
+      "_nofact\n"
+    ],
+    "human_score": 0.4444,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_565",
+    "question": "i just got back from my salsa dance lessons\nthat sounds like a really fun time . i was just meditating\nthat is so relaxing . my lite brite patterns are relaxing too\n",
+    "answer": "i'm buddhist , my spiritual journey relaxes me\n",
+    "context": [
+      "your persona: i quit my job to pursue my spirituality full time.\nyour persona: i'm a buddhist.\nyour persona: i have not spoken in three months.\nyour persona: i like meditation.\nyour persona: i live in alaska.\n"
+    ],
+    "human_score": 1.0,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_261",
+    "question": "p track of celebrity news by any chance \n no i do n't tend to read much about it unless it is front of me like this article . \n okay . do you believe what is the max sentence and fine should this guy get ? \n i think he should have gotten 20 years and be forced to return every cent he collected . what do you think ? \n completely with you on this . to warn others from carrying out such act . \n yes that would be a deterrent . punishments should be harsher to show the judicial system is serious . \n\n",
+    "answer": "it is a nice place . i hope you have a good day .\n",
+    "context": [
+      "_nofact\n"
+    ],
+    "human_score": 0.3333,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_259",
+    "question": "p track of celebrity news by any chance \n no i do n't tend to read much about it unless it is front of me like this article . \n okay . do you believe what is the max sentence and fine should this guy get ? \n i think he should have gotten 20 years and be forced to return every cent he collected . what do you think ? \n completely with you on this . to warn others from carrying out such act . \n yes that would be a deterrent . punishments should be harsher to show the judicial system is serious . \n\n",
+    "answer": "i think that would be a good idea .\n",
+    "context": [
+      "_nofact\n"
+    ],
+    "human_score": 0.7778,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_618",
+    "question": "k ?\ni am a nurse work in a trauma center in the trauma icu and you\ni am majoring in economics .\ndo you know where you will work after school ?\nno idea . hopefully somewhere near the new house i bought .\ni bough my house when i turned 19 best this i have done\nwow . that is young . you must be rich .\nno not rich just was smart with my money and bought fix upper\nthat is smart . what kind of work does your house need ?\nmainly cosmetics stuff . we had to tear out all carpet and re drywall every room\n",
+    "answer": "i am a nurse , i love to cook .\n",
+    "context": [
+      "your persona: i just bought a house recently.\nyour persona: i'm married with two kids.\nyour persona: i see the rolling stones in concert every year.\nyour persona: i'm an economics major.\nyour persona: i eat a raw diet.\n"
+    ],
+    "human_score": 0.3333,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_personachat_568",
+    "question": "i just got back from my salsa dance lessons\nthat sounds like a really fun time . i was just meditating\nthat is so relaxing . my lite brite patterns are relaxing too\n",
+    "answer": "i like to go to the gym and listen to music .\n",
+    "context": [
+      "your persona: i quit my job to pursue my spirituality full time.\nyour persona: i'm a buddhist.\nyour persona: i have not spoken in three months.\nyour persona: i like meditation.\nyour persona: i live in alaska.\n"
+    ],
+    "human_score": 0.6667,
+    "domain": "dialogue_personachat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_123",
+    "question": "was such a great movie . i heard they are making a second one . \n animated film are contribute biggest in box office collection . mostly kids liked movie have very high box office . \n yes for sure . disney once considered shutting down their animation studio because sleeping beauty was a flop at the box office . \n the projection and analysis of these earnings is very important for the movie industries and knowing the interest of the fans . so only they are promoting the films in various way . \n\n",
+    "answer": "i guess it is a very different film . it was nice chatting with you .\n",
+    "context": [
+      "the movie trojan wars with a budget of $ 15,000,000 has earned only $ 309 in box office\n"
+    ],
+    "human_score": 0.4444,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_6",
+    "question": "miserable season . are you familiar with the nfl ? \n oh i see , i guess i m confusing him with a player of the team , what was his name i think it was khalil mack , and i do follow some games what about you ? \n football is one of my favorite sports and i follow all 32 teams . khalil mack was traded to the bears by john gruden for some picks . they definitely felt his absence . i do n't know why they did n't just resign him . \n maybe he demanded a high salary ? what is your favorite nfl team ? \n\n",
+    "answer": "i like the giants best , you ? . he did demand a high salary . he 's the highest paid defensive player in the nfl . i guess the raiders tied up too much money in carr and gruden . \n",
+    "context": [
+      "the raiders sacked goff only once , on a play during which bruce irvin forced a fumble . other than that , the oakland defense could put almost no pressure on goff . the absence of mack , the former nfl defensive player of the year , was glaring . in the first half sunday night , mack had a sack , a forced fumble , a fumble recovery , an interception and a touchdown on defense . he and the bears could not sustain that , and they succumbed to the second - half exploits of packers quarterback aaron rodgers . but mack reinforced what a game - changing , difference - making player he is . he left little doubt that he is worth the six - year , $ 141 million contract given to him by the bears , making him the league 's highest - paid defensive player . [ the nfl teams that have serious reasons to worry , versus the ones that do n't ] mack , while still with the raiders , had been holding out , seeking such a deal . the raiders did n't want to give it to him . they have a $ 125 million quarterback in carr . they have a $ 100 million coach in gruden . they drew the line at handing out another mammoth deal , not wanting to further strain their budget or push the boundaries of the salary cap . they regarded the king 's ransom of draft picks put forth by the bears , including a pair of first - rounders , as an offer they could n't refuse . in truth , they could have refused it .\n"
+    ],
+    "human_score": 1.0,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  },
+  {
+    "id": "usr_topicalchat_302",
+    "question": "rack obama \n really ? i like books a bunch but like exercise too . reading is a complex brain process decoding symbols into meaning when you think about it . challenging for some . \n do u speed read ? the world record for speed reading is held by anne jones , with a reading speed of 4,700 words per minute \n not really , but i 'm pretty fast so maybe ? ? i would n't know how you tell . reading can be an escape for some but different for different people how they see things or do n't see things \n\n",
+    "answer": "i think that is very interesting , i do n't know how they could read that fast either .\n",
+    "context": [
+      "cs lewis and tolkien held \" you laugh you lose \" competitions when reading terrible poetry\n"
+    ],
+    "human_score": 0.8889,
+    "domain": "dialogue_topicalchat",
+    "dataset": "USR",
+    "metric_type": "faithfulness"
+  }
+]

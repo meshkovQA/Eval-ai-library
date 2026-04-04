@@ -1,0 +1,171 @@
+{
+  "sensitivity_analysis": {
+    "summeval": {
+      "Default": {
+        "spearman_rho": 0.6669,
+        "p_value": 4.2301455489789155e-23,
+        "mae": 0.3561
+      },
+      "Linear": {
+        "spearman_rho": 0.6676,
+        "p_value": 3.6496615520513376e-23,
+        "mae": 0.3515
+      },
+      "Aggressive": {
+        "spearman_rho": 0.6637,
+        "p_value": 8.049364357216626e-23,
+        "mae": 0.3598
+      },
+      "Conservative": {
+        "spearman_rho": 0.6685,
+        "p_value": 3.09010960389183e-23,
+        "mae": 0.352
+      },
+      "_variation": 0.0048
+    },
+    "summeval_rel": {
+      "Default": {
+        "spearman_rho": 0.48,
+        "p_value": 1.241538222894755e-12,
+        "mae": 0.2112
+      },
+      "Linear": {
+        "spearman_rho": 0.4718,
+        "p_value": 3.3405223868632512e-12,
+        "mae": 0.2206
+      },
+      "Aggressive": {
+        "spearman_rho": 0.4916,
+        "p_value": 2.9282148413086344e-13,
+        "mae": 0.2343
+      },
+      "Conservative": {
+        "spearman_rho": 0.4778,
+        "p_value": 1.630293160102697e-12,
+        "mae": 0.2235
+      },
+      "_variation": 0.0198
+    },
+    "usr": {
+      "Default": {
+        "spearman_rho": 0.2262,
+        "p_value": 0.015967468752785003,
+        "mae": 0.4128
+      },
+      "Linear": {
+        "spearman_rho": 0.2298,
+        "p_value": 0.014353993734808201,
+        "mae": 0.4175
+      },
+      "Aggressive": {
+        "spearman_rho": 0.2264,
+        "p_value": 0.015890756866105193,
+        "mae": 0.4218
+      },
+      "Conservative": {
+        "spearman_rho": 0.2299,
+        "p_value": 0.014280188019210776,
+        "mae": 0.4186
+      },
+      "_variation": 0.0037
+    }
+  },
+  "bootstrap_ci": {
+    "summeval": {
+      "TCVA (best)": {
+        "spearman_rho": 0.6669,
+        "bootstrap_median": 0.6668,
+        "ci_lower": 0.5613,
+        "ci_upper": 0.7549,
+        "ci_width": 0.1936,
+        "n": 169
+      },
+      "RAGAS": {
+        "spearman_rho": 0.6762,
+        "bootstrap_median": 0.6765,
+        "ci_lower": 0.5712,
+        "ci_upper": 0.7619,
+        "ci_width": 0.1907,
+        "n": 172
+      },
+      "DeepEval": {
+        "spearman_rho": 0.395,
+        "bootstrap_median": 0.3936,
+        "ci_lower": 0.2509,
+        "ci_upper": 0.5248,
+        "ci_width": 0.2739,
+        "n": 171
+      },
+      "_paired_tcva_vs_ragas": {
+        "delta_rho": -0.0149,
+        "p_value": 0.7593,
+        "significant_at_005": false,
+        "n_common": 169
+      }
+    },
+    "summeval_rel": {
+      "TCVA (best)": {
+        "spearman_rho": 0.48,
+        "bootstrap_median": 0.4806,
+        "ci_lower": 0.3669,
+        "ci_upper": 0.5832,
+        "ci_width": 0.2162,
+        "n": 195
+      },
+      "RAGAS": {
+        "spearman_rho": 0.4108,
+        "bootstrap_median": 0.4109,
+        "ci_lower": 0.2858,
+        "ci_upper": 0.5275,
+        "ci_width": 0.2417,
+        "n": 196
+      },
+      "DeepEval": {
+        "spearman_rho": 0.3149,
+        "bootstrap_median": 0.3165,
+        "ci_lower": 0.1832,
+        "ci_upper": 0.439,
+        "ci_width": 0.2558,
+        "n": 196
+      },
+      "_paired_tcva_vs_ragas": {
+        "delta_rho": 0.0621,
+        "p_value": 0.0412,
+        "significant_at_005": true,
+        "n_common": 195
+      }
+    },
+    "usr": {
+      "TCVA (best)": {
+        "spearman_rho": 0.1731,
+        "bootstrap_median": 0.1724,
+        "ci_lower": 0.0354,
+        "ci_upper": 0.3003,
+        "ci_width": 0.2649,
+        "n": 198
+      },
+      "RAGAS": {
+        "spearman_rho": 0.1714,
+        "bootstrap_median": 0.1704,
+        "ci_lower": 0.0341,
+        "ci_upper": 0.3049,
+        "ci_width": 0.2709,
+        "n": 198
+      },
+      "DeepEval": {
+        "spearman_rho": -0.052,
+        "bootstrap_median": -0.053,
+        "ci_lower": -0.1829,
+        "ci_upper": 0.0835,
+        "ci_width": 0.2665,
+        "n": 198
+      },
+      "_paired_tcva_vs_ragas": {
+        "delta_rho": 0.0017,
+        "p_value": 0.4795,
+        "significant_at_005": false,
+        "n_common": 198
+      }
+    }
+  }
+}

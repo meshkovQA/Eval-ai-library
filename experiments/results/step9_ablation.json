@@ -1,0 +1,68 @@
+{
+  "summeval": {
+    "A. Full TCVA": {
+      "spearman_rho": 0.6669,
+      "p_value": 4.2301455489789155e-23,
+      "mae": 0.3561
+    },
+    "B. No penalty": {
+      "spearman_rho": 0.6104,
+      "p_value": 1.2423810532108837e-18,
+      "mae": 0.4703
+    },
+    "C. Arithmetic": {
+      "spearman_rho": 0.6629,
+      "p_value": 9.48304335230938e-23,
+      "mae": 0.2459
+    },
+    "D. Binary": {
+      "spearman_rho": 0.6148,
+      "p_value": 6.020641450373418e-19,
+      "mae": 0.3114
+    }
+  },
+  "summeval_rel": {
+    "A. Full TCVA": {
+      "spearman_rho": 0.48,
+      "p_value": 1.241538222894755e-12,
+      "mae": 0.2112
+    },
+    "B. No penalty": {
+      "spearman_rho": 0.4854,
+      "p_value": 6.382684545265628e-13,
+      "mae": 0.2093
+    },
+    "C. Arithmetic": {
+      "spearman_rho": 0.48,
+      "p_value": 1.241538222894755e-12,
+      "mae": 0.2112
+    },
+    "D. Binary": {
+      "spearman_rho": 0.2363,
+      "p_value": 0.0008806738832507575,
+      "mae": 0.4588
+    }
+  },
+  "usr": {
+    "A. Full TCVA": {
+      "spearman_rho": 0.2262,
+      "p_value": 0.015967468752785003,
+      "mae": 0.4128
+    },
+    "B. No penalty": {
+      "spearman_rho": 0.2208,
+      "p_value": 0.018785656208377258,
+      "mae": 0.4134
+    },
+    "C. Arithmetic": {
+      "spearman_rho": 0.2182,
+      "p_value": 0.020274923558981046,
+      "mae": 0.4358
+    },
+    "D. Binary": {
+      "spearman_rho": 0.256,
+      "p_value": 0.00620360735062449,
+      "mae": 0.4408
+    }
+  }
+}

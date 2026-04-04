@@ -43,7 +43,11 @@ def score_agg(
     - Medium temperature (=0.5): balanced (p=1) -> arithmetic mean
     - High temperature (=1.0): lenient (large positive p) -> close to max
 
-    Applies a penalty for "none" verdicts (0.0) only.
+    Penalty uses proportional none-fraction with temperature-adaptive alpha:
+      penalty_factor = (1 - none_frac) ^ alpha
+    where alpha = 1.5 at low T (strict) and 0.5 at high T (lenient).
+    This avoids double-punishing "none" verdicts that already pull
+    the power mean down.
     """
     if not scores:
         return 0.0
@@ -63,11 +67,83 @@ def score_agg(
         mean_pow = sum(s ** p for s in base) / len(base)
         agg = mean_pow ** (1.0 / p)
 
-    # Apply penalty for "none" verdicts only
-    none_count = sum(1 for s in scores if s == 0.0)
-    penalty_factor = max(0.0, 1 - penalty * none_count)
+    # Proportional penalty: (1 - none_frac) ^ alpha
+    # alpha depends on temperature: strict T → higher alpha (harsher), lenient T → lower alpha (softer)
+    n = len(scores)
+    none_frac = sum(1 for s in scores if s == 0.0) / n if n > 0 else 0.0
+    alpha = 1.5 - temperature  # T=0.1 → alpha=1.4 (strict), T=0.5 → alpha=1.0, T=1.0 → alpha=0.5 (lenient)
+    penalty_factor = (1.0 - none_frac) ** alpha
 
     return round(agg * penalty_factor, 4)
+
+
+def _try_fix_escaped_quotes(text: str) -> str:
+    """Fix invalid backslash-escaped quotes outside JSON strings.
+
+    Some models (e.g. GPT-4.1) produce output like:
+        "key": \\"value with spaces\\"
+    instead of the valid:
+        "key": "value with spaces"
+    This function detects and repairs that pattern.
+    """
+    # Pattern: `: \"...\"` where \" should be plain " (value-level escaping)
+    # We fix by replacing \" that appears right after : (with optional whitespace)
+    # and before , or } or ] with plain "
+    fixed = re.sub(r':\s*\\"', ': "', text)
+    fixed = re.sub(r'\\"(\s*[,\}\]])', r'"\1', fixed)
+    if fixed != text:
+        try:
+            json.loads(fixed)
+            return fixed
+        except Exception:
+            pass
+    return text
+
+
+def _try_fix_truncated_json(text: str) -> str:
+    """Attempt to fix truncated JSON by closing open brackets/braces."""
+    open_brackets = 0
+    open_braces = 0
+    in_string = False
+    escape = False
+
+    for ch in text:
+        if escape:
+            escape = False
+            continue
+        if ch == '\\':
+            escape = True
+            continue
+        if ch == '"':
+            in_string = not in_string
+            continue
+        if in_string:
+            continue
+        if ch == '[':
+            open_brackets += 1
+        elif ch == ']':
+            open_brackets -= 1
+        elif ch == '{':
+            open_braces += 1
+        elif ch == '}':
+            open_braces -= 1
+
+    if open_braces > 0 or open_brackets > 0:
+        # Remove trailing incomplete key-value pair or element
+        # Find last complete element (ends with }, ], number, string, true/false/null)
+        stripped = text.rstrip()
+        # Remove trailing comma if present
+        if stripped.endswith(','):
+            stripped = stripped[:-1]
+        # Close remaining brackets/braces
+        result = stripped + '}' * open_braces + ']' * open_brackets
+        try:
+            json.loads(result)
+            return result
+        except Exception:
+            pass
+
+    return text
 
 
 def extract_json_block(text: str) -> str:
@@ -78,6 +154,7 @@ def extract_json_block(text: str) -> str:
     - Markdown JSON code blocks: ```json ... ```
     - Plain JSON objects/arrays
     - JSON embedded in text
+    - Truncated JSON (attempts to close open brackets)
 
     Args:
         text: Raw text from LLM that may contain JSON
@@ -96,7 +173,17 @@ def extract_json_block(text: str) -> str:
     # Try to extract from markdown code blocks
     match = re.search(r"```json\s*(.*?)```", text, re.DOTALL)
     if match:
-        return match.group(1).strip()
+        candidate = match.group(1).strip()
+        try:
+            json.loads(candidate)
+            return candidate
+        except Exception:
+            fixed = _try_fix_truncated_json(candidate)
+            try:
+                json.loads(fixed)
+                return fixed
+            except Exception:
+                pass
 
     # Try to parse as direct JSON
     try:
@@ -105,10 +192,34 @@ def extract_json_block(text: str) -> str:
     except Exception:
         pass
 
-    # Try to find JSON object/array pattern
-    json_match = re.search(r"({.*?}|\[.*?\])", text, re.DOTALL)
+    # Try fixing escaped quotes (common GPT-4.1 issue: \"value\" instead of "value")
+    fixed_quotes = _try_fix_escaped_quotes(text)
+    if fixed_quotes != text:
+        return fixed_quotes
+
+    # Try to find JSON object/array pattern (greedy to capture full nested structures)
+    json_match = re.search(r"(\{.*\}|\[.*\])", text, re.DOTALL)
     if json_match:
-        return json_match.group(1).strip()
+        candidate = json_match.group(1).strip()
+        try:
+            json.loads(candidate)
+            return candidate
+        except Exception:
+            # Try fixing escaped quotes in the candidate
+            fixed = _try_fix_escaped_quotes(candidate)
+            if fixed != candidate:
+                return fixed
+
+    # Try to find start of JSON and fix truncation
+    json_start = re.search(r"[\[{]", text)
+    if json_start:
+        candidate = text[json_start.start():].strip()
+        fixed = _try_fix_truncated_json(candidate)
+        try:
+            json.loads(fixed)
+            return fixed
+        except Exception:
+            pass
 
     # Return as-is if nothing found
     return text.strip()

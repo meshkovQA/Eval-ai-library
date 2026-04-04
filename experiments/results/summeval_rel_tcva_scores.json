@@ -1,0 +1,5692 @@
+[
+  {
+    "id": "summeval_rel_dm-test-8764fb95bfad8ee849274873a92fb8d6b400eee2_10",
+    "human_score": 0.5,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statements provide some details about the incident involving Paul Merson and Andros Townsend and the match context, but they do not offer a concise summary of the entire article."
+      }
+    ],
+    "weights": [
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-6372eff07fd3d6f578f90d6115e01747edccc095_10",
+    "human_score": 0.8333,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statements provide some relevant details about Dr Adrian Quarterman's work and views on space lasers but do not collectively form a brief summary of the entire article."
+      }
+    ],
+    "weights": [
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-2a48112ddee712f2364f128076cb2db555a043b1_9",
+    "human_score": 1.0,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statements provide some relevant details about Leicester's situation and a quote from Cambiasso, but they do not offer a complete summary of the article."
+      }
+    ],
+    "weights": [
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-5be0a9584b051175d9f4842a143b76385335d96a_14",
+    "human_score": 0.5833,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statements relate to Manchester City's player contracts and financial incentives but do not provide a brief summary of the entire article."
+      }
+    ],
+    "weights": [
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-eeef09d26cf30c2124c0399b08eedc6321fe5d20_4",
+    "human_score": 0.0833,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The statement is unrelated to summarizing the article and only describes a casual photo moment."
+      },
+      {
+        "verdict": "none",
+        "reason": "The statement is unrelated to summarizing the article and discusses Real Madrid's league standing, not the article content."
+      },
+      {
+        "verdict": "none",
+        "reason": "The statement is unrelated to summarizing the article and contains incorrect information about Neymar's sister leading a national team."
+      }
+    ],
+    "weights": [
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-2feca9acf532e33f1ab7442c442c8e19787d8d7b_3",
+    "human_score": 0.25,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The statements describe specific actions involving a fish and a man but do not provide any summary or overview of the article's content."
+      }
+    ],
+    "weights": [
+      0.0
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-eeef09d26cf30c2124c0399b08eedc6321fe5d20_5",
+    "human_score": 0.3333,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The statement is unrelated to summarizing the article and only mentions Neymar and Dani Alves attending a match."
+      },
+      {
+        "verdict": "none",
+        "reason": "The statement describes a specific match result involving Neymar but does not summarize the article."
+      },
+      {
+        "verdict": "none",
+        "reason": "The statement mentions Neymar and his team returning to La Liga but does not provide a summary of the article."
+      }
+    ],
+    "weights": [
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-2abe0f81f5b22c8a406165717e3bd7fce6fe47c6_14",
+    "human_score": 0.6667,
+    "tcva_scores": {
+      "T0.2": 0.407,
+      "T0.3": 0.4688,
+      "T0.5": 0.6333,
+      "T0.7": 0.6774,
+      "T0.9": 0.6874
+    },
+    "ablation_arithmetic": 0.6333,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statement provides a key fact about the chiropractor surrendering his license, which is relevant but does not summarize the entire article."
+      },
+      {
+        "verdict": "partial",
+        "reason": "This detail about admitting to swapping services for sex is significant but only one aspect of the article."
+      },
+      {
+        "verdict": "partial",
+        "reason": "The admission of performing exorcisms is related but only a part of the overall summary needed."
+      },
+      {
+        "verdict": "partial",
+        "reason": "The recommendation to stop medication is relevant but insufficient alone to summarize the article."
+      },
+      {
+        "verdict": "partial",
+        "reason": "Mentioning conditions for resuming practice is relevant but incomplete as a summary."
+      },
+      {
+        "verdict": "minor",
+        "reason": "The patient satisfaction rating is tangential and does not contribute directly to summarizing the article's main points."
+      }
+    ],
+    "weights": [
+      0.7,
+      0.7,
+      0.7,
+      0.7,
+      0.7,
+      0.3
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-dea0ed2e587495e516ac85056e21a2076a9a993c_7",
+    "human_score": 0.9167,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statements provide specific details about the theft and recovery of the car but do not offer a concise overall summary of the article."
+      }
+    ],
+    "weights": [
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-2c37d44d03ce2e91310339d884d33ee5aabf9abc_4",
+    "human_score": 1.0,
+    "tcva_scores": {
+      "T0.2": 0.338,
+      "T0.3": 0.3605,
+      "T0.5": 0.5,
+      "T0.7": 0.6182,
+      "T0.9": 0.6531
+    },
+    "ablation_arithmetic": 0.5,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "This sentence provides a key event from the article but does not summarize the entire article."
+      },
+      {
+        "verdict": "partial",
+        "reason": "This sentence adds important details about the rescue and injury but does not provide a full summary."
+      },
+      {
+        "verdict": "minor",
+        "reason": "This detail about the felines is related but is a minor aspect and does not contribute significantly to a summary."
+      },
+      {
+        "verdict": "minor",
+        "reason": "This background information about Dr. Kuhar is tangential and does not summarize the article."
+      }
+    ],
+    "weights": [
+      0.7,
+      0.7,
+      0.3,
+      0.3
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-f468efac7b3c54f8c42c2c81dff108c52ebe0d7d_15",
+    "human_score": 0.5,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statements describe specific events in the article but do not provide a brief overall summary."
+      }
+    ],
+    "weights": [
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_cnn-test-b8b6e729fff27c4eef87887e61d3448de9c063f6_1",
+    "human_score": 0.3333,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statement provides specific event details but does not summarize the entire article."
+      },
+      {
+        "verdict": "partial",
+        "reason": "The statement relates to the article's topic but only addresses a future intention, not a summary."
+      }
+    ],
+    "weights": [
+      0.7,
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-4a593dc4c7e0b4d09bfdc66bb315c47b54eb15df_8",
+    "human_score": 0.1667,
+    "tcva_scores": {
+      "T0.2": 0.3,
+      "T0.3": 0.3,
+      "T0.5": 0.3,
+      "T0.7": 0.3,
+      "T0.9": 0.3
+    },
+    "ablation_arithmetic": 0.3,
+    "verdicts": [
+      {
+        "verdict": "minor",
+        "reason": "The statement provides a specific match result but does not summarize the overall article content."
+      },
+      {
+        "verdict": "minor",
+        "reason": "The statement is a specific quote related to the match but does not provide a summary of the article."
+      }
+    ],
+    "weights": [
+      0.3,
+      0.3
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-130ff8f2dfb6ab67861d5924b0ff5acd63c7d8ce_0",
+    "human_score": 0.3333,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.384,
+      "T0.7": 0.5339,
+      "T0.9": 0.5818
+    },
+    "ablation_arithmetic": 0.384,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statement mentions the firing of Brazilian coach Ze Maria, which is relevant but does not provide a full summary of the article."
+      },
+      {
+        "verdict": "none",
+        "reason": "The statement is factually incorrect and unrelated to the article's content."
+      },
+      {
+        "verdict": "minor",
+        "reason": "The match result is tangential and does not summarize the article."
+      },
+      {
+        "verdict": "partial",
+        "reason": "Provides background information about Ze Maria but does not summarize the article."
+      },
+      {
+        "verdict": "partial",
+        "reason": "Gives context about Ze Maria's appointment but does not summarize the article fully."
+      }
+    ],
+    "weights": [
+      0.7,
+      0.0,
+      0.3,
+      0.7,
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-8764fb95bfad8ee849274873a92fb8d6b400eee2_15",
+    "human_score": 0.1667,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.175,
+      "T0.7": 0.3544,
+      "T0.9": 0.4309
+    },
+    "ablation_arithmetic": 0.175,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The statement about Paul Merson restarting a row with Burnley is unrelated to summarizing the article content."
+      },
+      {
+        "verdict": "none",
+        "reason": "The statement about Townsend being brought on in the 83rd minute for Tottenham is unrelated to summarizing the article content."
+      },
+      {
+        "verdict": "partial",
+        "reason": "The statement about Andros Townsend scoring England's equaliser relates to the article but does not provide a full summary."
+      },
+      {
+        "verdict": "partial",
+        "reason": "The statement about Townsend hitting a stunning equaliser for England against Italy is related but only partially addresses the intent to summarize the article."
+      }
+    ],
+    "weights": [
+      0.0,
+      0.0,
+      0.7,
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-096e418a953af86df0d1560bec95bc7bfee2e34b_12",
+    "human_score": 0.8333,
+    "tcva_scores": {
+      "T0.2": 0.3217,
+      "T0.3": 0.3344,
+      "T0.5": 0.4333,
+      "T0.7": 0.5752,
+      "T0.9": 0.6272
+    },
+    "ablation_arithmetic": 0.4333,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statement provides a key event from the article but does not summarize the entire content."
+      },
+      {
+        "verdict": "minor",
+        "reason": "The statement is a trivial detail unrelated to the main summary of the article."
+      },
+      {
+        "verdict": "minor",
+        "reason": "The statement is a humorous aside and does not contribute to summarizing the article."
+      }
+    ],
+    "weights": [
+      0.7,
+      0.3,
+      0.3
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-e428e25bbf8e06643154ce31b7c6fab64c81e857_3",
+    "human_score": 0.5833,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statements provide specific details about the gatso speed camera and its operational status but do not offer a complete brief summary of the entire article."
+      },
+      {
+        "verdict": "partial",
+        "reason": "This statement gives context about the non-functioning status of speed devices in the West Midlands, which relates to the article but does not fully summarize it."
+      }
+    ],
+    "weights": [
+      0.7,
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-d89de9c2a76f2665560becfe5d761a4fc62b9926_14",
+    "human_score": 0.3333,
+    "tcva_scores": {
+      "T0.2": 0.3622,
+      "T0.3": 0.3993,
+      "T0.5": 0.5667,
+      "T0.7": 0.6508,
+      "T0.9": 0.6722
+    },
+    "ablation_arithmetic": 0.5667,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statement mentions a key event in the match but does not provide a summary of the entire article."
+      },
+      {
+        "verdict": "partial",
+        "reason": "It gives some context about the match outcome but lacks a comprehensive summary of the article."
+      },
+      {
+        "verdict": "minor",
+        "reason": "This detail about team members is tangential and does not contribute significantly to summarizing the article."
+      }
+    ],
+    "weights": [
+      0.7,
+      0.7,
+      0.3
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-eeef09d26cf30c2124c0399b08eedc6321fe5d20_6",
+    "human_score": 0.5,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The statement describes Neymar and Alves attending a match but does not summarize the article."
+      },
+      {
+        "verdict": "none",
+        "reason": "The statement reports a specific game result unrelated to summarizing the article."
+      },
+      {
+        "verdict": "none",
+        "reason": "The statement mentions Neymar taking a selfie, which is unrelated to summarizing the article."
+      },
+      {
+        "verdict": "none",
+        "reason": "The statement provides a league standing detail but does not summarize the article."
+      }
+    ],
+    "weights": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-2377095dda83df778e34304b7a09813808105d3b_0",
+    "human_score": 0.5833,
+    "tcva_scores": {
+      "T0.2": 0.3622,
+      "T0.3": 0.3993,
+      "T0.5": 0.5667,
+      "T0.7": 0.6508,
+      "T0.9": 0.6722
+    },
+    "ablation_arithmetic": 0.5667,
+    "verdicts": [
+      {
+        "verdict": "minor",
+        "reason": "The statement about managers' bonuses is tangential and does not provide a summary of the article's main content."
+      },
+      {
+        "verdict": "partial",
+        "reason": "The statement about ministers refusing refunds relates to the article's topic but only addresses one aspect without summarizing the whole article."
+      },
+      {
+        "verdict": "partial",
+        "reason": "The statement about ministers not knowing claim rejections due to system failure is relevant but only covers a specific detail rather than summarizing the article."
+      }
+    ],
+    "weights": [
+      0.3,
+      0.7,
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-2cf8c2d1d2ceb1980249f77e703f9039e63799d0_1",
+    "human_score": 0.8333,
+    "tcva_scores": {
+      "T0.2": 0.9,
+      "T0.3": 0.9,
+      "T0.5": 0.9,
+      "T0.7": 0.9,
+      "T0.9": 0.9
+    },
+    "ablation_arithmetic": 0.9,
+    "verdicts": [
+      {
+        "verdict": "mostly",
+        "reason": "The statements collectively describe the main subject and theme of the article but do not provide a concise summary of the entire article content."
+      }
+    ],
+    "weights": [
+      0.9
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-54b857a66cbd8473d6732e5da52d48612e636a37_0",
+    "human_score": 0.8333,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statements provide specific details about the incident involving the passenger but do not offer a concise overall summary of the article."
+      }
+    ],
+    "weights": [
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-8b59fa7715418c4bcc0d50e3caeb239129de453e_15",
+    "human_score": 0.25,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statements mention Joe Hart praising Buffon and provide some context about Hart, but they do not provide a concise summary of the entire article."
+      }
+    ],
+    "weights": [
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-2a48112ddee712f2364f128076cb2db555a043b1_13",
+    "human_score": 0.5833,
+    "tcva_scores": {
+      "T0.2": 0.338,
+      "T0.3": 0.3605,
+      "T0.5": 0.5,
+      "T0.7": 0.6182,
+      "T0.9": 0.6531
+    },
+    "ablation_arithmetic": 0.5,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statement highlights Cambiasso's achievements but does not summarize the entire article."
+      },
+      {
+        "verdict": "minor",
+        "reason": "This detail about the Foxes' league position is tangential and does not summarize the article."
+      },
+      {
+        "verdict": "partial",
+        "reason": "This shows Cambiasso's attitude and motivation but only partially addresses the article's content."
+      },
+      {
+        "verdict": "minor",
+        "reason": "This provides background on Cambiasso but does not summarize the article."
+      }
+    ],
+    "weights": [
+      0.7,
+      0.3,
+      0.7,
+      0.3
+    ]
+  },
+  {
+    "id": "summeval_rel_cnn-test-a02e362c5b8f049848ce718b37b96117485461cf_11",
+    "human_score": 0.3333,
+    "tcva_scores": {
+      "T0.2": 0.3,
+      "T0.3": 0.3,
+      "T0.5": 0.3,
+      "T0.7": 0.3,
+      "T0.9": 0.3
+    },
+    "ablation_arithmetic": 0.3,
+    "verdicts": [
+      {
+        "verdict": "minor",
+        "reason": "The statements describe a sunset event and related photographs but do not provide a summary of the article's overall content."
+      }
+    ],
+    "weights": [
+      0.3
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-d680ebcdcd59fd5ee9b602a06bcd5230c212835b_14",
+    "human_score": 0.75,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statement relates to the article's content but only addresses a specific detail rather than providing a brief overall summary."
+      },
+      {
+        "verdict": "partial",
+        "reason": "This explains a specific proposal mentioned in the article but does not summarize the entire article."
+      },
+      {
+        "verdict": "partial",
+        "reason": "This provides a statistic relevant to the article's topic but does not summarize the article as a whole."
+      }
+    ],
+    "weights": [
+      0.7,
+      0.7,
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-e470f0a87d7513bf880412524332047020422c3f_7",
+    "human_score": 0.8333,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statement provides specific details about items auctioned from the film but does not summarize the entire article."
+      },
+      {
+        "verdict": "partial",
+        "reason": "This gives context about the dress's significance in the movie but does not offer a full article summary."
+      },
+      {
+        "verdict": "partial",
+        "reason": "It explains the provenance of the items but only partially addresses the intent to summarize the article."
+      }
+    ],
+    "weights": [
+      0.7,
+      0.7,
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_cnn-test-404f859482d47c127868964a9a39d1a7645dd2e9_14",
+    "human_score": 0.1667,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statement relates to the article's topic but only provides a specific detail rather than a brief summary."
+      },
+      {
+        "verdict": "partial",
+        "reason": "This detail is related to the article but does not provide an overall summary."
+      },
+      {
+        "verdict": "partial",
+        "reason": "This fact is connected to the article but does not summarize it."
+      }
+    ],
+    "weights": [
+      0.7,
+      0.7,
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-d3c9ce137ba24a69253508b3416630465c050ae4_9",
+    "human_score": 0.75,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statements provide background and motivation related to the article's subject but do not offer a concise summary of the entire article."
+      }
+    ],
+    "weights": [
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-26e4e19d945cedcb489f28808c730658139c9415_7",
+    "human_score": 0.75,
+    "tcva_scores": {
+      "T0.2": 0.3803,
+      "T0.3": 0.4279,
+      "T0.5": 0.6,
+      "T0.7": 0.6647,
+      "T0.9": 0.6802
+    },
+    "ablation_arithmetic": 0.6,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statement relates to the article's content about Orlando City's interest in Hernandez but does not provide a summary of the entire article."
+      },
+      {
+        "verdict": "partial",
+        "reason": "This provides background on Hernandez's current situation, which is relevant but only a part of the article's overall content."
+      },
+      {
+        "verdict": "partial",
+        "reason": "This mentions other clubs interested in Hernandez, contributing to the article's content but not summarizing it fully."
+      },
+      {
+        "verdict": "minor",
+        "reason": "This statement is about a different player and topic, only tangentially related to the article's main focus on Hernandez."
+      }
+    ],
+    "weights": [
+      0.7,
+      0.7,
+      0.7,
+      0.3
+    ]
+  },
+  {
+    "id": "summeval_rel_cnn-test-e49792c337d3f4c13e22f710efa44cf6a4e59aba_3",
+    "human_score": 0.1667,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.1333,
+      "T0.7": 0.2015,
+      "T0.9": 0.2259
+    },
+    "ablation_arithmetic": 0.1333,
+    "verdicts": [
+      {
+        "verdict": "minor",
+        "reason": "The statement provides a specific legal outcome but does not summarize the overall article."
+      },
+      {
+        "verdict": "none",
+        "reason": "The statement is a vague quote unrelated to summarizing the article."
+      },
+      {
+        "verdict": "minor",
+        "reason": "The statement mentions an opinion piece related to the event but does not summarize the article itself."
+      }
+    ],
+    "weights": [
+      0.3,
+      0.0,
+      0.3
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-c16c9fa34ccae7e2b9e29c3988ccb74974c4b3c0_14",
+    "human_score": 0.4167,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statements provide some relevant details about Carlos Tevez's situation but do not offer a concise summary of the entire article."
+      }
+    ],
+    "weights": [
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_cnn-test-d75b043ebefc3098aea84d92bb8bec0f509b1563_1",
+    "human_score": 0.5,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statement provides a specific detail about casualties but does not summarize the entire article."
+      },
+      {
+        "verdict": "partial",
+        "reason": "This statement mentions casualties and location but lacks a broader summary of the article."
+      },
+      {
+        "verdict": "partial",
+        "reason": "The statement identifies the responsible group but does not provide a summary of the article's content."
+      }
+    ],
+    "weights": [
+      0.7,
+      0.7,
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-4a593dc4c7e0b4d09bfdc66bb315c47b54eb15df_10",
+    "human_score": 0.5833,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The statement is about a player's opinion on the league race, not a summary of the article."
+      },
+      {
+        "verdict": "none",
+        "reason": "This repeats the first statement with no summary content."
+      },
+      {
+        "verdict": "none",
+        "reason": "This is a specific fact about a player's game count, unrelated to summarizing the article."
+      }
+    ],
+    "weights": [
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-8b59fa7715418c4bcc0d50e3caeb239129de453e_0",
+    "human_score": 0.1667,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.3187,
+      "T0.7": 0.4907,
+      "T0.9": 0.5496
+    },
+    "ablation_arithmetic": 0.3187,
+    "verdicts": [
+      {
+        "verdict": "minor",
+        "reason": "The statement is about Joe Hart's reputation but does not summarize the article."
+      },
+      {
+        "verdict": "partial",
+        "reason": "The match result is relevant but does not provide a full summary of the article."
+      },
+      {
+        "verdict": "none",
+        "reason": "The statement is nonsensical and unrelated to summarizing the article."
+      },
+      {
+        "verdict": "partial",
+        "reason": "Buffon's milestone is relevant but only partially addresses the article's content."
+      }
+    ],
+    "weights": [
+      0.3,
+      0.7,
+      0.0,
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-a3b6201aca77b5bdaa5df02d6acee2be66233237_0",
+    "human_score": 0.4167,
+    "tcva_scores": {
+      "T0.2": 0.3718,
+      "T0.3": 0.4145,
+      "T0.5": 0.5857,
+      "T0.7": 0.6589,
+      "T0.9": 0.6768
+    },
+    "ablation_arithmetic": 0.5857,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "This statement introduces a key character and setting but does not summarize the article."
+      },
+      {
+        "verdict": "partial",
+        "reason": "Provides specific background information about Dawn but lacks overall summary context."
+      },
+      {
+        "verdict": "partial",
+        "reason": "Mentions a significant event but does not provide a complete summary."
+      },
+      {
+        "verdict": "minor",
+        "reason": "The statement is confusing and unclear, offering little relevant summary information."
+      },
+      {
+        "verdict": "partial",
+        "reason": "Describes an emotional reaction but does not summarize the article."
+      },
+      {
+        "verdict": "partial",
+        "reason": "Mentions a lie detector test which is relevant but incomplete as a summary."
+      },
+      {
+        "verdict": "minor",
+        "reason": "This detail about a gravestone allocation is tangential and does not summarize the article."
+      }
+    ],
+    "weights": [
+      0.7,
+      0.7,
+      0.7,
+      0.3,
+      0.7,
+      0.7,
+      0.3
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-d296270ab4a4cf20f2d9c1aae7514687806f2b35_3",
+    "human_score": 0.9167,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statements provide specific details about the customized Boeing 747 but do not offer a concise summary of the entire article."
+      }
+    ],
+    "weights": [
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-4001b252a072ac149c70840b22299cc6cfab3bae_1",
+    "human_score": 0.75,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statements relate to Radamel Falcao's career and transfer issues but do not provide a brief summary of the entire article."
+      }
+    ],
+    "weights": [
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-a3b6201aca77b5bdaa5df02d6acee2be66233237_15",
+    "human_score": 0.3333,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statements provide specific incidents and characters from the article but do not offer a concise overall summary."
+      }
+    ],
+    "weights": [
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-c16c9fa34ccae7e2b9e29c3988ccb74974c4b3c0_15",
+    "human_score": 0.6667,
+    "tcva_scores": {
+      "T0.2": 0.9,
+      "T0.3": 0.9,
+      "T0.5": 0.9,
+      "T0.7": 0.9,
+      "T0.9": 0.9
+    },
+    "ablation_arithmetic": 0.9,
+    "verdicts": [
+      {
+        "verdict": "mostly",
+        "reason": "The statements collectively provide a clear overview of Tevez's situation with Juventus and his potential move, but lack a concise, unified summary format."
+      }
+    ],
+    "weights": [
+      0.9
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-1747dcd6a007ee97954b6b10cde549bf82f6a4eb_11",
+    "human_score": 0.9167,
+    "tcva_scores": {
+      "T0.2": 1.0,
+      "T0.3": 1.0,
+      "T0.5": 1.0,
+      "T0.7": 1.0,
+      "T0.9": 1.0
+    },
+    "ablation_arithmetic": 1.0,
+    "verdicts": [
+      {
+        "verdict": "fully",
+        "reason": "The statement provides a concise summary of Chipotle's new delivery partnership, directly addressing the user's request for a brief article summary."
+      }
+    ],
+    "weights": [
+      1.0
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-e43eef75de38d246db9d80216ca9f5487215a78b_5",
+    "human_score": 0.8333,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statements provide some relevant details about Filipe Luis's contract and potential transfer but do not offer a concise summary of the entire article."
+      }
+    ],
+    "weights": [
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-c50d33e9749e7bb484d9b69c4f5fca35a3a50cb5_10",
+    "human_score": 0.8333,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statements provide specific details about Jacob Phillips' death but do not offer a complete brief summary of the entire article."
+      }
+    ],
+    "weights": [
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-8b59fa7715418c4bcc0d50e3caeb239129de453e_9",
+    "human_score": 0.75,
+    "tcva_scores": {
+      "T0.2": 0.3,
+      "T0.3": 0.3,
+      "T0.5": 0.3,
+      "T0.7": 0.3,
+      "T0.9": 0.3
+    },
+    "ablation_arithmetic": 0.3,
+    "verdicts": [
+      {
+        "verdict": "minor",
+        "reason": "The statements mention specific facts about Joe Hart and Gianluigi Buffon but do not provide a brief summary of the article as a whole."
+      }
+    ],
+    "weights": [
+      0.3
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-d89de9c2a76f2665560becfe5d761a4fc62b9926_2",
+    "human_score": 0.5,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statements provide specific details about the match and players but do not offer a comprehensive summary of the entire article."
+      }
+    ],
+    "weights": [
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-4f3b35b540ba05f0f82d71a694ec23dde4dc3e01_14",
+    "human_score": 0.75,
+    "tcva_scores": {
+      "T0.2": 1.0,
+      "T0.3": 1.0,
+      "T0.5": 1.0,
+      "T0.7": 1.0,
+      "T0.9": 1.0
+    },
+    "ablation_arithmetic": 1.0,
+    "verdicts": [
+      {
+        "verdict": "fully",
+        "reason": "Each statement provides concrete details that collectively summarize the key events described in the article."
+      }
+    ],
+    "weights": [
+      1.0
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-18243373494a1722ddcd162ec67b63dd749633ab_4",
+    "human_score": 0.3333,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statements provide specific match details and player actions but do not offer a comprehensive summary of the entire article."
+      }
+    ],
+    "weights": [
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-9b5a04b9879fe716a2dcd66dd331f99534603c16_4",
+    "human_score": 0.9167,
+    "tcva_scores": {
+      "T0.2": 0.338,
+      "T0.3": 0.3605,
+      "T0.5": 0.5,
+      "T0.7": 0.6182,
+      "T0.9": 0.6531
+    },
+    "ablation_arithmetic": 0.5,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statement relates to the article's content but focuses on a specific incident rather than providing a brief overall summary."
+      },
+      {
+        "verdict": "partial",
+        "reason": "This provides some context about the accusations against Billy Gordon but does not summarize the entire article."
+      },
+      {
+        "verdict": "minor",
+        "reason": "This is background information about Mr Katter but does not contribute to summarizing the article."
+      },
+      {
+        "verdict": "minor",
+        "reason": "This is unrelated personal background about Mr Katter and does not help summarize the article."
+      }
+    ],
+    "weights": [
+      0.7,
+      0.7,
+      0.3,
+      0.3
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-808a439a5d83fc47baaea934c8779a7ebc62470d_11",
+    "human_score": 0.1667,
+    "tcva_scores": {
+      "T0.2": 0.3253,
+      "T0.3": 0.3401,
+      "T0.5": 0.45,
+      "T0.7": 0.5873,
+      "T0.9": 0.6346
+    },
+    "ablation_arithmetic": 0.45,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statement provides a specific fact about the referee for the Manchester derby but does not summarize the entire article."
+      },
+      {
+        "verdict": "partial",
+        "reason": "This details disciplinary actions by the referee but only covers part of the article's content."
+      },
+      {
+        "verdict": "minor",
+        "reason": "Information about Vincent Kompany's dismissal in an unrelated match is tangential to the article's main focus."
+      },
+      {
+        "verdict": "minor",
+        "reason": "Kompany's suspension is related background but not central to summarizing the article."
+      },
+      {
+        "verdict": "minor",
+        "reason": "Accusations against Clattenburg are mentioned but do not summarize the article as a whole."
+      },
+      {
+        "verdict": "partial",
+        "reason": "This provides some disciplinary statistics but does not fully summarize the article."
+      },
+      {
+        "verdict": "minor",
+        "reason": "Details about specific players sent off are too narrow to serve as a summary."
+      },
+      {
+        "verdict": "minor",
+        "reason": "Match-specific sending off details are too detailed and narrow for a summary."
+      }
+    ],
+    "weights": [
+      0.7,
+      0.7,
+      0.3,
+      0.3,
+      0.3,
+      0.7,
+      0.3,
+      0.3
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-1747dcd6a007ee97954b6b10cde549bf82f6a4eb_1",
+    "human_score": 0.9167,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statement provides a key detail about Chipotle entering the food delivery market but lacks a comprehensive summary of the entire article."
+      },
+      {
+        "verdict": "partial",
+        "reason": "This detail about the service charge is relevant but only covers a small aspect of the article, not a full summary."
+      },
+      {
+        "verdict": "partial",
+        "reason": "Information about Postmates delivery fees is related but only addresses a minor part of the article, not a full summary."
+      }
+    ],
+    "weights": [
+      0.7,
+      0.7,
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-2377095dda83df778e34304b7a09813808105d3b_14",
+    "human_score": 0.3333,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statements relate to the article's topic but do not provide a coherent or complete summary of its main points."
+      }
+    ],
+    "weights": [
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_cnn-test-404f859482d47c127868964a9a39d1a7645dd2e9_5",
+    "human_score": 0.1667,
+    "tcva_scores": {
+      "T0.2": 0.3,
+      "T0.3": 0.3,
+      "T0.5": 0.3,
+      "T0.7": 0.3,
+      "T0.9": 0.3
+    },
+    "ablation_arithmetic": 0.3,
+    "verdicts": [
+      {
+        "verdict": "minor",
+        "reason": "The statements provide specific allegations and counterclaims but do not offer a brief summary of the entire article."
+      }
+    ],
+    "weights": [
+      0.3
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-155754e1f2bc83f6836af78703edd4d00f19f381_3",
+    "human_score": 0.4167,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The statement is unrelated to summarizing the article and provides a character detail without summarizing content."
+      },
+      {
+        "verdict": "none",
+        "reason": "This statement is a character relationship detail and does not summarize the article."
+      },
+      {
+        "verdict": "none",
+        "reason": "This is a character quote and does not provide a summary of the article."
+      }
+    ],
+    "weights": [
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "id": "summeval_rel_cnn-test-a02e362c5b8f049848ce718b37b96117485461cf_5",
+    "human_score": 0.5833,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statements provide specific details about the cause and effects of the wildfires but do not offer a complete brief summary of the entire article."
+      }
+    ],
+    "weights": [
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-d89de9c2a76f2665560becfe5d761a4fc62b9926_10",
+    "human_score": 0.4167,
+    "tcva_scores": {
+      "T0.2": 0.3217,
+      "T0.3": 0.3344,
+      "T0.5": 0.4333,
+      "T0.7": 0.5752,
+      "T0.9": 0.6272
+    },
+    "ablation_arithmetic": 0.4333,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statement provides a specific detail about player nationality but does not summarize the article."
+      },
+      {
+        "verdict": "partial",
+        "reason": "The statement highlights a key event in the match but does not provide a full summary."
+      },
+      {
+        "verdict": "minor",
+        "reason": "The statement about free entry is tangential and does not contribute to summarizing the article."
+      },
+      {
+        "verdict": "minor",
+        "reason": "The attendance detail is related but does not summarize the article."
+      },
+      {
+        "verdict": "minor",
+        "reason": "The kickoff time is a minor detail and does not summarize the article."
+      },
+      {
+        "verdict": "minor",
+        "reason": "The absence of half-and-half scarves is a minor, tangential detail not relevant to a summary."
+      }
+    ],
+    "weights": [
+      0.7,
+      0.7,
+      0.3,
+      0.3,
+      0.3,
+      0.3
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-3785743303ddb8b594be7c449a37458b99e83812_4",
+    "human_score": 0.5833,
+    "tcva_scores": {
+      "T0.2": 0.3803,
+      "T0.3": 0.4279,
+      "T0.5": 0.6,
+      "T0.7": 0.6647,
+      "T0.9": 0.6802
+    },
+    "ablation_arithmetic": 0.6,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statement provides a specific match result but does not summarize the entire article."
+      },
+      {
+        "verdict": "partial",
+        "reason": "The statement relates to the article's content about Steve Bruce's confidence but lacks a broader summary."
+      },
+      {
+        "verdict": "minor",
+        "reason": "The statement is a motivational comment and only tangentially relates to summarizing the article."
+      },
+      {
+        "verdict": "partial",
+        "reason": "The statement reflects Bruce's conviction but does not provide a full summary of the article."
+      }
+    ],
+    "weights": [
+      0.7,
+      0.7,
+      0.3,
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-4e0de0ec6d5b9df174f54d03158de8f30aac861f_14",
+    "human_score": 0.5,
+    "tcva_scores": {
+      "T0.2": 0.3217,
+      "T0.3": 0.3344,
+      "T0.5": 0.4333,
+      "T0.7": 0.5752,
+      "T0.9": 0.6272
+    },
+    "ablation_arithmetic": 0.4333,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statement provides a specific event involving Mesut Ozil but does not summarize the entire article."
+      },
+      {
+        "verdict": "minor",
+        "reason": "The statement gives background information about Ozil's transfer but does not summarize the article."
+      },
+      {
+        "verdict": "minor",
+        "reason": "The statement mentions a specific incident unrelated to summarizing the article as a whole."
+      }
+    ],
+    "weights": [
+      0.7,
+      0.3,
+      0.3
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-23e8c1d71474d239aa9ae37b9a05031b0054b8ce_10",
+    "human_score": 0.75,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statements provide related information about Leicester's situation and recent matches but do not collectively form a concise summary of the entire article."
+      }
+    ],
+    "weights": [
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-02c955067d00f38b6978b805d5a8701a787f78ac_9",
+    "human_score": 0.75,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statement provides a specific detail about the incident location but does not summarize the entire article."
+      },
+      {
+        "verdict": "partial",
+        "reason": "This details the condition and evacuation of some patients, partially addressing the article's content but not summarizing it fully."
+      },
+      {
+        "verdict": "partial",
+        "reason": "This gives information about the hospital destination of patients, related but insufficient as a summary."
+      },
+      {
+        "verdict": "partial",
+        "reason": "This describes additional patients and their conditions, relevant but only a part of the overall article summary."
+      }
+    ],
+    "weights": [
+      0.7,
+      0.7,
+      0.7,
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-b5bc2ae78441e4ac08fb01823d5fc0f1627c3166_15",
+    "human_score": 0.3333,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.256,
+      "T0.7": 0.4392,
+      "T0.9": 0.5213
+    },
+    "ablation_arithmetic": 0.256,
+    "verdicts": [
+      {
+        "verdict": "minor",
+        "reason": "The statement describes Pietersen's action but does not summarize the article."
+      },
+      {
+        "verdict": "minor",
+        "reason": "It mentions Pietersen's emotions during a photo shoot but does not provide a summary."
+      },
+      {
+        "verdict": "none",
+        "reason": "This statement about Downton's sacking is unrelated to the article summary request."
+      },
+      {
+        "verdict": "minor",
+        "reason": "Describes Pietersen's pose but does not address the article's main content."
+      },
+      {
+        "verdict": "partial",
+        "reason": "Provides context about the timing of the event but lacks a full summary of the article."
+      }
+    ],
+    "weights": [
+      0.3,
+      0.3,
+      0.0,
+      0.3,
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_cnn-test-b8b6e729fff27c4eef87887e61d3448de9c063f6_10",
+    "human_score": 0.3333,
+    "tcva_scores": {
+      "T0.2": 0.3962,
+      "T0.3": 0.4629,
+      "T0.5": 0.8,
+      "T0.7": 0.919,
+      "T0.9": 0.9511
+    },
+    "ablation_arithmetic": 0.8,
+    "verdicts": [
+      {
+        "verdict": "fully",
+        "reason": "The statement provides a concise summary of the article by mentioning the launch, the rocket, the spacecraft, and its mission to the ISS."
+      },
+      {
+        "verdict": "partial",
+        "reason": "The statement gives a detail about the launch location but does not summarize the article as a whole."
+      },
+      {
+        "verdict": "fully",
+        "reason": "This statement clearly summarizes the article by stating the spacecraft's destination and mission."
+      },
+      {
+        "verdict": "minor",
+        "reason": "This is a vague comment about the launch and does not provide a summary of the article."
+      },
+      {
+        "verdict": "fully",
+        "reason": "This statement summarizes the article by indicating the spacecraft's current status and mission."
+      }
+    ],
+    "weights": [
+      1.0,
+      0.7,
+      1.0,
+      0.3,
+      1.0
+    ]
+  },
+  {
+    "id": "summeval_rel_cnn-test-5139ccfabee55ddb83e7937f5802c0a67aee8975_13",
+    "human_score": 0.1667,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statements provide specific details about the incident but do not offer a complete brief summary of the entire article."
+      }
+    ],
+    "weights": [
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_cnn-test-4761dc6d8bdf56b9ada97104113dd1bcf4aed3f1_8",
+    "human_score": 0.25,
+    "tcva_scores": {
+      "T0.2": 0.3,
+      "T0.3": 0.3,
+      "T0.5": 0.3,
+      "T0.7": 0.3,
+      "T0.9": 0.3
+    },
+    "ablation_arithmetic": 0.3,
+    "verdicts": [
+      {
+        "verdict": "minor",
+        "reason": "The statement provides a single detail about Varvara's travel but does not summarize the entire article."
+      }
+    ],
+    "weights": [
+      0.3
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-b5925c1a02fa9a8f6b1d5ad764c19a732deac0df_2",
+    "human_score": 0.75,
+    "tcva_scores": {
+      "T0.2": 0.407,
+      "T0.3": 0.4688,
+      "T0.5": 0.6333,
+      "T0.7": 0.6774,
+      "T0.9": 0.6874
+    },
+    "ablation_arithmetic": 0.6333,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statement provides context about a person involved but does not summarize the article."
+      },
+      {
+        "verdict": "partial",
+        "reason": "It describes a specific detail of the incident but does not provide a full summary."
+      },
+      {
+        "verdict": "partial",
+        "reason": "It describes the setting and main event but lacks a complete summary."
+      },
+      {
+        "verdict": "partial",
+        "reason": "It gives a detail about the crocodile and dog but is not a full summary."
+      },
+      {
+        "verdict": "partial",
+        "reason": "It mentions the video content but does not summarize the entire article."
+      },
+      {
+        "verdict": "minor",
+        "reason": "The video view count is tangential and does not contribute to summarizing the article."
+      }
+    ],
+    "weights": [
+      0.7,
+      0.7,
+      0.7,
+      0.7,
+      0.7,
+      0.3
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-3785743303ddb8b594be7c449a37458b99e83812_5",
+    "human_score": 0.6667,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statements mention key match details and Steve Bruce's confidence but do not provide a comprehensive summary of the entire article."
+      }
+    ],
+    "weights": [
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_cnn-test-e2bccd4dec93c9bb7b327827dae004c2d494ec31_0",
+    "human_score": 0.0,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.012,
+      "T0.7": 0.0618,
+      "T0.9": 0.0972
+    },
+    "ablation_arithmetic": 0.012,
+    "verdicts": [
+      {
+        "verdict": "minor",
+        "reason": "Mentions a fact about the video game but does not summarize the article."
+      },
+      {
+        "verdict": "none",
+        "reason": "Statement is unrelated and confusing, not summarizing the article."
+      },
+      {
+        "verdict": "none",
+        "reason": "Incomplete and irrelevant to summarizing the article."
+      },
+      {
+        "verdict": "none",
+        "reason": "Irrelevant and unclear, does not summarize the article."
+      },
+      {
+        "verdict": "none",
+        "reason": "Unclear and unrelated to summarizing the article."
+      }
+    ],
+    "weights": [
+      0.3,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-bd4684a0f5af5dd6ac88d2fb50f902bd7f10217b_5",
+    "human_score": 0.25,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.192,
+      "T0.7": 0.241,
+      "T0.9": 0.2566
+    },
+    "ablation_arithmetic": 0.192,
+    "verdicts": [
+      {
+        "verdict": "minor",
+        "reason": "The statement provides a specific detail about Falcao's career but does not summarize the article."
+      },
+      {
+        "verdict": "minor",
+        "reason": "This mentions River Plate's interest but lacks broader context or summary of the article."
+      },
+      {
+        "verdict": "none",
+        "reason": "The statement is unclear and does not relate to summarizing the article."
+      },
+      {
+        "verdict": "minor",
+        "reason": "This is a speculative detail about Manchester United's decision, not a summary."
+      },
+      {
+        "verdict": "minor",
+        "reason": "This is a speculative statement about Falcao's future, not a summary of the article."
+      }
+    ],
+    "weights": [
+      0.3,
+      0.3,
+      0.0,
+      0.3,
+      0.3
+    ]
+  },
+  {
+    "id": "summeval_rel_cnn-test-88c2481234e763c9bbc68d0ab1be1d2375c1349a_0",
+    "human_score": 0.25,
+    "tcva_scores": {
+      "T0.2": 0.3,
+      "T0.3": 0.3,
+      "T0.5": 0.3,
+      "T0.7": 0.3,
+      "T0.9": 0.3
+    },
+    "ablation_arithmetic": 0.3,
+    "verdicts": [
+      {
+        "verdict": "minor",
+        "reason": "The statement mentions a fire incident related to the article but does not provide a summary of the entire article."
+      },
+      {
+        "verdict": "minor",
+        "reason": "This provides a detail about a band member but does not summarize the article."
+      },
+      {
+        "verdict": "minor",
+        "reason": "This gives information about band members' travel status but does not summarize the article."
+      },
+      {
+        "verdict": "minor",
+        "reason": "This is a tangential quote that does not summarize the article."
+      },
+      {
+        "verdict": "minor",
+        "reason": "This mentions an event related to the band but does not summarize the article."
+      }
+    ],
+    "weights": [
+      0.3,
+      0.3,
+      0.3,
+      0.3,
+      0.3
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-2feca9acf532e33f1ab7442c442c8e19787d8d7b_4",
+    "human_score": 0.1667,
+    "tcva_scores": {
+      "T0.2": 0.3,
+      "T0.3": 0.3,
+      "T0.5": 0.3,
+      "T0.7": 0.3,
+      "T0.9": 0.3
+    },
+    "ablation_arithmetic": 0.3,
+    "verdicts": [
+      {
+        "verdict": "minor",
+        "reason": "The statements describe specific actions involving a fish and a man but do not provide a summary of the entire article."
+      }
+    ],
+    "weights": [
+      0.3
+    ]
+  },
+  {
+    "id": "summeval_rel_cnn-test-a02e362c5b8f049848ce718b37b96117485461cf_9",
+    "human_score": 0.8333,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statement describes a specific scene from the article but does not provide a summary of the entire article."
+      },
+      {
+        "verdict": "partial",
+        "reason": "The statement explains the cause of the sunsets mentioned but does not summarize the full content of the article."
+      }
+    ],
+    "weights": [
+      0.7,
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_cnn-test-e2bccd4dec93c9bb7b327827dae004c2d494ec31_10",
+    "human_score": 0.25,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.08,
+      "T0.7": 0.2514,
+      "T0.9": 0.3439
+    },
+    "ablation_arithmetic": 0.08,
+    "verdicts": [
+      {
+        "verdict": "minor",
+        "reason": "The statement provides background information unrelated to summarizing the given article."
+      },
+      {
+        "verdict": "partial",
+        "reason": "The statement relates to a topic mentioned in the article but does not summarize the article itself."
+      },
+      {
+        "verdict": "none",
+        "reason": "The statement is unrelated to the article or its summary."
+      },
+      {
+        "verdict": "none",
+        "reason": "The statement is unrelated to the article or its summary."
+      },
+      {
+        "verdict": "none",
+        "reason": "The statement is unrelated to the article or its summary."
+      }
+    ],
+    "weights": [
+      0.3,
+      0.7,
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-26e4e19d945cedcb489f28808c730658139c9415_14",
+    "human_score": 0.5,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The statement about Javier Hernandez's potential move does not summarize the article but mentions a single transfer rumor."
+      },
+      {
+        "verdict": "none",
+        "reason": "The statement about Orlando City's coach provides background information unrelated to summarizing the article."
+      },
+      {
+        "verdict": "none",
+        "reason": "The statement listing clubs interested in the player is a detail but does not summarize the article as a whole."
+      }
+    ],
+    "weights": [
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-5be0a9584b051175d9f4842a143b76385335d96a_0",
+    "human_score": 0.5833,
+    "tcva_scores": {
+      "T0.2": 0.338,
+      "T0.3": 0.3605,
+      "T0.5": 0.5,
+      "T0.7": 0.6182,
+      "T0.9": 0.6531
+    },
+    "ablation_arithmetic": 0.5,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statement relates to the article's content about Manchester City's bonuses but does not provide a summary of the entire article."
+      },
+      {
+        "verdict": "minor",
+        "reason": "This provides some context about the team's league position but does not summarize the article."
+      },
+      {
+        "verdict": "minor",
+        "reason": "This gives background on contract incentives but does not summarize the article."
+      },
+      {
+        "verdict": "partial",
+        "reason": "This mentions a specific player's potential bonus loss, related to the article but not a full summary."
+      }
+    ],
+    "weights": [
+      0.7,
+      0.3,
+      0.3,
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-6f027d030f9ca86446dc893f1d10ced4c9a3561f_15",
+    "human_score": 0.3333,
+    "tcva_scores": {
+      "T0.2": 0.3513,
+      "T0.3": 0.3831,
+      "T0.5": 0.58,
+      "T0.7": 0.7237,
+      "T0.9": 0.7778
+    },
+    "ablation_arithmetic": 0.58,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statement relates to Jordan Henderson's impact on Liverpool but does not summarize the article as a whole."
+      },
+      {
+        "verdict": "minor",
+        "reason": "This statement about club talks is tangential and lacks context or summary of the article."
+      },
+      {
+        "verdict": "partial",
+        "reason": "Mentions contract details but does not provide a full summary of the article."
+      },
+      {
+        "verdict": "mostly",
+        "reason": "This statement clearly supports the main point about Henderson signing a new contract, a key article element, but lacks broader context."
+      },
+      {
+        "verdict": "minor",
+        "reason": "Describes a specific match moment unrelated to summarizing the article."
+      }
+    ],
+    "weights": [
+      0.7,
+      0.3,
+      0.7,
+      0.9,
+      0.3
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-18243373494a1722ddcd162ec67b63dd749633ab_13",
+    "human_score": 0.25,
+    "tcva_scores": {
+      "T0.2": 0.7367,
+      "T0.3": 0.7448,
+      "T0.5": 0.7667,
+      "T0.7": 0.7936,
+      "T0.9": 0.8186
+    },
+    "ablation_arithmetic": 0.7667,
+    "verdicts": [
+      {
+        "verdict": "mostly",
+        "reason": "The statement provides the final score and significance of the match, which is key information for a summary but lacks additional context or details."
+      },
+      {
+        "verdict": "partial",
+        "reason": "This statement gives a specific event in the match but does not summarize the entire article."
+      },
+      {
+        "verdict": "partial",
+        "reason": "This repeats the same event as the previous statement and only partially addresses the intent by focusing on one moment."
+      }
+    ],
+    "weights": [
+      0.9,
+      0.7,
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-d3c9ce137ba24a69253508b3416630465c050ae4_8",
+    "human_score": 0.5,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statements provide specific details about Dayna Dobias and her experiences but do not collectively form a brief summary of the entire article."
+      }
+    ],
+    "weights": [
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-f5fead94ee884800e84a212cc0edc78b11c4ba9f_5",
+    "human_score": 0.75,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statements provide specific details about a player and transfer interest but do not offer a comprehensive summary of the entire article."
+      }
+    ],
+    "weights": [
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_cnn-test-e49792c337d3f4c13e22f710efa44cf6a4e59aba_4",
+    "human_score": 0.25,
+    "tcva_scores": {
+      "T0.2": 0.3217,
+      "T0.3": 0.3344,
+      "T0.5": 0.4333,
+      "T0.7": 0.5752,
+      "T0.9": 0.6272
+    },
+    "ablation_arithmetic": 0.4333,
+    "verdicts": [
+      {
+        "verdict": "minor",
+        "reason": "The statement mentions the start of the sentencing phase but does not summarize the article."
+      },
+      {
+        "verdict": "minor",
+        "reason": "The statement provides a detail about the expected duration of the sentencing phase but does not summarize the article."
+      },
+      {
+        "verdict": "partial",
+        "reason": "The statement relates to the article's content by mentioning the Richards' personal story but does not provide a full summary."
+      }
+    ],
+    "weights": [
+      0.3,
+      0.3,
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_cnn-test-c05bda9b387ec8ae43803170b6f59b4b82505db9_4",
+    "human_score": 0.5,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statements provide specific details about the released Yazidis and their reception but do not offer a complete brief summary of the entire article."
+      }
+    ],
+    "weights": [
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-31114653cd606fd3f4b1035f98dedd71f8282cd2_13",
+    "human_score": 0.8333,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statements provide relevant details about the Euro 2016 qualifier match between Wales and Belgium but do not offer a concise summary of the entire article."
+      }
+    ],
+    "weights": [
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_cnn-test-b8b6e729fff27c4eef87887e61d3448de9c063f6_13",
+    "human_score": 0.25,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statements provide some key details about the rocket's ascent, landing attempt, and outcome but do not form a complete brief summary of the article."
+      }
+    ],
+    "weights": [
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_cnn-test-d75b043ebefc3098aea84d92bb8bec0f509b1563_15",
+    "human_score": 0.75,
+    "tcva_scores": {
+      "T0.2": 1.0,
+      "T0.3": 1.0,
+      "T0.5": 1.0,
+      "T0.7": 1.0,
+      "T0.9": 1.0
+    },
+    "ablation_arithmetic": 1.0,
+    "verdicts": [
+      {
+        "verdict": "fully",
+        "reason": "The statement provides a concise summary of the article's main events, including casualties, responsible group, and official response."
+      }
+    ],
+    "weights": [
+      1.0
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-2a48112ddee712f2364f128076cb2db555a043b1_10",
+    "human_score": 0.1667,
+    "tcva_scores": {
+      "T0.2": 0.3,
+      "T0.3": 0.3,
+      "T0.5": 0.3,
+      "T0.7": 0.3,
+      "T0.9": 0.3
+    },
+    "ablation_arithmetic": 0.3,
+    "verdicts": [
+      {
+        "verdict": "minor",
+        "reason": "The statement is a specific quote related to a feeling about helping Leicester but does not summarize the entire article."
+      },
+      {
+        "verdict": "minor",
+        "reason": "This statement provides a background detail about Cambiasso's past achievement but does not summarize the article."
+      },
+      {
+        "verdict": "minor",
+        "reason": "This is a factual association about Cambiasso's career but does not address the article's content or provide a summary."
+      }
+    ],
+    "weights": [
+      0.3,
+      0.3,
+      0.3
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-3785743303ddb8b594be7c449a37458b99e83812_1",
+    "human_score": 0.5833,
+    "tcva_scores": {
+      "T0.2": 0.9,
+      "T0.3": 0.9,
+      "T0.5": 0.9,
+      "T0.7": 0.9,
+      "T0.9": 0.9
+    },
+    "ablation_arithmetic": 0.9,
+    "verdicts": [
+      {
+        "verdict": "mostly",
+        "reason": "The statements collectively provide a clear overview of the match outcome and Hull City's relegation battle, but lack a concise, unified summary format."
+      }
+    ],
+    "weights": [
+      0.9
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-02c955067d00f38b6978b805d5a8701a787f78ac_5",
+    "human_score": 0.75,
+    "tcva_scores": {
+      "T0.2": 0.9,
+      "T0.3": 0.9,
+      "T0.5": 0.9,
+      "T0.7": 0.9,
+      "T0.9": 0.9
+    },
+    "ablation_arithmetic": 0.9,
+    "verdicts": [
+      {
+        "verdict": "mostly",
+        "reason": "The statements collectively describe the key details of the multi-vehicle crash, including location, number of people involved, and injuries, but do not provide a concise summary format."
+      }
+    ],
+    "weights": [
+      0.9
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-0f0789390d67698283cc87b2e046b5c5cd77edb7_5",
+    "human_score": 0.75,
+    "tcva_scores": {
+      "T0.2": 0.7611,
+      "T0.3": 0.7727,
+      "T0.5": 0.8,
+      "T0.7": 0.8264,
+      "T0.9": 0.8463
+    },
+    "ablation_arithmetic": 0.8,
+    "verdicts": [
+      {
+        "verdict": "mostly",
+        "reason": "The statement introduces the main event of the article, providing key context about the incident involving the Buckingham Palace guard."
+      },
+      {
+        "verdict": "mostly",
+        "reason": "This statement supports the main event by describing the guard's embarrassment and the setting, adding relevant detail."
+      },
+      {
+        "verdict": "partial",
+        "reason": "It describes a specific consequence of the slip but lacks broader context or summary of the article."
+      },
+      {
+        "verdict": "partial",
+        "reason": "It mentions another detail of the incident but does not provide a complete summary of the article."
+      }
+    ],
+    "weights": [
+      0.9,
+      0.9,
+      0.7,
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-b255397ee863bd8faf9def57c0f76769153d905e_6",
+    "human_score": 0.75,
+    "tcva_scores": {
+      "T0.2": 1.0,
+      "T0.3": 1.0,
+      "T0.5": 1.0,
+      "T0.7": 1.0,
+      "T0.9": 1.0
+    },
+    "ablation_arithmetic": 1.0,
+    "verdicts": [
+      {
+        "verdict": "fully",
+        "reason": "The statement provides a concise summary of the main event in the article, explicitly describing the incident involving the boy and the toy gun at airport security."
+      }
+    ],
+    "weights": [
+      1.0
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-bd4684a0f5af5dd6ac88d2fb50f902bd7f10217b_3",
+    "human_score": 0.3333,
+    "tcva_scores": {
+      "T0.2": 0.3622,
+      "T0.3": 0.3993,
+      "T0.5": 0.5667,
+      "T0.7": 0.6508,
+      "T0.9": 0.6722
+    },
+    "ablation_arithmetic": 0.5667,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statement provides some background on Falcao's time at the Argentine club but does not summarize the entire article."
+      },
+      {
+        "verdict": "minor",
+        "reason": "The statement is unclear and seems unrelated to the article's main content about Falcao's career."
+      },
+      {
+        "verdict": "partial",
+        "reason": "The statement gives specific details about Falcao's performance but does not provide a full summary of the article."
+      }
+    ],
+    "weights": [
+      0.7,
+      0.3,
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-d3c9ce137ba24a69253508b3416630465c050ae4_10",
+    "human_score": 1.0,
+    "tcva_scores": {
+      "T0.2": 0.9,
+      "T0.3": 0.9,
+      "T0.5": 0.9,
+      "T0.7": 0.9,
+      "T0.9": 0.9
+    },
+    "ablation_arithmetic": 0.9,
+    "verdicts": [
+      {
+        "verdict": "mostly",
+        "reason": "The statements collectively provide key details about the subject and her motivation, but do not explicitly summarize the entire article in a concise form."
+      }
+    ],
+    "weights": [
+      0.9
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-1747dcd6a007ee97954b6b10cde549bf82f6a4eb_10",
+    "human_score": 0.6667,
+    "tcva_scores": {
+      "T0.2": 0.338,
+      "T0.3": 0.3605,
+      "T0.5": 0.5,
+      "T0.7": 0.6182,
+      "T0.9": 0.6531
+    },
+    "ablation_arithmetic": 0.5,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statement provides specific details about delivery partnerships but does not summarize the entire article."
+      },
+      {
+        "verdict": "minor",
+        "reason": "This provides source information but does not contribute to summarizing the article's content."
+      },
+      {
+        "verdict": "partial",
+        "reason": "Mentions a specific plan related to service charges but does not cover the full article summary."
+      },
+      {
+        "verdict": "partial",
+        "reason": "Gives details about delivery fees but only addresses a part of the article's content."
+      },
+      {
+        "verdict": "minor",
+        "reason": "Explains how Postmates hires drivers, which is tangential to summarizing the article."
+      },
+      {
+        "verdict": "minor",
+        "reason": "Compares delivery model to Uber taxis, which is background detail rather than a summary."
+      }
+    ],
+    "weights": [
+      0.7,
+      0.3,
+      0.7,
+      0.7,
+      0.3,
+      0.3
+    ]
+  },
+  {
+    "id": "summeval_rel_cnn-test-4761dc6d8bdf56b9ada97104113dd1bcf4aed3f1_14",
+    "human_score": 0.25,
+    "tcva_scores": {
+      "T0.2": 0.338,
+      "T0.3": 0.3605,
+      "T0.5": 0.5,
+      "T0.7": 0.6182,
+      "T0.9": 0.6531
+    },
+    "ablation_arithmetic": 0.5,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "Mentions the whale's long journey but incorrectly states it swam from Oregon State University, which is not a location relevant to the whale's migration."
+      },
+      {
+        "verdict": "partial",
+        "reason": "Indicates the journey surpassed a Guinness World Record, providing some summary detail but lacking context about the article's main points."
+      },
+      {
+        "verdict": "minor",
+        "reason": "Provides background on the whale's name, which is tangential and not central to summarizing the article."
+      },
+      {
+        "verdict": "minor",
+        "reason": "Mentions the previous record holder but does not contribute directly to summarizing the article's main content."
+      }
+    ],
+    "weights": [
+      0.7,
+      0.7,
+      0.3,
+      0.3
+    ]
+  },
+  {
+    "id": "summeval_rel_cnn-test-404f859482d47c127868964a9a39d1a7645dd2e9_0",
+    "human_score": 0.1667,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "Mentions Donald Sterling and legal issues involving gifts but does not provide a concise summary of the entire article."
+      }
+    ],
+    "weights": [
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-8847383b72167c3f3dd2161b5b091b580c8f4da7_4",
+    "human_score": 1.0,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statements describe specific details about the coastline change but do not provide a concise overall summary of the article."
+      }
+    ],
+    "weights": [
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-02c955067d00f38b6978b805d5a8701a787f78ac_0",
+    "human_score": 0.5,
+    "tcva_scores": {
+      "T0.2": 0.75,
+      "T0.3": 0.7602,
+      "T0.5": 0.7857,
+      "T0.7": 0.8131,
+      "T0.9": 0.8354
+    },
+    "ablation_arithmetic": 0.7857,
+    "verdicts": [
+      {
+        "verdict": "mostly",
+        "reason": "This statement provides the key event of the article but lacks details about injuries or outcomes."
+      },
+      {
+        "verdict": "partial",
+        "reason": "Mentions hospital transport but does not summarize the overall incident or injuries."
+      },
+      {
+        "verdict": "mostly",
+        "reason": "Gives important information about the number of people injured and their condition, supporting the summary."
+      },
+      {
+        "verdict": "mostly",
+        "reason": "Provides location details of the incident, which supports understanding but is not a full summary."
+      },
+      {
+        "verdict": "partial",
+        "reason": "Details specific injuries to individuals but does not summarize the entire article."
+      },
+      {
+        "verdict": "partial",
+        "reason": "Mentions airlifting of patients but lacks context or summary of the full event."
+      },
+      {
+        "verdict": "partial",
+        "reason": "General statement about airlifting patients but vague and incomplete for a summary."
+      }
+    ],
+    "weights": [
+      0.9,
+      0.7,
+      0.9,
+      0.9,
+      0.7,
+      0.7,
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_cnn-test-b1c3fc03a2b74cf4c79844c1fe2fdce70a8a436e_0",
+    "human_score": 0.1667,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statements provide specific details about migrant rescues and missing persons but do not offer a comprehensive summary of the entire article."
+      }
+    ],
+    "weights": [
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-9beaaf73e4517d5bf1bc284f386485d571da96cf_6",
+    "human_score": 0.9167,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statements provide specific details about an upcoming Elvis-themed wedding event but do not offer a brief summary of the entire article."
+      }
+    ],
+    "weights": [
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-8b51a10370a1219137e231192e65b9cd52238ea6_4",
+    "human_score": 0.6667,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statements relate to the article's content but only provide specific incidents and character traits without summarizing the entire article."
+      }
+    ],
+    "weights": [
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-6c1341bedf92a304318545fbf1aad88651de7909_14",
+    "human_score": 0.3333,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The statements do not provide a summary of the article but rather isolated facts unrelated to a comprehensive overview."
+      }
+    ],
+    "weights": [
+      0.0
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-c16c9fa34ccae7e2b9e29c3988ccb74974c4b3c0_4",
+    "human_score": 0.75,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statements provide some relevant details about Carlos Tevez's contract situation and intentions but do not offer a concise, comprehensive summary of the entire article."
+      }
+    ],
+    "weights": [
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-096e418a953af86df0d1560bec95bc7bfee2e34b_8",
+    "human_score": 0.3333,
+    "tcva_scores": {
+      "T0.2": 0.7367,
+      "T0.3": 0.7448,
+      "T0.5": 0.7667,
+      "T0.7": 0.7936,
+      "T0.9": 0.8186
+    },
+    "ablation_arithmetic": 0.7667,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "Mentions a specific event related to the match but does not summarize the article as a whole."
+      },
+      {
+        "verdict": "partial",
+        "reason": "Provides a detail about Porto's manager but does not offer a summary of the article."
+      },
+      {
+        "verdict": "mostly",
+        "reason": "Gives the main result of the match, which is central to the article, but lacks broader context or additional details."
+      }
+    ],
+    "weights": [
+      0.7,
+      0.7,
+      0.9
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-31114653cd606fd3f4b1035f98dedd71f8282cd2_0",
+    "human_score": 0.0833,
+    "tcva_scores": {
+      "T0.2": 0.3,
+      "T0.3": 0.3,
+      "T0.5": 0.3,
+      "T0.7": 0.3,
+      "T0.9": 0.3
+    },
+    "ablation_arithmetic": 0.3,
+    "verdicts": [
+      {
+        "verdict": "minor",
+        "reason": "The statement mentions a specific match date and location but does not summarize the article."
+      },
+      {
+        "verdict": "minor",
+        "reason": "It references a specific event related to the article but does not provide a summary."
+      },
+      {
+        "verdict": "minor",
+        "reason": "This is a historical fact related to the teams but not a summary of the article."
+      },
+      {
+        "verdict": "minor",
+        "reason": "This mentions a potential outcome but lacks a summary of the article."
+      },
+      {
+        "verdict": "minor",
+        "reason": "This provides a statistic but does not summarize the article."
+      }
+    ],
+    "weights": [
+      0.3,
+      0.3,
+      0.3,
+      0.3,
+      0.3
+    ]
+  },
+  {
+    "id": "summeval_rel_cnn-test-404f859482d47c127868964a9a39d1a7645dd2e9_10",
+    "human_score": 0.8333,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statements provide specific details about the lawsuit and financial claims but do not offer a concise overall summary of the article."
+      }
+    ],
+    "weights": [
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-e43eef75de38d246db9d80216ca9f5487215a78b_15",
+    "human_score": 0.5,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statements mention Filipe Luis's desire to stay at Chelsea and contract details but do not provide a comprehensive summary of the entire article."
+      }
+    ],
+    "weights": [
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_cnn-test-e2bccd4dec93c9bb7b327827dae004c2d494ec31_1",
+    "human_score": 0.0833,
+    "tcva_scores": {
+      "T0.2": 0.3511,
+      "T0.3": 0.3816,
+      "T0.5": 0.54,
+      "T0.7": 0.6386,
+      "T0.9": 0.6651
+    },
+    "ablation_arithmetic": 0.54,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "\"Space Invaders\" development in Japan provides some background but does not summarize the entire article."
+      },
+      {
+        "verdict": "partial",
+        "reason": "Mentioning political discussion about real-life counterparts relates to the article but lacks a full summary."
+      },
+      {
+        "verdict": "partial",
+        "reason": "The reassuring statement by a government official is relevant but only a part of the article's content."
+      },
+      {
+        "verdict": "minor",
+        "reason": "Inoki's appearance in WWE is tangential and does not contribute to summarizing the article."
+      },
+      {
+        "verdict": "minor",
+        "reason": "WWE's description of Inoki is tangential and unrelated to summarizing the article."
+      }
+    ],
+    "weights": [
+      0.7,
+      0.7,
+      0.7,
+      0.3,
+      0.3
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-f468efac7b3c54f8c42c2c81dff108c52ebe0d7d_9",
+    "human_score": 0.8333,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The statements describe specific events and opinions from a match but do not provide a summary of the article."
+      }
+    ],
+    "weights": [
+      0.0
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-e06ff0eb7c4fa4416fda84a9a239b15480c5a9d9_14",
+    "human_score": 0.3333,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.2222,
+      "T0.7": 0.4152,
+      "T0.9": 0.4917
+    },
+    "ablation_arithmetic": 0.2222,
+    "verdicts": [
+      {
+        "verdict": "minor",
+        "reason": "The statement mentions unrelated details about preferences and gym membership that do not summarize the article."
+      },
+      {
+        "verdict": "none",
+        "reason": "The statement is off-topic and does not relate to summarizing the article."
+      },
+      {
+        "verdict": "partial",
+        "reason": "The statement relates to the article's subject but only partially addresses the intent by mentioning the Outback Casanova and his dream girl without summarizing the full article."
+      }
+    ],
+    "weights": [
+      0.3,
+      0.0,
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-096e418a953af86df0d1560bec95bc7bfee2e34b_15",
+    "human_score": 0.5833,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statements mention key events and outcomes related to the match but lack a concise overall summary of the article."
+      }
+    ],
+    "weights": [
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_cnn-test-a02e362c5b8f049848ce718b37b96117485461cf_8",
+    "human_score": 0.1667,
+    "tcva_scores": {
+      "T0.2": 0.3,
+      "T0.3": 0.3,
+      "T0.5": 0.3,
+      "T0.7": 0.3,
+      "T0.9": 0.3
+    },
+    "ablation_arithmetic": 0.3,
+    "verdicts": [
+      {
+        "verdict": "minor",
+        "reason": "The statement describes a specific scene but does not summarize the article or provide an overview of its content."
+      }
+    ],
+    "weights": [
+      0.3
+    ]
+  },
+  {
+    "id": "summeval_rel_cnn-test-e2bccd4dec93c9bb7b327827dae004c2d494ec31_13",
+    "human_score": 0.0,
+    "tcva_scores": {
+      "T0.2": 0.3,
+      "T0.3": 0.3,
+      "T0.5": 0.3,
+      "T0.7": 0.3,
+      "T0.9": 0.3
+    },
+    "ablation_arithmetic": 0.3,
+    "verdicts": [
+      {
+        "verdict": "minor",
+        "reason": "\"space invaders\" being the founder of the new Japan pro wrestling organization is tangential and lacks a summary of the article's main points."
+      },
+      {
+        "verdict": "minor",
+        "reason": "Inoki's appearance in WWE is a related fact but does not provide a summary of the article."
+      },
+      {
+        "verdict": "minor",
+        "reason": "WWE's description of Inoki offers background context but does not summarize the article."
+      }
+    ],
+    "weights": [
+      0.3,
+      0.3,
+      0.3
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-46609841ffd23e9c22d1507edf7b176ecc4d834f_8",
+    "human_score": 0.3333,
+    "tcva_scores": {
+      "T0.2": 0.3,
+      "T0.3": 0.3,
+      "T0.5": 0.3,
+      "T0.7": 0.3,
+      "T0.9": 0.3
+    },
+    "ablation_arithmetic": 0.3,
+    "verdicts": [
+      {
+        "verdict": "minor",
+        "reason": "The statement provides a specific match result but does not summarize the overall article content."
+      }
+    ],
+    "weights": [
+      0.3
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-23e8c1d71474d239aa9ae37b9a05031b0054b8ce_3",
+    "human_score": 0.5,
+    "tcva_scores": {
+      "T0.2": 0.3,
+      "T0.3": 0.3,
+      "T0.5": 0.3,
+      "T0.7": 0.3,
+      "T0.9": 0.3
+    },
+    "ablation_arithmetic": 0.3,
+    "verdicts": [
+      {
+        "verdict": "minor",
+        "reason": "The statement mentions a specific match and league position but does not provide a summary of the entire article."
+      },
+      {
+        "verdict": "minor",
+        "reason": "This details a specific event in a match but does not summarize the article as a whole."
+      },
+      {
+        "verdict": "minor",
+        "reason": "This is a brief comment from a coach but does not constitute a summary of the article."
+      }
+    ],
+    "weights": [
+      0.3,
+      0.3,
+      0.3
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-1749a22e2b6facaa057213cb9b33261b319bbd2b_6",
+    "human_score": 0.6667,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.5139,
+      "T0.7": 0.6372,
+      "T0.9": 0.6936
+    },
+    "ablation_arithmetic": 0.5139,
+    "verdicts": [
+      {
+        "verdict": "mostly",
+        "reason": "The statement summarizes the main point that Jamie Carragher supports Brendan Rodgers despite a trophyless season and likely missing top four, but lacks broader article context."
+      },
+      {
+        "verdict": "partial",
+        "reason": "It mentions doubts about Rodgers' future but does not provide a summary of the article's overall content."
+      },
+      {
+        "verdict": "partial",
+        "reason": "It notes Carragher's support but is too brief to serve as a full summary."
+      },
+      {
+        "verdict": "none",
+        "reason": "Carragher sharing an Instagram image unrelated to the article's main content does not summarize the article."
+      },
+      {
+        "verdict": "partial",
+        "reason": "It provides context on Liverpool's league position but does not summarize the article fully."
+      },
+      {
+        "verdict": "partial",
+        "reason": "It relates to Liverpool's likely failure to qualify for the Champions League but is only a part of the article's content."
+      }
+    ],
+    "weights": [
+      0.9,
+      0.7,
+      0.7,
+      0.0,
+      0.7,
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-6372eff07fd3d6f578f90d6115e01747edccc095_6",
+    "human_score": 0.6667,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statements provide several specific details about Dr Adrian Quarterman and his work on space lasers, but they do not collectively form a concise summary of the entire article."
+      }
+    ],
+    "weights": [
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_cnn-test-5139ccfabee55ddb83e7937f5802c0a67aee8975_6",
+    "human_score": 0.9167,
+    "tcva_scores": {
+      "T0.2": 0.8309,
+      "T0.3": 0.8547,
+      "T0.5": 0.9,
+      "T0.7": 0.9311,
+      "T0.9": 0.9493
+    },
+    "ablation_arithmetic": 0.9,
+    "verdicts": [
+      {
+        "verdict": "fully",
+        "reason": "The statement provides a concise summary of the article's main event, describing the interception incident clearly."
+      },
+      {
+        "verdict": "partial",
+        "reason": "The statement relates to the article by mentioning the U.S. response but does not summarize the entire article."
+      },
+      {
+        "verdict": "fully",
+        "reason": "This statement explicitly details the key event and parties involved, effectively summarizing the article."
+      },
+      {
+        "verdict": "mostly",
+        "reason": "The statement gives important context about the location and timing, supporting the summary but lacking full detail on the incident."
+      }
+    ],
+    "weights": [
+      1.0,
+      0.7,
+      1.0,
+      0.9
+    ]
+  },
+  {
+    "id": "summeval_rel_cnn-test-d75b043ebefc3098aea84d92bb8bec0f509b1563_14",
+    "human_score": 0.1667,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statements provide some key details about the militants and their motives but do not offer a comprehensive summary of the entire article."
+      }
+    ],
+    "weights": [
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-2feca9acf532e33f1ab7442c442c8e19787d8d7b_0",
+    "human_score": 0.5833,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statements describe specific interactions between humans and pets but do not provide a brief summary of the entire article."
+      }
+    ],
+    "weights": [
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_cnn-test-bcdb32ae644040a721da880fff9c1d502048cd8b_5",
+    "human_score": 0.75,
+    "tcva_scores": {
+      "T0.2": 0.9,
+      "T0.3": 0.9,
+      "T0.5": 0.9,
+      "T0.7": 0.9,
+      "T0.9": 0.9
+    },
+    "ablation_arithmetic": 0.9,
+    "verdicts": [
+      {
+        "verdict": "mostly",
+        "reason": "The statements provide key facts about the incident but lack a concise overall summary of the article."
+      }
+    ],
+    "weights": [
+      0.9
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-6372eff07fd3d6f578f90d6115e01747edccc095_14",
+    "human_score": 0.3333,
+    "tcva_scores": {
+      "T0.2": 0.3511,
+      "T0.3": 0.3816,
+      "T0.5": 0.54,
+      "T0.7": 0.6386,
+      "T0.9": 0.6651
+    },
+    "ablation_arithmetic": 0.54,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "This statement describes a specific detail about the satellites but does not provide a brief overall summary of the article."
+      },
+      {
+        "verdict": "partial",
+        "reason": "This statement suggests a potential outcome of the technology but lacks a concise summary of the article's main points."
+      },
+      {
+        "verdict": "partial",
+        "reason": "This statement mentions another possible application but does not summarize the article as a whole."
+      },
+      {
+        "verdict": "minor",
+        "reason": "This statement introduces a related but different research proposal, which is tangential to the main article summary."
+      },
+      {
+        "verdict": "minor",
+        "reason": "This statement describes a use case unrelated to the main article's focus, making it only tangentially related."
+      }
+    ],
+    "weights": [
+      0.7,
+      0.7,
+      0.7,
+      0.3,
+      0.3
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-eeef09d26cf30c2124c0399b08eedc6321fe5d20_14",
+    "human_score": 0.0,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The statement is about a specific football match and does not provide a summary of the article."
+      },
+      {
+        "verdict": "none",
+        "reason": "The statement concerns Real Madrid's league position and is unrelated to summarizing the article."
+      },
+      {
+        "verdict": "none",
+        "reason": "The statement discusses Barcelona's league status and does not summarize the article."
+      }
+    ],
+    "weights": [
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-4e0de0ec6d5b9df174f54d03158de8f30aac861f_1",
+    "human_score": 0.0833,
+    "tcva_scores": {
+      "T0.2": 0.3515,
+      "T0.3": 0.3847,
+      "T0.5": 0.62,
+      "T0.7": 0.7787,
+      "T0.9": 0.8245
+    },
+    "ablation_arithmetic": 0.62,
+    "verdicts": [
+      {
+        "verdict": "mostly",
+        "reason": "The statement provides key match information and Ozil's performance, supporting a summary but lacks broader article context."
+      },
+      {
+        "verdict": "mostly",
+        "reason": "It highlights Ozil's form and match outcome, relevant for a summary but somewhat repetitive and limited in scope."
+      },
+      {
+        "verdict": "partial",
+        "reason": "Offers background on Ozil but does not summarize the article's main event or content."
+      },
+      {
+        "verdict": "minor",
+        "reason": "Mentions Ozil's absence from a different game, which is tangential to the article's main focus."
+      },
+      {
+        "verdict": "minor",
+        "reason": "Discusses Wenger's comments unrelated to the main article summary about the Euro qualifier."
+      }
+    ],
+    "weights": [
+      0.9,
+      0.9,
+      0.7,
+      0.3,
+      0.3
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-096e418a953af86df0d1560bec95bc7bfee2e34b_3",
+    "human_score": 0.75,
+    "tcva_scores": {
+      "T0.2": -1.0,
+      "T0.3": -1.0,
+      "T0.5": -1.0,
+      "T0.7": -1.0,
+      "T0.9": -1.0
+    },
+    "ablation_arithmetic": -1.0,
+    "verdicts": [],
+    "weights": [],
+    "error": "Expecting ',' delimiter: line 1 column 697 (char 696)"
+  },
+  {
+    "id": "summeval_rel_dm-test-8bc8f134bc3ceaeec0df8f29e96e13d319717ab8_9",
+    "human_score": 0.9167,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statements provide some relevant details about Luis Enrique and Barcelona but do not collectively offer a brief summary of the entire article."
+      }
+    ],
+    "weights": [
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-03e271b4305517e02c9ead82d57327d32b99102e_6",
+    "human_score": 0.8333,
+    "tcva_scores": {
+      "T0.2": 0.9,
+      "T0.3": 0.9,
+      "T0.5": 0.9,
+      "T0.7": 0.9,
+      "T0.9": 0.9
+    },
+    "ablation_arithmetic": 0.9,
+    "verdicts": [
+      {
+        "verdict": "mostly",
+        "reason": "The statements collectively provide key details about Serena Williams' match, the outcome, and the team's overall result, but lack a concise, unified summary format."
+      }
+    ],
+    "weights": [
+      0.9
+    ]
+  },
+  {
+    "id": "summeval_rel_cnn-test-b1c3fc03a2b74cf4c79844c1fe2fdce70a8a436e_14",
+    "human_score": 0.25,
+    "tcva_scores": {
+      "T0.2": 0.3622,
+      "T0.3": 0.3993,
+      "T0.5": 0.5667,
+      "T0.7": 0.6508,
+      "T0.9": 0.6722
+    },
+    "ablation_arithmetic": 0.5667,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statement provides a specific detail about the situation but does not summarize the entire article."
+      },
+      {
+        "verdict": "partial",
+        "reason": "This fact is relevant to the article's topic but only covers one aspect without summarizing the whole content."
+      },
+      {
+        "verdict": "minor",
+        "reason": "The statistic is related to the broader context but is not a direct summary of the article."
+      }
+    ],
+    "weights": [
+      0.7,
+      0.7,
+      0.3
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-46609841ffd23e9c22d1507edf7b176ecc4d834f_9",
+    "human_score": 0.75,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.5063,
+      "T0.7": 0.6785,
+      "T0.9": 0.7358
+    },
+    "ablation_arithmetic": 0.5063,
+    "verdicts": [
+      {
+        "verdict": "mostly",
+        "reason": "The statement provides a key outcome of the article but lacks broader context or additional details for a full summary."
+      },
+      {
+        "verdict": "mostly",
+        "reason": "This details a specific match result relevant to the article's main topic but does not summarize the entire article."
+      },
+      {
+        "verdict": "none",
+        "reason": "This statement is unrelated to the article's main topic about Curacao's World Cup qualification."
+      },
+      {
+        "verdict": "mostly",
+        "reason": "This provides information about upcoming matches, supporting the article's focus but not a complete summary."
+      }
+    ],
+    "weights": [
+      0.9,
+      0.9,
+      0.0,
+      0.9
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-f468efac7b3c54f8c42c2c81dff108c52ebe0d7d_11",
+    "human_score": 0.75,
+    "tcva_scores": {
+      "T0.2": 0.7306,
+      "T0.3": 0.7404,
+      "T0.5": 0.775,
+      "T0.7": 0.8286,
+      "T0.9": 0.8777
+    },
+    "ablation_arithmetic": 0.775,
+    "verdicts": [
+      {
+        "verdict": "fully",
+        "reason": "The statement directly summarizes the key event of the article by stating the goal scorer, the score, the teams involved, and the match location."
+      },
+      {
+        "verdict": "partial",
+        "reason": "It provides related commentary on the goal's build-up but does not summarize the article itself."
+      },
+      {
+        "verdict": "partial",
+        "reason": "Describes a specific event in the match but does not provide a summary of the article."
+      },
+      {
+        "verdict": "partial",
+        "reason": "Details an incident during the match relevant to the goal but not a summary."
+      },
+      {
+        "verdict": "partial",
+        "reason": "Mentions a player action in the build-up to the goal, related but not a summary."
+      },
+      {
+        "verdict": "partial",
+        "reason": "Describes a pass in the goal sequence, related but not a summary."
+      },
+      {
+        "verdict": "partial",
+        "reason": "Details a key pass leading to the goal, related but not a summary."
+      },
+      {
+        "verdict": "fully",
+        "reason": "Explicitly states the goal scored by Eden Hazard, directly summarizing the main event of the article."
+      }
+    ],
+    "weights": [
+      1.0,
+      0.7,
+      0.7,
+      0.7,
+      0.7,
+      0.7,
+      0.7,
+      1.0
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-9afda3cde191a883d8c166ceb5765eb53205d8f4_15",
+    "human_score": 0.1667,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statements relate to Alexis Sanchez's transfer situation but do not provide a concise summary of the entire article."
+      }
+    ],
+    "weights": [
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-8764fb95bfad8ee849274873a92fb8d6b400eee2_0",
+    "human_score": 0.1667,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.1687,
+      "T0.7": 0.2262,
+      "T0.9": 0.2453
+    },
+    "ablation_arithmetic": 0.1687,
+    "verdicts": [
+      {
+        "verdict": "minor",
+        "reason": "The statement mentions a player substitution but does not summarize the article."
+      },
+      {
+        "verdict": "none",
+        "reason": "The statement is factually incorrect and unrelated to summarizing the article."
+      },
+      {
+        "verdict": "minor",
+        "reason": "The statement references a player's opinion but does not provide a summary of the article."
+      },
+      {
+        "verdict": "minor",
+        "reason": "The statement provides background on a player but does not summarize the article."
+      }
+    ],
+    "weights": [
+      0.3,
+      0.0,
+      0.3,
+      0.3
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-14c813567696f4e63a39993c09d4edb454036179_13",
+    "human_score": 0.8333,
+    "tcva_scores": {
+      "T0.2": 0.3,
+      "T0.3": 0.3,
+      "T0.5": 0.3,
+      "T0.7": 0.3,
+      "T0.9": 0.3
+    },
+    "ablation_arithmetic": 0.3,
+    "verdicts": [
+      {
+        "verdict": "minor",
+        "reason": "The statement mentions the announcement of expecting a child but lacks a summary of the overall article content."
+      },
+      {
+        "verdict": "minor",
+        "reason": "Describes a specific scene from the video but does not summarize the article."
+      },
+      {
+        "verdict": "minor",
+        "reason": "Provides a detail about the video's popularity, which is tangential to summarizing the article."
+      },
+      {
+        "verdict": "minor",
+        "reason": "Quotes the parents' statement, which is a minor detail and does not summarize the article."
+      }
+    ],
+    "weights": [
+      0.3,
+      0.3,
+      0.3,
+      0.3
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-8764fb95bfad8ee849274873a92fb8d6b400eee2_3",
+    "human_score": 0.4167,
+    "tcva_scores": {
+      "T0.2": 0.3,
+      "T0.3": 0.3,
+      "T0.5": 0.3,
+      "T0.7": 0.3,
+      "T0.9": 0.3
+    },
+    "ablation_arithmetic": 0.3,
+    "verdicts": [
+      {
+        "verdict": "minor",
+        "reason": "The statement mentions a conflict involving Paul Merson but does not summarize the article."
+      },
+      {
+        "verdict": "minor",
+        "reason": "The statement provides a specific event detail but does not summarize the article."
+      },
+      {
+        "verdict": "minor",
+        "reason": "The statement gives a match substitution detail but does not summarize the article."
+      }
+    ],
+    "weights": [
+      0.3,
+      0.3,
+      0.3
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-eeef09d26cf30c2124c0399b08eedc6321fe5d20_7",
+    "human_score": 0.8333,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.2437,
+      "T0.7": 0.4337,
+      "T0.9": 0.5128
+    },
+    "ablation_arithmetic": 0.2437,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statement provides a key result from the article but lacks broader context or additional details to form a complete summary."
+      },
+      {
+        "verdict": "minor",
+        "reason": "This detail about Neymar and Dani Alves watching the game is tangential and does not contribute directly to summarizing the article."
+      },
+      {
+        "verdict": "minor",
+        "reason": "The mention of Neymar's sister attending the game is a minor detail unrelated to the main content of the article summary."
+      },
+      {
+        "verdict": "none",
+        "reason": "This statement about Neymar helping Brazil beat Chile is unrelated to the article about the El Clasico basketball game."
+      }
+    ],
+    "weights": [
+      0.7,
+      0.3,
+      0.3,
+      0.0
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-808a439a5d83fc47baaea934c8779a7ebc62470d_8",
+    "human_score": 0.0833,
+    "tcva_scores": {
+      "T0.2": 0.3948,
+      "T0.3": 0.4504,
+      "T0.5": 0.62,
+      "T0.7": 0.6725,
+      "T0.9": 0.6846
+    },
+    "ablation_arithmetic": 0.62,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statement provides a specific detail about United's recent league win but does not summarize the entire article."
+      },
+      {
+        "verdict": "partial",
+        "reason": "The statement gives a detail about City's recent league win but does not provide a summary of the article."
+      },
+      {
+        "verdict": "partial",
+        "reason": "This repeats the previous fact about Manchester City's win, offering detail but not a summary."
+      },
+      {
+        "verdict": "partial",
+        "reason": "The statement gives context about the league standings but does not summarize the article fully."
+      },
+      {
+        "verdict": "minor",
+        "reason": "The statement about Chelsea having a game in hand is a minor detail and does not summarize the article."
+      }
+    ],
+    "weights": [
+      0.7,
+      0.7,
+      0.7,
+      0.7,
+      0.3
+    ]
+  },
+  {
+    "id": "summeval_rel_cnn-test-e2bccd4dec93c9bb7b327827dae004c2d494ec31_15",
+    "human_score": 0.0,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "\"Space Invaders\" development date is incorrect and unrelated to summarizing the article."
+      },
+      {
+        "verdict": "none",
+        "reason": "The statement is incomplete and unrelated to summarizing the article."
+      },
+      {
+        "verdict": "none",
+        "reason": "The statement about fighting Muhammad Ali is unrelated to summarizing the article."
+      },
+      {
+        "verdict": "none",
+        "reason": "The statement about WWE appearance is unrelated to summarizing the article."
+      }
+    ],
+    "weights": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-e43eef75de38d246db9d80216ca9f5487215a78b_3",
+    "human_score": 0.6667,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statements provide some relevant details about Filipe Luis's contract and recent activity but do not offer a concise summary of the entire article."
+      }
+    ],
+    "weights": [
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-4fb64a2298e18626db776fccf834be87388827e0_3",
+    "human_score": 0.5833,
+    "tcva_scores": {
+      "T0.2": 1.0,
+      "T0.3": 1.0,
+      "T0.5": 1.0,
+      "T0.7": 1.0,
+      "T0.9": 1.0
+    },
+    "ablation_arithmetic": 1.0,
+    "verdicts": [
+      {
+        "verdict": "fully",
+        "reason": "The statement provides a concise summary of the article by mentioning Wiggins' upcoming hour record attempt, his key achievements, and the event details."
+      }
+    ],
+    "weights": [
+      1.0
+    ]
+  },
+  {
+    "id": "summeval_rel_cnn-test-404f859482d47c127868964a9a39d1a7645dd2e9_6",
+    "human_score": 0.9167,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statement relates to a key event involving Donald Sterling but does not provide a summary of the entire article."
+      },
+      {
+        "verdict": "partial",
+        "reason": "This detail is relevant to the article's content but only covers one aspect without summarizing the whole article."
+      },
+      {
+        "verdict": "partial",
+        "reason": "The statement is related to the article's subject but only addresses a specific legal action, not a summary."
+      },
+      {
+        "verdict": "partial",
+        "reason": "This provides context about the lawsuit mentioned but does not summarize the article as a whole."
+      }
+    ],
+    "weights": [
+      0.7,
+      0.7,
+      0.7,
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-4f3b35b540ba05f0f82d71a694ec23dde4dc3e01_8",
+    "human_score": 0.5833,
+    "tcva_scores": {
+      "T0.2": 0.3,
+      "T0.3": 0.3,
+      "T0.5": 0.3,
+      "T0.7": 0.3,
+      "T0.9": 0.3
+    },
+    "ablation_arithmetic": 0.3,
+    "verdicts": [
+      {
+        "verdict": "minor",
+        "reason": "The statement provides a specific event from the article but does not offer a brief summary of the entire article."
+      }
+    ],
+    "weights": [
+      0.3
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-e470f0a87d7513bf880412524332047020422c3f_15",
+    "human_score": 0.5,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "Mentions the dress worn by Vivien Leigh as Scarlett O'Hara but lacks a broader summary of the article."
+      },
+      {
+        "verdict": "partial",
+        "reason": "References an auction item related to the article but does not summarize the article as a whole."
+      },
+      {
+        "verdict": "partial",
+        "reason": "Gives a specific auction result but does not provide a summary of the entire article."
+      },
+      {
+        "verdict": "partial",
+        "reason": "Notes the dress's use in key scenes, which is relevant but insufficient for a full summary."
+      },
+      {
+        "verdict": "partial",
+        "reason": "Describes the dress's components but does not summarize the article content fully."
+      },
+      {
+        "verdict": "partial",
+        "reason": "Repeats the dress's use in key scenes, related but incomplete as a summary."
+      }
+    ],
+    "weights": [
+      0.7,
+      0.7,
+      0.7,
+      0.7,
+      0.7,
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-1747dcd6a007ee97954b6b10cde549bf82f6a4eb_12",
+    "human_score": 0.6667,
+    "tcva_scores": {
+      "T0.2": 0.3,
+      "T0.3": 0.3,
+      "T0.5": 0.3,
+      "T0.7": 0.3,
+      "T0.9": 0.3
+    },
+    "ablation_arithmetic": 0.3,
+    "verdicts": [
+      {
+        "verdict": "minor",
+        "reason": "The statements provide specific details about delivery and fees but do not offer a brief summary of the entire article."
+      }
+    ],
+    "weights": [
+      0.3
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-5be0a9584b051175d9f4842a143b76385335d96a_8",
+    "human_score": 0.1667,
+    "tcva_scores": {
+      "T0.2": 0.307,
+      "T0.3": 0.311,
+      "T0.5": 0.35,
+      "T0.7": 0.4853,
+      "T0.9": 0.5687
+    },
+    "ablation_arithmetic": 0.35,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statement relates to Manchester City's financial situation, which is relevant but does not provide a summary of the entire article."
+      },
+      {
+        "verdict": "minor",
+        "reason": "The statement lists a specific upcoming match but does not summarize the article."
+      },
+      {
+        "verdict": "minor",
+        "reason": "The statement lists a specific upcoming match but does not summarize the article."
+      },
+      {
+        "verdict": "minor",
+        "reason": "The statement lists a specific upcoming match but does not summarize the article."
+      },
+      {
+        "verdict": "minor",
+        "reason": "The statement lists a specific upcoming match but does not summarize the article."
+      },
+      {
+        "verdict": "minor",
+        "reason": "The statement lists a specific upcoming match but does not summarize the article."
+      },
+      {
+        "verdict": "minor",
+        "reason": "The statement lists a specific upcoming match but does not summarize the article."
+      },
+      {
+        "verdict": "minor",
+        "reason": "The statement lists a specific upcoming match but does not summarize the article."
+      }
+    ],
+    "weights": [
+      0.7,
+      0.3,
+      0.3,
+      0.3,
+      0.3,
+      0.3,
+      0.3,
+      0.3
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-6c1341bedf92a304318545fbf1aad88651de7909_0",
+    "human_score": 0.3333,
+    "tcva_scores": {
+      "T0.2": 0.3948,
+      "T0.3": 0.4504,
+      "T0.5": 0.62,
+      "T0.7": 0.6725,
+      "T0.9": 0.6846
+    },
+    "ablation_arithmetic": 0.62,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statement relates to Harry Kane's progress but does not provide a summary of the entire article."
+      },
+      {
+        "verdict": "minor",
+        "reason": "The statement about the video release is tangential and does not summarize the article."
+      },
+      {
+        "verdict": "partial",
+        "reason": "The nomination information is relevant but incomplete as a summary of the article."
+      },
+      {
+        "verdict": "partial",
+        "reason": "The nomination details are related but do not fully summarize the article."
+      },
+      {
+        "verdict": "partial",
+        "reason": "The mention of Kane scoring a winner is relevant but insufficient as a full summary."
+      }
+    ],
+    "weights": [
+      0.7,
+      0.3,
+      0.7,
+      0.7,
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-dea0ed2e587495e516ac85056e21a2076a9a993c_10",
+    "human_score": 0.5833,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statements provide related details about the theft and recovery of Becky Schoenig's car but do not collectively form a concise summary of the entire article."
+      }
+    ],
+    "weights": [
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-9d0fcbd873927674d12aafce4ae7754fd591d4e2_1",
+    "human_score": 0.6667,
+    "tcva_scores": {
+      "T0.2": 0.3511,
+      "T0.3": 0.3816,
+      "T0.5": 0.54,
+      "T0.7": 0.6386,
+      "T0.9": 0.6651
+    },
+    "ablation_arithmetic": 0.54,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "This statement relates to the article's content but only mentions a specific detail about Ella Henderson's role with Batiste, not a summary of the entire article."
+      },
+      {
+        "verdict": "minor",
+        "reason": "This provides background information about Ella Henderson but does not summarize the article."
+      },
+      {
+        "verdict": "partial",
+        "reason": "This gives a specific detail about the campaign but does not provide a full summary of the article."
+      },
+      {
+        "verdict": "minor",
+        "reason": "This is background information about Ella Henderson but does not summarize the article."
+      },
+      {
+        "verdict": "partial",
+        "reason": "This indicates a partnership mentioned in the article but does not summarize the full content."
+      }
+    ],
+    "weights": [
+      0.7,
+      0.3,
+      0.7,
+      0.3,
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-eeef09d26cf30c2124c0399b08eedc6321fe5d20_3",
+    "human_score": 0.25,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The statement does not provide any summary or overview of the article's content."
+      },
+      {
+        "verdict": "none",
+        "reason": "This statement mentions a fact but does not summarize the article as a whole."
+      },
+      {
+        "verdict": "none",
+        "reason": "This statement is unrelated to summarizing the article and only mentions a specific event."
+      }
+    ],
+    "weights": [
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-4fb64a2298e18626db776fccf834be87388827e0_14",
+    "human_score": 0.8333,
+    "tcva_scores": {
+      "T0.2": 0.8309,
+      "T0.3": 0.8547,
+      "T0.5": 0.9,
+      "T0.7": 0.9311,
+      "T0.9": 0.9493
+    },
+    "ablation_arithmetic": 0.9,
+    "verdicts": [
+      {
+        "verdict": "fully",
+        "reason": "The statement directly summarizes the main event of the article, specifying who, what, when, and where."
+      },
+      {
+        "verdict": "mostly",
+        "reason": "Provides relevant background information about Wiggins that supports understanding the significance of the event but does not summarize the article itself."
+      },
+      {
+        "verdict": "fully",
+        "reason": "Explicitly states the purpose of Wiggins' attempt, directly summarizing the article's main point."
+      },
+      {
+        "verdict": "partial",
+        "reason": "Mentions an aspect of the event (the crowd) that is related but less central to the main summary of the article."
+      }
+    ],
+    "weights": [
+      1.0,
+      0.9,
+      1.0,
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-eeef09d26cf30c2124c0399b08eedc6321fe5d20_0",
+    "human_score": 0.0,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.1687,
+      "T0.7": 0.2262,
+      "T0.9": 0.2453
+    },
+    "ablation_arithmetic": 0.1687,
+    "verdicts": [
+      {
+        "verdict": "minor",
+        "reason": "The statement mentions a match result but does not provide a summary of the article as a whole."
+      },
+      {
+        "verdict": "minor",
+        "reason": "This statement provides a detail about a player scoring but does not summarize the article."
+      },
+      {
+        "verdict": "none",
+        "reason": "This statement is unrelated to the article summary and seems off-topic."
+      },
+      {
+        "verdict": "minor",
+        "reason": "This statement gives a standing update but does not summarize the article content."
+      }
+    ],
+    "weights": [
+      0.3,
+      0.3,
+      0.0,
+      0.3
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-f37fd6e9b6cc18a7132568e307ef3b130931e809_2",
+    "human_score": 0.8333,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statement provides specific details about an incident but does not summarize the entire article."
+      },
+      {
+        "verdict": "partial",
+        "reason": "This gives background context related to the article but does not summarize it fully."
+      },
+      {
+        "verdict": "partial",
+        "reason": "This describes the outcome of the incident but alone does not provide a full summary of the article."
+      }
+    ],
+    "weights": [
+      0.7,
+      0.7,
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-f26d8400ae49b90d109c165d0f44b8f6ca253c08_1",
+    "human_score": 0.8333,
+    "tcva_scores": {
+      "T0.2": 0.338,
+      "T0.3": 0.3605,
+      "T0.5": 0.5,
+      "T0.7": 0.6182,
+      "T0.9": 0.6531
+    },
+    "ablation_arithmetic": 0.5,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statement provides a specific detail about Chelsea's offer for Muto but does not summarize the entire article."
+      },
+      {
+        "verdict": "minor",
+        "reason": "This fact about Muto being a Japan international is related but does not contribute directly to summarizing the article."
+      },
+      {
+        "verdict": "partial",
+        "reason": "This explains a potential loan arrangement if the transfer happens, which is a detail but not a full summary."
+      },
+      {
+        "verdict": "minor",
+        "reason": "This statement about Muto's claim on sponsorship connection is tangential and does not summarize the article."
+      }
+    ],
+    "weights": [
+      0.7,
+      0.3,
+      0.7,
+      0.3
+    ]
+  },
+  {
+    "id": "summeval_rel_cnn-test-fbbafa743a8c2ecd2cedf65c6c61956b2db8ec5c_2",
+    "human_score": 0.75,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statement provides a notable fact about the original miniseries' audience size but does not summarize the article as a whole."
+      },
+      {
+        "verdict": "partial",
+        "reason": "It mentions the remake and its airing year, which is relevant but incomplete as a summary of the entire article."
+      },
+      {
+        "verdict": "partial",
+        "reason": "This details the networks involved in the remake, contributing to the summary but lacking full coverage of the article."
+      },
+      {
+        "verdict": "partial",
+        "reason": "It explains who Kunta Kinte is, giving context but not summarizing the article fully."
+      },
+      {
+        "verdict": "partial",
+        "reason": "This notes LeVar Burton's involvement in the remake, relevant but insufficient alone as a summary."
+      }
+    ],
+    "weights": [
+      0.7,
+      0.7,
+      0.7,
+      0.7,
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_cnn-test-e2bccd4dec93c9bb7b327827dae004c2d494ec31_14",
+    "human_score": 0.25,
+    "tcva_scores": {
+      "T0.2": 0.3,
+      "T0.3": 0.3,
+      "T0.5": 0.3,
+      "T0.7": 0.3,
+      "T0.9": 0.3
+    },
+    "ablation_arithmetic": 0.3,
+    "verdicts": [
+      {
+        "verdict": "minor",
+        "reason": "The statement about 'Space Invaders' is tangential and does not summarize the article."
+      },
+      {
+        "verdict": "minor",
+        "reason": "The statement about Defense Minister Gen Nakatani is weakly related and does not provide a summary of the article."
+      },
+      {
+        "verdict": "minor",
+        "reason": "The statement about Inoki's WWE appearances is tangential and does not summarize the article."
+      }
+    ],
+    "weights": [
+      0.3,
+      0.3,
+      0.3
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-e43eef75de38d246db9d80216ca9f5487215a78b_14",
+    "human_score": 0.3333,
+    "tcva_scores": {
+      "T0.2": 0.3217,
+      "T0.3": 0.3344,
+      "T0.5": 0.4333,
+      "T0.7": 0.5752,
+      "T0.9": 0.6272
+    },
+    "ablation_arithmetic": 0.4333,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statement relates to the article's subject but only addresses one aspect without summarizing the entire article."
+      },
+      {
+        "verdict": "minor",
+        "reason": "This provides background context but does not summarize the article."
+      },
+      {
+        "verdict": "minor",
+        "reason": "This is tangential information about the player's recent matches and does not summarize the article."
+      }
+    ],
+    "weights": [
+      0.7,
+      0.3,
+      0.3
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-3785743303ddb8b594be7c449a37458b99e83812_2",
+    "human_score": 0.75,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statements relate to Hull City's relegation battle and Steve Bruce's confidence but do not provide a comprehensive summary of the entire article."
+      }
+    ],
+    "weights": [
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-5be0a9584b051175d9f4842a143b76385335d96a_5",
+    "human_score": 0.8333,
+    "tcva_scores": {
+      "T0.2": 0.338,
+      "T0.3": 0.3605,
+      "T0.5": 0.5,
+      "T0.7": 0.6182,
+      "T0.9": 0.6531
+    },
+    "ablation_arithmetic": 0.5,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statement provides a specific detail about player bonuses related to Champions League qualification but does not summarize the entire article."
+      },
+      {
+        "verdict": "partial",
+        "reason": "This gives background on player contracts and Financial Fair Play but does not summarize the article as a whole."
+      },
+      {
+        "verdict": "minor",
+        "reason": "The current league position is a small fact and does not provide a summary of the article."
+      },
+      {
+        "verdict": "minor",
+        "reason": "This is a specific match outcome detail that is tangential and does not summarize the article."
+      }
+    ],
+    "weights": [
+      0.7,
+      0.7,
+      0.3,
+      0.3
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-5be0a9584b051175d9f4842a143b76385335d96a_11",
+    "human_score": 0.5,
+    "tcva_scores": {
+      "T0.2": 0.9,
+      "T0.3": 0.9,
+      "T0.5": 0.9,
+      "T0.7": 0.9,
+      "T0.9": 0.9
+    },
+    "ablation_arithmetic": 0.9,
+    "verdicts": [
+      {
+        "verdict": "mostly",
+        "reason": "The statements collectively provide key points about Manchester City's financial penalties related to Champions League qualification and recent match outcomes, but do not form a concise, unified summary of the entire article."
+      }
+    ],
+    "weights": [
+      0.9
+    ]
+  },
+  {
+    "id": "summeval_rel_cnn-test-c05bda9b387ec8ae43803170b6f59b4b82505db9_13",
+    "human_score": 0.1667,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statements provide some relevant facts about Yazidis and a key event but do not collectively form a brief summary of the entire article."
+      }
+    ],
+    "weights": [
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-d83b82a9cd504218e604616be3f3c3928e3428b8_14",
+    "human_score": 0.8333,
+    "tcva_scores": {
+      "T0.2": 0.3803,
+      "T0.3": 0.4279,
+      "T0.5": 0.6,
+      "T0.7": 0.6647,
+      "T0.9": 0.6802
+    },
+    "ablation_arithmetic": 0.6,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statement relates to Arsenal and Thierry Henry's views but does not provide a summary of the entire article."
+      },
+      {
+        "verdict": "partial",
+        "reason": "It mentions Henry's opinion on needed positions but lacks a comprehensive summary of the article."
+      },
+      {
+        "verdict": "minor",
+        "reason": "This is a specific detail about Giroud's status, which is too narrow to summarize the article."
+      },
+      {
+        "verdict": "partial",
+        "reason": "It highlights Henry's urging for signings but does not fully summarize the article content."
+      }
+    ],
+    "weights": [
+      0.7,
+      0.7,
+      0.3,
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-f26d8400ae49b90d109c165d0f44b8f6ca253c08_11",
+    "human_score": 0.9167,
+    "tcva_scores": {
+      "T0.2": 0.7611,
+      "T0.3": 0.7727,
+      "T0.5": 0.8,
+      "T0.7": 0.8264,
+      "T0.9": 0.8463
+    },
+    "ablation_arithmetic": 0.8,
+    "verdicts": [
+      {
+        "verdict": "mostly",
+        "reason": "The statement provides a key fact about Chelsea's offer for Muto, which is central to the article's topic but lacks a full summary of the entire article."
+      },
+      {
+        "verdict": "partial",
+        "reason": "This gives background information about Muto but does not summarize the article's main points."
+      },
+      {
+        "verdict": "mostly",
+        "reason": "This explains the potential next step if the transfer happens, supporting the main topic but not a full summary."
+      },
+      {
+        "verdict": "partial",
+        "reason": "This clarifies a detail about the transfer's context but is only a part of the overall article content."
+      }
+    ],
+    "weights": [
+      0.9,
+      0.7,
+      0.9,
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_cnn-test-e49792c337d3f4c13e22f710efa44cf6a4e59aba_14",
+    "human_score": 0.1667,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0778,
+      "T0.7": 0.238,
+      "T0.9": 0.3244
+    },
+    "ablation_arithmetic": 0.0778,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statement provides a key fact about the article's subject but does not offer a brief summary of the entire article."
+      },
+      {
+        "verdict": "none",
+        "reason": "The statement is vague and unrelated to summarizing the article."
+      },
+      {
+        "verdict": "none",
+        "reason": "The statement is unclear and does not relate to summarizing the article."
+      }
+    ],
+    "weights": [
+      0.7,
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-18243373494a1722ddcd162ec67b63dd749633ab_0",
+    "human_score": 0.1667,
+    "tcva_scores": {
+      "T0.2": 0.3382,
+      "T0.3": 0.3623,
+      "T0.5": 0.575,
+      "T0.7": 0.7964,
+      "T0.9": 0.873
+    },
+    "ablation_arithmetic": 0.575,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statement provides a key event from the article but lacks a broader summary."
+      },
+      {
+        "verdict": "fully",
+        "reason": "This statement explicitly summarizes the main event and outcome of the article with concrete detail."
+      },
+      {
+        "verdict": "minor",
+        "reason": "This statement is about Roma's previous home win streak but unrelated to the specific match summarized."
+      },
+      {
+        "verdict": "minor",
+        "reason": "This statement refers to a past match between the teams, not the current article's focus."
+      }
+    ],
+    "weights": [
+      0.7,
+      1.0,
+      0.3,
+      0.3
+    ]
+  },
+  {
+    "id": "summeval_rel_cnn-test-404f859482d47c127868964a9a39d1a7645dd2e9_1",
+    "human_score": 0.1667,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statements provide specific allegations and claims from the article but do not offer a brief overall summary of the article's content."
+      }
+    ],
+    "weights": [
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-97bbda7ec22a736cd174b51513c72a6372d13d35_4",
+    "human_score": 0.3333,
+    "tcva_scores": {
+      "T0.2": 0.3217,
+      "T0.3": 0.3344,
+      "T0.5": 0.4333,
+      "T0.7": 0.5752,
+      "T0.9": 0.6272
+    },
+    "ablation_arithmetic": 0.4333,
+    "verdicts": [
+      {
+        "verdict": "minor",
+        "reason": "The statement provides a specific detail about expected auction value but does not summarize the article."
+      },
+      {
+        "verdict": "partial",
+        "reason": "The statement relates to the article's content about the auction outcome but only addresses one aspect."
+      },
+      {
+        "verdict": "minor",
+        "reason": "The statement offers a personal quote unrelated to summarizing the article as a whole."
+      }
+    ],
+    "weights": [
+      0.3,
+      0.7,
+      0.3
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-97bbda7ec22a736cd174b51513c72a6372d13d35_7",
+    "human_score": 0.9167,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statement provides a specific detail about the auction but does not summarize the overall article."
+      },
+      {
+        "verdict": "partial",
+        "reason": "This detail about the bidding process is related but only partially addresses the article's content."
+      },
+      {
+        "verdict": "partial",
+        "reason": "Identifies the current owner, which is relevant but insufficient as a summary."
+      },
+      {
+        "verdict": "partial",
+        "reason": "Gives background on the purchase and context but does not summarize the entire article."
+      }
+    ],
+    "weights": [
+      0.7,
+      0.7,
+      0.7,
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-d89de9c2a76f2665560becfe5d761a4fc62b9926_13",
+    "human_score": 0.25,
+    "tcva_scores": {
+      "T0.2": 0.3622,
+      "T0.3": 0.3993,
+      "T0.5": 0.5667,
+      "T0.7": 0.6508,
+      "T0.9": 0.6722
+    },
+    "ablation_arithmetic": 0.5667,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statement provides some background about Altrincham's stadium but does not summarize the article as a whole."
+      },
+      {
+        "verdict": "partial",
+        "reason": "This details a specific event in the article but does not provide a summary of the entire content."
+      },
+      {
+        "verdict": "minor",
+        "reason": "This is a vague comment about the entry experience and does not contribute directly to summarizing the article."
+      }
+    ],
+    "weights": [
+      0.7,
+      0.7,
+      0.3
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-632cfdb03aacd90a34a470f6a70b47eee62ec5f0_4",
+    "human_score": 0.6667,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statements provide some relevant details about Serge Gnabry's status and background but do not offer a concise summary of the entire article."
+      }
+    ],
+    "weights": [
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-207df192edc1836250b69d1bc5b9e6a38206eb78_2",
+    "human_score": 0.75,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statement provides a key fact about obesity rates but does not summarize the entire article."
+      },
+      {
+        "verdict": "partial",
+        "reason": "This statement relates to the consequences of obesity but does not summarize the full article content."
+      },
+      {
+        "verdict": "partial",
+        "reason": "This introduces a possible cause of obesity but does not provide a full summary of the article."
+      },
+      {
+        "verdict": "partial",
+        "reason": "This elaborates on a potential cause mentioned but still only covers part of the article's content."
+      }
+    ],
+    "weights": [
+      0.7,
+      0.7,
+      0.7,
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_cnn-test-a02e362c5b8f049848ce718b37b96117485461cf_0",
+    "human_score": 0.1667,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statement provides a specific detail from the article but does not offer a summary of the entire content."
+      },
+      {
+        "verdict": "partial",
+        "reason": "The statement relates to the article's topic by mentioning the impact of the fires but does not summarize the full article."
+      }
+    ],
+    "weights": [
+      0.7,
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-b5bc2ae78441e4ac08fb01823d5fc0f1627c3166_5",
+    "human_score": 0.5,
+    "tcva_scores": {
+      "T0.2": 0.3,
+      "T0.3": 0.3,
+      "T0.5": 0.3,
+      "T0.7": 0.3,
+      "T0.9": 0.3
+    },
+    "ablation_arithmetic": 0.3,
+    "verdicts": [
+      {
+        "verdict": "minor",
+        "reason": "The statement mentions a specific individual related to English cricket but does not provide a summary of the article."
+      },
+      {
+        "verdict": "minor",
+        "reason": "This statement refers to a shift in focus to a cricket season but lacks a summary of the article's main points."
+      },
+      {
+        "verdict": "minor",
+        "reason": "The statement references emotions around a player but does not summarize the article."
+      },
+      {
+        "verdict": "minor",
+        "reason": "This statement describes a player posing for a photo but does not summarize the article."
+      }
+    ],
+    "weights": [
+      0.3,
+      0.3,
+      0.3,
+      0.3
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-0cdd7cdb5d99c36f25f1f4fa0e962d558f7ff07b_8",
+    "human_score": 0.1667,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statement provides a key fact about qualification but lacks a broader summary of the article."
+      },
+      {
+        "verdict": "partial",
+        "reason": "Listing players relates to the article but does not summarize it."
+      },
+      {
+        "verdict": "partial",
+        "reason": "Information about the group is relevant but only a part of a full summary."
+      },
+      {
+        "verdict": "partial",
+        "reason": "Details about the opening match are related but insufficient for a full summary."
+      }
+    ],
+    "weights": [
+      0.7,
+      0.7,
+      0.7,
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_cnn-test-e49792c337d3f4c13e22f710efa44cf6a4e59aba_5",
+    "human_score": 0.25,
+    "tcva_scores": {
+      "T0.2": 0.3217,
+      "T0.3": 0.3344,
+      "T0.5": 0.4333,
+      "T0.7": 0.5752,
+      "T0.9": 0.6272
+    },
+    "ablation_arithmetic": 0.4333,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statement provides specific information about the verdict in the article but does not summarize the entire article."
+      },
+      {
+        "verdict": "minor",
+        "reason": "The statement mentions the timing of the sentencing phase relative to the race but does not summarize the article's main content."
+      },
+      {
+        "verdict": "minor",
+        "reason": "The statement gives a detail about the expected length of the sentencing phase but does not address the article's overall content."
+      }
+    ],
+    "weights": [
+      0.7,
+      0.3,
+      0.3
+    ]
+  },
+  {
+    "id": "summeval_rel_cnn-test-404f859482d47c127868964a9a39d1a7645dd2e9_2",
+    "human_score": 0.3333,
+    "tcva_scores": {
+      "T0.2": 0.3217,
+      "T0.3": 0.3344,
+      "T0.5": 0.4333,
+      "T0.7": 0.5752,
+      "T0.9": 0.6272
+    },
+    "ablation_arithmetic": 0.4333,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statement provides a specific legal outcome related to the article but does not summarize the entire article."
+      },
+      {
+        "verdict": "minor",
+        "reason": "The statement is tangentially related by mentioning Donald Sterling's past but does not summarize the article."
+      },
+      {
+        "verdict": "minor",
+        "reason": "The statement offers background information about V. Stiviano but does not summarize the article."
+      }
+    ],
+    "weights": [
+      0.7,
+      0.3,
+      0.3
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-998cb27197db1fd299aff3322ac041ba4bf1148f_14",
+    "human_score": 0.1667,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The statements do not provide a summary or overview of the article, but rather unrelated or unclear details."
+      }
+    ],
+    "weights": [
+      0.0
+    ]
+  },
+  {
+    "id": "summeval_rel_cnn-test-c05bda9b387ec8ae43803170b6f59b4b82505db9_8",
+    "human_score": 0.5833,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statement provides a specific fact from the article but does not offer a brief summary of the entire article."
+      }
+    ],
+    "weights": [
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-8b51a10370a1219137e231192e65b9cd52238ea6_3",
+    "human_score": 0.75,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statements relate to Ben Stokes and provide some context but do not collectively offer a brief summary of the entire article."
+      }
+    ],
+    "weights": [
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-f468efac7b3c54f8c42c2c81dff108c52ebe0d7d_4",
+    "human_score": 0.5833,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statements mention specific events in the match but do not provide a brief overall summary of the article."
+      }
+    ],
+    "weights": [
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_cnn-test-a02e362c5b8f049848ce718b37b96117485461cf_13",
+    "human_score": 0.4167,
+    "tcva_scores": {
+      "T0.2": 0.3217,
+      "T0.3": 0.3344,
+      "T0.5": 0.4333,
+      "T0.7": 0.5752,
+      "T0.9": 0.6272
+    },
+    "ablation_arithmetic": 0.4333,
+    "verdicts": [
+      {
+        "verdict": "minor",
+        "reason": "The statement is a specific detail about a person's reaction and does not provide a summary of the article."
+      },
+      {
+        "verdict": "minor",
+        "reason": "This describes an action taken by an individual but does not summarize the article's main points."
+      },
+      {
+        "verdict": "partial",
+        "reason": "This provides relevant background information about the cause of the fires but does not summarize the entire article."
+      }
+    ],
+    "weights": [
+      0.3,
+      0.3,
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-801763443e6c73e3857039f2223798b2b58bef19_6",
+    "human_score": 0.8333,
+    "tcva_scores": {
+      "T0.2": 0.9,
+      "T0.3": 0.9,
+      "T0.5": 0.9,
+      "T0.7": 0.9,
+      "T0.9": 0.9
+    },
+    "ablation_arithmetic": 0.9,
+    "verdicts": [
+      {
+        "verdict": "mostly",
+        "reason": "The statements collectively provide a clear summary of the article about Gregory van der Wiel's situation at Paris Saint-Germain, but they lack a concise, unified summary format."
+      }
+    ],
+    "weights": [
+      0.9
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-6372eff07fd3d6f578f90d6115e01747edccc095_3",
+    "human_score": 0.8333,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statements describe specific details about the article's content but do not provide a concise overall summary."
+      }
+    ],
+    "weights": [
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-31114653cd606fd3f4b1035f98dedd71f8282cd2_15",
+    "human_score": 0.5833,
+    "tcva_scores": {
+      "T0.2": 0.3276,
+      "T0.3": 0.3438,
+      "T0.5": 0.46,
+      "T0.7": 0.5941,
+      "T0.9": 0.6387
+    },
+    "ablation_arithmetic": 0.46,
+    "verdicts": [
+      {
+        "verdict": "minor",
+        "reason": "The statement mentions a match date and location but does not summarize the article."
+      },
+      {
+        "verdict": "partial",
+        "reason": "Provides relevant details about team points and coach but lacks a full summary."
+      },
+      {
+        "verdict": "minor",
+        "reason": "Mentions ticket sales for a match, which is tangential to summarizing the article."
+      },
+      {
+        "verdict": "partial",
+        "reason": "Describes a specific event in a match but does not provide an overall summary."
+      },
+      {
+        "verdict": "minor",
+        "reason": "Mentions a player and group standing but is vague and incomplete as a summary."
+      }
+    ],
+    "weights": [
+      0.3,
+      0.7,
+      0.3,
+      0.7,
+      0.3
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-2cfc33d01364162579f46b2764914a03a29453ce_14",
+    "human_score": 0.5,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The statement about Mesut Ozil showing off his Apple Watch does not summarize the article."
+      },
+      {
+        "verdict": "none",
+        "reason": "Mesut Ozil's age is unrelated to summarizing the article content."
+      },
+      {
+        "verdict": "none",
+        "reason": "The price of the Apple Watch is irrelevant to the article summary."
+      },
+      {
+        "verdict": "none",
+        "reason": "Ozil being on the bench for a specific match does not summarize the article."
+      }
+    ],
+    "weights": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-d89de9c2a76f2665560becfe5d761a4fc62b9926_3",
+    "human_score": 0.3333,
+    "tcva_scores": {
+      "T0.2": 0.3217,
+      "T0.3": 0.3344,
+      "T0.5": 0.4333,
+      "T0.7": 0.5752,
+      "T0.9": 0.6272
+    },
+    "ablation_arithmetic": 0.4333,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statement highlights a key event in the match but does not provide a summary of the entire article."
+      },
+      {
+        "verdict": "minor",
+        "reason": "This sentence offers a vague comparison unrelated to summarizing the article's main content."
+      },
+      {
+        "verdict": "minor",
+        "reason": "This detail about the venue is tangential and does not summarize the article."
+      }
+    ],
+    "weights": [
+      0.7,
+      0.3,
+      0.3
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-808a439a5d83fc47baaea934c8779a7ebc62470d_14",
+    "human_score": 0.8333,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statements relate to the article's topic but only provide specific details about the referee and incidents, lacking a comprehensive summary of the entire article."
+      }
+    ],
+    "weights": [
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-632cfdb03aacd90a34a470f6a70b47eee62ec5f0_13",
+    "human_score": 0.75,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statements provide some relevant details about Serge Gnabry's condition and background but do not offer a complete summary of the article."
+      }
+    ],
+    "weights": [
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-8764fb95bfad8ee849274873a92fb8d6b400eee2_11",
+    "human_score": 0.25,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statements provide some details about the article's content, including the players involved, the match result, and a Twitter comment, but they do not collectively form a concise summary of the entire article."
+      }
+    ],
+    "weights": [
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-4e0de0ec6d5b9df174f54d03158de8f30aac861f_4",
+    "human_score": 0.5833,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.3556,
+      "T0.7": 0.555,
+      "T0.9": 0.6372
+    },
+    "ablation_arithmetic": 0.3556,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The statement about Mesut Ozil relaxing with his dog is unrelated to summarizing the article's content."
+      },
+      {
+        "verdict": "partial",
+        "reason": "The statement mentions Germany's 2-0 win over Georgia and Ozil's form but lacks a broader summary of the article."
+      },
+      {
+        "verdict": "mostly",
+        "reason": "The statement clearly supports the intent by summarizing Ozil's performance and the match result, though it could include more context for a full summary."
+      }
+    ],
+    "weights": [
+      0.0,
+      0.7,
+      0.9
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-b255397ee863bd8faf9def57c0f76769153d905e_11",
+    "human_score": 0.6667,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statements provide specific details about the incident involving James Hayward and his toy gun at the airport but do not offer a concise overall summary of the article."
+      }
+    ],
+    "weights": [
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-bd4684a0f5af5dd6ac88d2fb50f902bd7f10217b_15",
+    "human_score": 0.6667,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statement mentions River Plate's interest and the complexity of the deal, which relates to the article but does not summarize it fully."
+      },
+      {
+        "verdict": "partial",
+        "reason": "This provides background on Falcao's history with River Plate, relevant but not a complete summary."
+      },
+      {
+        "verdict": "partial",
+        "reason": "This notes Falcao's struggles at Manchester United, related but only part of the article's content."
+      },
+      {
+        "verdict": "partial",
+        "reason": "This repeats the information about Falcao's struggles on loan, relevant but insufficient as a summary."
+      }
+    ],
+    "weights": [
+      0.7,
+      0.7,
+      0.7,
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-8b59fa7715418c4bcc0d50e3caeb239129de453e_8",
+    "human_score": 0.25,
+    "tcva_scores": {
+      "T0.2": 0.3,
+      "T0.3": 0.3,
+      "T0.5": 0.3,
+      "T0.7": 0.3,
+      "T0.9": 0.3
+    },
+    "ablation_arithmetic": 0.3,
+    "verdicts": [
+      {
+        "verdict": "minor",
+        "reason": "The statements mention Joe Hart and a milestone but do not provide a summary of the article's content."
+      }
+    ],
+    "weights": [
+      0.3
+    ]
+  },
+  {
+    "id": "summeval_rel_cnn-test-c05bda9b387ec8ae43803170b6f59b4b82505db9_7",
+    "human_score": 0.25,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statement provides a specific detail about the released individuals but does not summarize the entire article."
+      },
+      {
+        "verdict": "partial",
+        "reason": "The statement relates to the topic by mentioning previous releases but does not provide a summary of the article."
+      }
+    ],
+    "weights": [
+      0.7,
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-4fb64a2298e18626db776fccf834be87388827e0_1",
+    "human_score": 0.75,
+    "tcva_scores": {
+      "T0.2": 0.3515,
+      "T0.3": 0.385,
+      "T0.5": 0.64,
+      "T0.7": 0.8222,
+      "T0.9": 0.879
+    },
+    "ablation_arithmetic": 0.64,
+    "verdicts": [
+      {
+        "verdict": "mostly",
+        "reason": "The statement provides key information about the event and date but lacks a full summary of the article."
+      },
+      {
+        "verdict": "minor",
+        "reason": "This gives background on Wiggins but does not summarize the article itself."
+      },
+      {
+        "verdict": "minor",
+        "reason": "Age detail is tangential and not central to summarizing the article."
+      },
+      {
+        "verdict": "fully",
+        "reason": "This clearly states the main event and purpose, effectively summarizing the article's core content."
+      },
+      {
+        "verdict": "partial",
+        "reason": "Includes a relevant quote that adds context but does not fully summarize the article."
+      }
+    ],
+    "weights": [
+      0.9,
+      0.3,
+      0.3,
+      1.0,
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-6372eff07fd3d6f578f90d6115e01747edccc095_11",
+    "human_score": 0.6667,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statements relate to the article's topic but only partially summarize it, lacking a concise overview of the main points."
+      }
+    ],
+    "weights": [
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-2abe0f81f5b22c8a406165717e3bd7fce6fe47c6_11",
+    "human_score": 1.0,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statement provides a key event about the chiropractor surrendering his license but lacks broader context or details from the article."
+      },
+      {
+        "verdict": "partial",
+        "reason": "This gives background about the source of the charges but does not summarize the article's main points."
+      },
+      {
+        "verdict": "partial",
+        "reason": "It mentions the admission of wrongdoing, which is relevant but incomplete as a summary."
+      },
+      {
+        "verdict": "partial",
+        "reason": "This details a consequence related to the license but does not fully summarize the article."
+      }
+    ],
+    "weights": [
+      0.7,
+      0.7,
+      0.7,
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-fadabe346fe95d33eee71299e6596754768f5246_5",
+    "human_score": 0.8333,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statements provide specific details about Gemma and her family situation but do not offer a concise summary of the entire article."
+      }
+    ],
+    "weights": [
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-bd4684a0f5af5dd6ac88d2fb50f902bd7f10217b_13",
+    "human_score": 0.0833,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statements relate to the article's topic but only provide specific details about Falcao's performance rather than a brief overall summary."
+      }
+    ],
+    "weights": [
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-e428e25bbf8e06643154ce31b7c6fab64c81e857_12",
+    "human_score": 0.6667,
+    "tcva_scores": {
+      "T0.2": 0.7,
+      "T0.3": 0.7,
+      "T0.5": 0.7,
+      "T0.7": 0.7,
+      "T0.9": 0.7
+    },
+    "ablation_arithmetic": 0.7,
+    "verdicts": [
+      {
+        "verdict": "partial",
+        "reason": "The statements provide specific details about speed cameras being turned off in the West Midlands but do not offer a complete brief summary of the entire article."
+      }
+    ],
+    "weights": [
+      0.7
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-0cdd7cdb5d99c36f25f1f4fa0e962d558f7ff07b_4",
+    "human_score": 0.9167,
+    "tcva_scores": {
+      "T0.2": 0.9,
+      "T0.3": 0.9,
+      "T0.5": 0.9,
+      "T0.7": 0.9,
+      "T0.9": 0.9
+    },
+    "ablation_arithmetic": 0.9,
+    "verdicts": [
+      {
+        "verdict": "mostly",
+        "reason": "The statements collectively provide key details about the England U-17 squad, their status as defending champions, group placement, and opening match, which together form a brief summary but lack a concise synthesis."
+      }
+    ],
+    "weights": [
+      0.9
+    ]
+  },
+  {
+    "id": "summeval_rel_dm-test-130ff8f2dfb6ab67861d5924b0ff5acd63c7d8ce_4",
+    "human_score": 0.1667,
+    "tcva_scores": {
+      "T0.2": 0.0,
+      "T0.3": 0.0,
+      "T0.5": 0.0,
+      "T0.7": 0.0,
+      "T0.9": 0.0
+    },
+    "ablation_arithmetic": 0.0,
+    "verdicts": [
+      {
+        "verdict": "none",
+        "reason": "The statements provide specific details unrelated to summarizing the article as a whole."
+      }
+    ],
+    "weights": [
+      0.0
+    ]
+  }
+]

@@ -1,0 +1,982 @@
+[
+  {
+    "id": "summeval_rel_dm-test-8764fb95bfad8ee849274873a92fb8d6b400eee2_10",
+    "human_score": 0.5,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-6372eff07fd3d6f578f90d6115e01747edccc095_10",
+    "human_score": 0.8333,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-2a48112ddee712f2364f128076cb2db555a043b1_9",
+    "human_score": 1.0,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-5be0a9584b051175d9f4842a143b76385335d96a_14",
+    "human_score": 0.5833,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-eeef09d26cf30c2124c0399b08eedc6321fe5d20_4",
+    "human_score": 0.0833,
+    "deepeval_score": 0.6666666666666666
+  },
+  {
+    "id": "summeval_rel_dm-test-2feca9acf532e33f1ab7442c442c8e19787d8d7b_3",
+    "human_score": 0.25,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-eeef09d26cf30c2124c0399b08eedc6321fe5d20_5",
+    "human_score": 0.3333,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-2abe0f81f5b22c8a406165717e3bd7fce6fe47c6_14",
+    "human_score": 0.6667,
+    "deepeval_score": 0.8333333333333334
+  },
+  {
+    "id": "summeval_rel_dm-test-dea0ed2e587495e516ac85056e21a2076a9a993c_7",
+    "human_score": 0.9167,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-2c37d44d03ce2e91310339d884d33ee5aabf9abc_4",
+    "human_score": 1.0,
+    "deepeval_score": 0.8
+  },
+  {
+    "id": "summeval_rel_dm-test-f468efac7b3c54f8c42c2c81dff108c52ebe0d7d_15",
+    "human_score": 0.5,
+    "deepeval_score": 0.3333333333333333
+  },
+  {
+    "id": "summeval_rel_cnn-test-b8b6e729fff27c4eef87887e61d3448de9c063f6_1",
+    "human_score": 0.3333,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-4a593dc4c7e0b4d09bfdc66bb315c47b54eb15df_8",
+    "human_score": 0.1667,
+    "deepeval_score": 0.5
+  },
+  {
+    "id": "summeval_rel_dm-test-130ff8f2dfb6ab67861d5924b0ff5acd63c7d8ce_0",
+    "human_score": 0.3333,
+    "deepeval_score": 0.6
+  },
+  {
+    "id": "summeval_rel_dm-test-8764fb95bfad8ee849274873a92fb8d6b400eee2_15",
+    "human_score": 0.1667,
+    "deepeval_score": 0.75
+  },
+  {
+    "id": "summeval_rel_dm-test-096e418a953af86df0d1560bec95bc7bfee2e34b_12",
+    "human_score": 0.8333,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-e428e25bbf8e06643154ce31b7c6fab64c81e857_3",
+    "human_score": 0.5833,
+    "deepeval_score": 0.6666666666666666
+  },
+  {
+    "id": "summeval_rel_dm-test-d89de9c2a76f2665560becfe5d761a4fc62b9926_14",
+    "human_score": 0.3333,
+    "deepeval_score": 0.6666666666666666
+  },
+  {
+    "id": "summeval_rel_dm-test-eeef09d26cf30c2124c0399b08eedc6321fe5d20_6",
+    "human_score": 0.5,
+    "deepeval_score": 0.75
+  },
+  {
+    "id": "summeval_rel_dm-test-2377095dda83df778e34304b7a09813808105d3b_0",
+    "human_score": 0.5833,
+    "deepeval_score": 0.5
+  },
+  {
+    "id": "summeval_rel_dm-test-2cf8c2d1d2ceb1980249f77e703f9039e63799d0_1",
+    "human_score": 0.8333,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-54b857a66cbd8473d6732e5da52d48612e636a37_0",
+    "human_score": 0.8333,
+    "deepeval_score": 0.75
+  },
+  {
+    "id": "summeval_rel_dm-test-8b59fa7715418c4bcc0d50e3caeb239129de453e_15",
+    "human_score": 0.25,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-2a48112ddee712f2364f128076cb2db555a043b1_13",
+    "human_score": 0.5833,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_cnn-test-a02e362c5b8f049848ce718b37b96117485461cf_11",
+    "human_score": 0.3333,
+    "deepeval_score": 0.8
+  },
+  {
+    "id": "summeval_rel_dm-test-d680ebcdcd59fd5ee9b602a06bcd5230c212835b_14",
+    "human_score": 0.75,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-e470f0a87d7513bf880412524332047020422c3f_7",
+    "human_score": 0.8333,
+    "deepeval_score": 0.8333333333333334
+  },
+  {
+    "id": "summeval_rel_cnn-test-404f859482d47c127868964a9a39d1a7645dd2e9_14",
+    "human_score": 0.1667,
+    "deepeval_score": 0.3333333333333333
+  },
+  {
+    "id": "summeval_rel_dm-test-d3c9ce137ba24a69253508b3416630465c050ae4_9",
+    "human_score": 0.75,
+    "deepeval_score": 0.8333333333333334
+  },
+  {
+    "id": "summeval_rel_dm-test-26e4e19d945cedcb489f28808c730658139c9415_7",
+    "human_score": 0.75,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_cnn-test-e49792c337d3f4c13e22f710efa44cf6a4e59aba_3",
+    "human_score": 0.1667,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-c16c9fa34ccae7e2b9e29c3988ccb74974c4b3c0_14",
+    "human_score": 0.4167,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_cnn-test-d75b043ebefc3098aea84d92bb8bec0f509b1563_1",
+    "human_score": 0.5,
+    "deepeval_score": 0.6666666666666666
+  },
+  {
+    "id": "summeval_rel_dm-test-4a593dc4c7e0b4d09bfdc66bb315c47b54eb15df_10",
+    "human_score": 0.5833,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-8b59fa7715418c4bcc0d50e3caeb239129de453e_0",
+    "human_score": 0.1667,
+    "deepeval_score": 0.75
+  },
+  {
+    "id": "summeval_rel_dm-test-a3b6201aca77b5bdaa5df02d6acee2be66233237_0",
+    "human_score": 0.4167,
+    "deepeval_score": 0.7142857142857143
+  },
+  {
+    "id": "summeval_rel_dm-test-d296270ab4a4cf20f2d9c1aae7514687806f2b35_3",
+    "human_score": 0.9167,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-4001b252a072ac149c70840b22299cc6cfab3bae_1",
+    "human_score": 0.75,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-a3b6201aca77b5bdaa5df02d6acee2be66233237_15",
+    "human_score": 0.3333,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-c16c9fa34ccae7e2b9e29c3988ccb74974c4b3c0_15",
+    "human_score": 0.6667,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-1747dcd6a007ee97954b6b10cde549bf82f6a4eb_11",
+    "human_score": 0.9167,
+    "deepeval_score": 0.8333333333333334
+  },
+  {
+    "id": "summeval_rel_dm-test-e43eef75de38d246db9d80216ca9f5487215a78b_5",
+    "human_score": 0.8333,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-c50d33e9749e7bb484d9b69c4f5fca35a3a50cb5_10",
+    "human_score": 0.8333,
+    "deepeval_score": 0.7142857142857143
+  },
+  {
+    "id": "summeval_rel_dm-test-8b59fa7715418c4bcc0d50e3caeb239129de453e_9",
+    "human_score": 0.75,
+    "deepeval_score": 0.75
+  },
+  {
+    "id": "summeval_rel_dm-test-d89de9c2a76f2665560becfe5d761a4fc62b9926_2",
+    "human_score": 0.5,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-4f3b35b540ba05f0f82d71a694ec23dde4dc3e01_14",
+    "human_score": 0.75,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-18243373494a1722ddcd162ec67b63dd749633ab_4",
+    "human_score": 0.3333,
+    "deepeval_score": 0.5
+  },
+  {
+    "id": "summeval_rel_dm-test-9b5a04b9879fe716a2dcd66dd331f99534603c16_4",
+    "human_score": 0.9167,
+    "deepeval_score": 0.8571428571428571
+  },
+  {
+    "id": "summeval_rel_dm-test-808a439a5d83fc47baaea934c8779a7ebc62470d_11",
+    "human_score": 0.1667,
+    "deepeval_score": 0.8
+  },
+  {
+    "id": "summeval_rel_dm-test-1747dcd6a007ee97954b6b10cde549bf82f6a4eb_1",
+    "human_score": 0.9167,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-2377095dda83df778e34304b7a09813808105d3b_14",
+    "human_score": 0.3333,
+    "deepeval_score": 0.6666666666666666
+  },
+  {
+    "id": "summeval_rel_cnn-test-404f859482d47c127868964a9a39d1a7645dd2e9_5",
+    "human_score": 0.1667,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-155754e1f2bc83f6836af78703edd4d00f19f381_3",
+    "human_score": 0.4167,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_cnn-test-a02e362c5b8f049848ce718b37b96117485461cf_5",
+    "human_score": 0.5833,
+    "deepeval_score": 0.6666666666666666
+  },
+  {
+    "id": "summeval_rel_dm-test-d89de9c2a76f2665560becfe5d761a4fc62b9926_10",
+    "human_score": 0.4167,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-3785743303ddb8b594be7c449a37458b99e83812_4",
+    "human_score": 0.5833,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-4e0de0ec6d5b9df174f54d03158de8f30aac861f_14",
+    "human_score": 0.5,
+    "deepeval_score": 0.3333333333333333
+  },
+  {
+    "id": "summeval_rel_dm-test-23e8c1d71474d239aa9ae37b9a05031b0054b8ce_10",
+    "human_score": 0.75,
+    "deepeval_score": 0.875
+  },
+  {
+    "id": "summeval_rel_dm-test-02c955067d00f38b6978b805d5a8701a787f78ac_9",
+    "human_score": 0.75,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-b5bc2ae78441e4ac08fb01823d5fc0f1627c3166_15",
+    "human_score": 0.3333,
+    "deepeval_score": 0.8
+  },
+  {
+    "id": "summeval_rel_cnn-test-b8b6e729fff27c4eef87887e61d3448de9c063f6_10",
+    "human_score": 0.3333,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_cnn-test-5139ccfabee55ddb83e7937f5802c0a67aee8975_13",
+    "human_score": 0.1667,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_cnn-test-4761dc6d8bdf56b9ada97104113dd1bcf4aed3f1_8",
+    "human_score": 0.25,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-b5925c1a02fa9a8f6b1d5ad764c19a732deac0df_2",
+    "human_score": 0.75,
+    "deepeval_score": 0.8
+  },
+  {
+    "id": "summeval_rel_dm-test-3785743303ddb8b594be7c449a37458b99e83812_5",
+    "human_score": 0.6667,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_cnn-test-e2bccd4dec93c9bb7b327827dae004c2d494ec31_0",
+    "human_score": 0.0,
+    "deepeval_score": 0.0
+  },
+  {
+    "id": "summeval_rel_dm-test-bd4684a0f5af5dd6ac88d2fb50f902bd7f10217b_5",
+    "human_score": 0.25,
+    "deepeval_score": 0.75
+  },
+  {
+    "id": "summeval_rel_cnn-test-88c2481234e763c9bbc68d0ab1be1d2375c1349a_0",
+    "human_score": 0.25,
+    "deepeval_score": 0.4
+  },
+  {
+    "id": "summeval_rel_dm-test-2feca9acf532e33f1ab7442c442c8e19787d8d7b_4",
+    "human_score": 0.1667,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_cnn-test-a02e362c5b8f049848ce718b37b96117485461cf_9",
+    "human_score": 0.8333,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_cnn-test-e2bccd4dec93c9bb7b327827dae004c2d494ec31_10",
+    "human_score": 0.25,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-26e4e19d945cedcb489f28808c730658139c9415_14",
+    "human_score": 0.5,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-5be0a9584b051175d9f4842a143b76385335d96a_0",
+    "human_score": 0.5833,
+    "deepeval_score": 0.5
+  },
+  {
+    "id": "summeval_rel_dm-test-6f027d030f9ca86446dc893f1d10ced4c9a3561f_15",
+    "human_score": 0.3333,
+    "deepeval_score": 0.8
+  },
+  {
+    "id": "summeval_rel_dm-test-18243373494a1722ddcd162ec67b63dd749633ab_13",
+    "human_score": 0.25,
+    "deepeval_score": 0.6666666666666666
+  },
+  {
+    "id": "summeval_rel_dm-test-d3c9ce137ba24a69253508b3416630465c050ae4_8",
+    "human_score": 0.5,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-f5fead94ee884800e84a212cc0edc78b11c4ba9f_5",
+    "human_score": 0.75,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_cnn-test-e49792c337d3f4c13e22f710efa44cf6a4e59aba_4",
+    "human_score": 0.25,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_cnn-test-c05bda9b387ec8ae43803170b6f59b4b82505db9_4",
+    "human_score": 0.5,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-31114653cd606fd3f4b1035f98dedd71f8282cd2_13",
+    "human_score": 0.8333,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_cnn-test-b8b6e729fff27c4eef87887e61d3448de9c063f6_13",
+    "human_score": 0.25,
+    "deepeval_score": 0.75
+  },
+  {
+    "id": "summeval_rel_cnn-test-d75b043ebefc3098aea84d92bb8bec0f509b1563_15",
+    "human_score": 0.75,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-2a48112ddee712f2364f128076cb2db555a043b1_10",
+    "human_score": 0.1667,
+    "deepeval_score": 0.6666666666666666
+  },
+  {
+    "id": "summeval_rel_dm-test-3785743303ddb8b594be7c449a37458b99e83812_1",
+    "human_score": 0.5833,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-02c955067d00f38b6978b805d5a8701a787f78ac_5",
+    "human_score": 0.75,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-0f0789390d67698283cc87b2e046b5c5cd77edb7_5",
+    "human_score": 0.75,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-b255397ee863bd8faf9def57c0f76769153d905e_6",
+    "human_score": 0.75,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-bd4684a0f5af5dd6ac88d2fb50f902bd7f10217b_3",
+    "human_score": 0.3333,
+    "deepeval_score": 0.6666666666666666
+  },
+  {
+    "id": "summeval_rel_dm-test-d3c9ce137ba24a69253508b3416630465c050ae4_10",
+    "human_score": 1.0,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-1747dcd6a007ee97954b6b10cde549bf82f6a4eb_10",
+    "human_score": 0.6667,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_cnn-test-4761dc6d8bdf56b9ada97104113dd1bcf4aed3f1_14",
+    "human_score": 0.25,
+    "deepeval_score": 0.75
+  },
+  {
+    "id": "summeval_rel_cnn-test-404f859482d47c127868964a9a39d1a7645dd2e9_0",
+    "human_score": 0.1667,
+    "deepeval_score": 0.2
+  },
+  {
+    "id": "summeval_rel_dm-test-8847383b72167c3f3dd2161b5b091b580c8f4da7_4",
+    "human_score": 1.0,
+    "deepeval_score": 0.75
+  },
+  {
+    "id": "summeval_rel_dm-test-02c955067d00f38b6978b805d5a8701a787f78ac_0",
+    "human_score": 0.5,
+    "deepeval_score": 0.42857142857142855
+  },
+  {
+    "id": "summeval_rel_cnn-test-b1c3fc03a2b74cf4c79844c1fe2fdce70a8a436e_0",
+    "human_score": 0.1667,
+    "deepeval_score": 0.2
+  },
+  {
+    "id": "summeval_rel_dm-test-9beaaf73e4517d5bf1bc284f386485d571da96cf_6",
+    "human_score": 0.9167,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-8b51a10370a1219137e231192e65b9cd52238ea6_4",
+    "human_score": 0.6667,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-6c1341bedf92a304318545fbf1aad88651de7909_14",
+    "human_score": 0.3333,
+    "deepeval_score": 0.75
+  },
+  {
+    "id": "summeval_rel_dm-test-c16c9fa34ccae7e2b9e29c3988ccb74974c4b3c0_4",
+    "human_score": 0.75,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-096e418a953af86df0d1560bec95bc7bfee2e34b_8",
+    "human_score": 0.3333,
+    "deepeval_score": 0.3333333333333333
+  },
+  {
+    "id": "summeval_rel_dm-test-31114653cd606fd3f4b1035f98dedd71f8282cd2_0",
+    "human_score": 0.0833,
+    "deepeval_score": 0.6
+  },
+  {
+    "id": "summeval_rel_cnn-test-404f859482d47c127868964a9a39d1a7645dd2e9_10",
+    "human_score": 0.8333,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-e43eef75de38d246db9d80216ca9f5487215a78b_15",
+    "human_score": 0.5,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_cnn-test-e2bccd4dec93c9bb7b327827dae004c2d494ec31_1",
+    "human_score": 0.0833,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-f468efac7b3c54f8c42c2c81dff108c52ebe0d7d_9",
+    "human_score": 0.8333,
+    "deepeval_score": 0.6666666666666666
+  },
+  {
+    "id": "summeval_rel_dm-test-e06ff0eb7c4fa4416fda84a9a239b15480c5a9d9_14",
+    "human_score": 0.3333,
+    "deepeval_score": 0.8
+  },
+  {
+    "id": "summeval_rel_dm-test-096e418a953af86df0d1560bec95bc7bfee2e34b_15",
+    "human_score": 0.5833,
+    "deepeval_score": 0.75
+  },
+  {
+    "id": "summeval_rel_cnn-test-a02e362c5b8f049848ce718b37b96117485461cf_8",
+    "human_score": 0.1667,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_cnn-test-e2bccd4dec93c9bb7b327827dae004c2d494ec31_13",
+    "human_score": 0.0,
+    "deepeval_score": 0.6666666666666666
+  },
+  {
+    "id": "summeval_rel_dm-test-46609841ffd23e9c22d1507edf7b176ecc4d834f_8",
+    "human_score": 0.3333,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-23e8c1d71474d239aa9ae37b9a05031b0054b8ce_3",
+    "human_score": 0.5,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-1749a22e2b6facaa057213cb9b33261b319bbd2b_6",
+    "human_score": 0.6667,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-6372eff07fd3d6f578f90d6115e01747edccc095_6",
+    "human_score": 0.6667,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_cnn-test-5139ccfabee55ddb83e7937f5802c0a67aee8975_6",
+    "human_score": 0.9167,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_cnn-test-d75b043ebefc3098aea84d92bb8bec0f509b1563_14",
+    "human_score": 0.1667,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-2feca9acf532e33f1ab7442c442c8e19787d8d7b_0",
+    "human_score": 0.5833,
+    "deepeval_score": 0.3333333333333333
+  },
+  {
+    "id": "summeval_rel_cnn-test-bcdb32ae644040a721da880fff9c1d502048cd8b_5",
+    "human_score": 0.75,
+    "deepeval_score": 0.8
+  },
+  {
+    "id": "summeval_rel_dm-test-6372eff07fd3d6f578f90d6115e01747edccc095_14",
+    "human_score": 0.3333,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-eeef09d26cf30c2124c0399b08eedc6321fe5d20_14",
+    "human_score": 0.0,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-4e0de0ec6d5b9df174f54d03158de8f30aac861f_1",
+    "human_score": 0.0833,
+    "deepeval_score": 0.6
+  },
+  {
+    "id": "summeval_rel_dm-test-096e418a953af86df0d1560bec95bc7bfee2e34b_3",
+    "human_score": 0.75,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-8bc8f134bc3ceaeec0df8f29e96e13d319717ab8_9",
+    "human_score": 0.9167,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-03e271b4305517e02c9ead82d57327d32b99102e_6",
+    "human_score": 0.8333,
+    "deepeval_score": 0.9
+  },
+  {
+    "id": "summeval_rel_cnn-test-b1c3fc03a2b74cf4c79844c1fe2fdce70a8a436e_14",
+    "human_score": 0.25,
+    "deepeval_score": 0.3333333333333333
+  },
+  {
+    "id": "summeval_rel_dm-test-46609841ffd23e9c22d1507edf7b176ecc4d834f_9",
+    "human_score": 0.75,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-f468efac7b3c54f8c42c2c81dff108c52ebe0d7d_11",
+    "human_score": 0.75,
+    "deepeval_score": 0.875
+  },
+  {
+    "id": "summeval_rel_dm-test-9afda3cde191a883d8c166ceb5765eb53205d8f4_15",
+    "human_score": 0.1667,
+    "deepeval_score": 0.5
+  },
+  {
+    "id": "summeval_rel_dm-test-8764fb95bfad8ee849274873a92fb8d6b400eee2_0",
+    "human_score": 0.1667,
+    "deepeval_score": 0.8
+  },
+  {
+    "id": "summeval_rel_dm-test-14c813567696f4e63a39993c09d4edb454036179_13",
+    "human_score": 0.8333,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-8764fb95bfad8ee849274873a92fb8d6b400eee2_3",
+    "human_score": 0.4167,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-eeef09d26cf30c2124c0399b08eedc6321fe5d20_7",
+    "human_score": 0.8333,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-808a439a5d83fc47baaea934c8779a7ebc62470d_8",
+    "human_score": 0.0833,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_cnn-test-e2bccd4dec93c9bb7b327827dae004c2d494ec31_15",
+    "human_score": 0.0,
+    "deepeval_score": 0.75
+  },
+  {
+    "id": "summeval_rel_dm-test-e43eef75de38d246db9d80216ca9f5487215a78b_3",
+    "human_score": 0.6667,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-4fb64a2298e18626db776fccf834be87388827e0_3",
+    "human_score": 0.5833,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_cnn-test-404f859482d47c127868964a9a39d1a7645dd2e9_6",
+    "human_score": 0.9167,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-4f3b35b540ba05f0f82d71a694ec23dde4dc3e01_8",
+    "human_score": 0.5833,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-e470f0a87d7513bf880412524332047020422c3f_15",
+    "human_score": 0.5,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-1747dcd6a007ee97954b6b10cde549bf82f6a4eb_12",
+    "human_score": 0.6667,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-5be0a9584b051175d9f4842a143b76385335d96a_8",
+    "human_score": 0.1667,
+    "deepeval_score": 0.3333333333333333
+  },
+  {
+    "id": "summeval_rel_dm-test-6c1341bedf92a304318545fbf1aad88651de7909_0",
+    "human_score": 0.3333,
+    "deepeval_score": 0.6
+  },
+  {
+    "id": "summeval_rel_dm-test-dea0ed2e587495e516ac85056e21a2076a9a993c_10",
+    "human_score": 0.5833,
+    "deepeval_score": 0.8
+  },
+  {
+    "id": "summeval_rel_dm-test-9d0fcbd873927674d12aafce4ae7754fd591d4e2_1",
+    "human_score": 0.6667,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-eeef09d26cf30c2124c0399b08eedc6321fe5d20_3",
+    "human_score": 0.25,
+    "deepeval_score": 0.6666666666666666
+  },
+  {
+    "id": "summeval_rel_dm-test-4fb64a2298e18626db776fccf834be87388827e0_14",
+    "human_score": 0.8333,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-eeef09d26cf30c2124c0399b08eedc6321fe5d20_0",
+    "human_score": 0.0,
+    "deepeval_score": 0.25
+  },
+  {
+    "id": "summeval_rel_dm-test-f37fd6e9b6cc18a7132568e307ef3b130931e809_2",
+    "human_score": 0.8333,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-f26d8400ae49b90d109c165d0f44b8f6ca253c08_1",
+    "human_score": 0.8333,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_cnn-test-fbbafa743a8c2ecd2cedf65c6c61956b2db8ec5c_2",
+    "human_score": 0.75,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_cnn-test-e2bccd4dec93c9bb7b327827dae004c2d494ec31_14",
+    "human_score": 0.25,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-e43eef75de38d246db9d80216ca9f5487215a78b_14",
+    "human_score": 0.3333,
+    "deepeval_score": 0.6666666666666666
+  },
+  {
+    "id": "summeval_rel_dm-test-3785743303ddb8b594be7c449a37458b99e83812_2",
+    "human_score": 0.75,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-5be0a9584b051175d9f4842a143b76385335d96a_5",
+    "human_score": 0.8333,
+    "deepeval_score": 0.75
+  },
+  {
+    "id": "summeval_rel_dm-test-5be0a9584b051175d9f4842a143b76385335d96a_11",
+    "human_score": 0.5,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_cnn-test-c05bda9b387ec8ae43803170b6f59b4b82505db9_13",
+    "human_score": 0.1667,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-d83b82a9cd504218e604616be3f3c3928e3428b8_14",
+    "human_score": 0.8333,
+    "deepeval_score": 0.8
+  },
+  {
+    "id": "summeval_rel_dm-test-f26d8400ae49b90d109c165d0f44b8f6ca253c08_11",
+    "human_score": 0.9167,
+    "deepeval_score": 0.75
+  },
+  {
+    "id": "summeval_rel_cnn-test-e49792c337d3f4c13e22f710efa44cf6a4e59aba_14",
+    "human_score": 0.1667,
+    "deepeval_score": 0.6666666666666666
+  },
+  {
+    "id": "summeval_rel_dm-test-18243373494a1722ddcd162ec67b63dd749633ab_0",
+    "human_score": 0.1667,
+    "deepeval_score": 0.75
+  },
+  {
+    "id": "summeval_rel_cnn-test-404f859482d47c127868964a9a39d1a7645dd2e9_1",
+    "human_score": 0.1667,
+    "deepeval_score": 0.3333333333333333
+  },
+  {
+    "id": "summeval_rel_dm-test-97bbda7ec22a736cd174b51513c72a6372d13d35_4",
+    "human_score": 0.3333,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-97bbda7ec22a736cd174b51513c72a6372d13d35_7",
+    "human_score": 0.9167,
+    "deepeval_score": 0.8333333333333334
+  },
+  {
+    "id": "summeval_rel_dm-test-d89de9c2a76f2665560becfe5d761a4fc62b9926_13",
+    "human_score": 0.25,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-632cfdb03aacd90a34a470f6a70b47eee62ec5f0_4",
+    "human_score": 0.6667,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-207df192edc1836250b69d1bc5b9e6a38206eb78_2",
+    "human_score": 0.75,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_cnn-test-a02e362c5b8f049848ce718b37b96117485461cf_0",
+    "human_score": 0.1667,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-b5bc2ae78441e4ac08fb01823d5fc0f1627c3166_5",
+    "human_score": 0.5,
+    "deepeval_score": 0.6
+  },
+  {
+    "id": "summeval_rel_dm-test-0cdd7cdb5d99c36f25f1f4fa0e962d558f7ff07b_8",
+    "human_score": 0.1667,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_cnn-test-e49792c337d3f4c13e22f710efa44cf6a4e59aba_5",
+    "human_score": 0.25,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_cnn-test-404f859482d47c127868964a9a39d1a7645dd2e9_2",
+    "human_score": 0.3333,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-998cb27197db1fd299aff3322ac041ba4bf1148f_14",
+    "human_score": 0.1667,
+    "deepeval_score": 0.25
+  },
+  {
+    "id": "summeval_rel_cnn-test-c05bda9b387ec8ae43803170b6f59b4b82505db9_8",
+    "human_score": 0.5833,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-8b51a10370a1219137e231192e65b9cd52238ea6_3",
+    "human_score": 0.75,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-f468efac7b3c54f8c42c2c81dff108c52ebe0d7d_4",
+    "human_score": 0.5833,
+    "deepeval_score": 0.6666666666666666
+  },
+  {
+    "id": "summeval_rel_cnn-test-a02e362c5b8f049848ce718b37b96117485461cf_13",
+    "human_score": 0.4167,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-801763443e6c73e3857039f2223798b2b58bef19_6",
+    "human_score": 0.8333,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-6372eff07fd3d6f578f90d6115e01747edccc095_3",
+    "human_score": 0.8333,
+    "deepeval_score": 0.6666666666666666
+  },
+  {
+    "id": "summeval_rel_dm-test-31114653cd606fd3f4b1035f98dedd71f8282cd2_15",
+    "human_score": 0.5833,
+    "deepeval_score": 0.8
+  },
+  {
+    "id": "summeval_rel_dm-test-2cfc33d01364162579f46b2764914a03a29453ce_14",
+    "human_score": 0.5,
+    "deepeval_score": 0.5
+  },
+  {
+    "id": "summeval_rel_dm-test-d89de9c2a76f2665560becfe5d761a4fc62b9926_3",
+    "human_score": 0.3333,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-808a439a5d83fc47baaea934c8779a7ebc62470d_14",
+    "human_score": 0.8333,
+    "deepeval_score": 0.6666666666666666
+  },
+  {
+    "id": "summeval_rel_dm-test-632cfdb03aacd90a34a470f6a70b47eee62ec5f0_13",
+    "human_score": 0.75,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-8764fb95bfad8ee849274873a92fb8d6b400eee2_11",
+    "human_score": 0.25,
+    "deepeval_score": 0.8
+  },
+  {
+    "id": "summeval_rel_dm-test-4e0de0ec6d5b9df174f54d03158de8f30aac861f_4",
+    "human_score": 0.5833,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-b255397ee863bd8faf9def57c0f76769153d905e_11",
+    "human_score": 0.6667,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-bd4684a0f5af5dd6ac88d2fb50f902bd7f10217b_15",
+    "human_score": 0.6667,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-8b59fa7715418c4bcc0d50e3caeb239129de453e_8",
+    "human_score": 0.25,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_cnn-test-c05bda9b387ec8ae43803170b6f59b4b82505db9_7",
+    "human_score": 0.25,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-4fb64a2298e18626db776fccf834be87388827e0_1",
+    "human_score": 0.75,
+    "deepeval_score": 0.8333333333333334
+  },
+  {
+    "id": "summeval_rel_dm-test-6372eff07fd3d6f578f90d6115e01747edccc095_11",
+    "human_score": 0.6667,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-2abe0f81f5b22c8a406165717e3bd7fce6fe47c6_11",
+    "human_score": 1.0,
+    "deepeval_score": 0.875
+  },
+  {
+    "id": "summeval_rel_dm-test-fadabe346fe95d33eee71299e6596754768f5246_5",
+    "human_score": 0.8333,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-bd4684a0f5af5dd6ac88d2fb50f902bd7f10217b_13",
+    "human_score": 0.0833,
+    "deepeval_score": 0.75
+  },
+  {
+    "id": "summeval_rel_dm-test-e428e25bbf8e06643154ce31b7c6fab64c81e857_12",
+    "human_score": 0.6667,
+    "deepeval_score": 0.6666666666666666
+  },
+  {
+    "id": "summeval_rel_dm-test-0cdd7cdb5d99c36f25f1f4fa0e962d558f7ff07b_4",
+    "human_score": 0.9167,
+    "deepeval_score": 1.0
+  },
+  {
+    "id": "summeval_rel_dm-test-130ff8f2dfb6ab67861d5924b0ff5acd63c7d8ce_4",
+    "human_score": 0.1667,
+    "deepeval_score": 0.5
+  }
+]

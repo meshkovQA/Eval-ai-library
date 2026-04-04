@@ -7,9 +7,7 @@ Score is based on the proportion of relevant statements, with detailed verdicts 
 '''
 
 from typing import List, Dict, Any, Tuple
-import numpy as np
 import json
-import re
 from math import exp
 from eval_lib.testcases_schema import EvalTestCase
 from eval_lib.metric_pattern import MetricPattern
@@ -50,16 +48,16 @@ class AnswerRelevancyMetric(MetricPattern):
 
     async def _generate_statements(self, intent: str, answer: str) -> Tuple[List[str], float]:
         prompt = (
-            "You are extracting atomic facts from a chatbot answer.\n"
+            "Extract the key factual claims from the following answer.\n\n"
             f"User intent: {intent}\n\n"
-            "Answer:\n"
-            f"{answer}\n\n"
-            "Instructions:\n"
-            "• Extract ALL factual statements from the answer.\n"
-            "• Include both relevant AND irrelevant statements.\n"
-            "• Skip only greetings, disclaimers, offers to help.\n"
-            "• 1-sentence per statement, no numbering.\n"
-            "• Output as a JSON array of strings."
+            f"Answer:\n{answer}\n\n"
+            "Rules:\n"
+            "- Each claim must be a single, verifiable statement.\n"
+            "- Ignore greetings, meta-comments, disclaimers, and offers to help.\n"
+            "- Do NOT split one sentence into micro-facts. Keep claims at sentence-level.\n"
+            "- Include both relevant AND irrelevant statements.\n"
+            "- Maximum 8 claims. Focus on the most substantive facts.\n"
+            "- Output as a JSON array of strings."
         )
         text, cost = await chat_complete(self.model, [{"role": "user", "content": prompt}], temperature=0.0)
         try:
@@ -71,37 +69,33 @@ class AnswerRelevancyMetric(MetricPattern):
             raise RuntimeError(f"Failed to parse statements: {e}\n{text}")
 
     async def _generate_verdicts(self, question: str, intent: str, statements: List[str]) -> Tuple[List[Dict[str, str]], float, float]:
-
-        prompt_user = (
-            "You are an impartial evaluator.\n"
-            "TASK\n"
-            "For every statement below decide **how directly it fulfils the user intent**, using the 5-level scale:\n"
-            "• fully   – Explicitly answers the intent with no missing info.\n"
-            "• mostly  – Clearly supports the intent via concrete example or list item; small details may be missing.\n"
-            "• partial – Related to the topic but only partially addresses the intent.\n"
-            "• minor   – Weak or tangential relation.\n"
-            "• none    – Irrelevant or off-topic.\n\n"
-            "⚠️  Do NOT punish a statement just because it is an example or uses different wording; examples usually deserve **mostly**.\n"
-            "⚠️  Ignore polite closings, greetings, offers to help.\n\n"
+        """Single-step verdict with improved prompt for relevancy."""
+        prompt = (
+            "You are an impartial evaluator.\n\n"
+            "For every statement below, decide how directly it fulfils the user intent "
+            "using the 5-level scale:\n"
+            "- fully: Explicitly answers the intent with concrete information (examples count as fully).\n"
+            "- mostly: Clearly supports the intent; small details may be missing.\n"
+            "- partial: Related to the topic but only partially addresses the intent.\n"
+            "- minor: Weak or tangential relation.\n"
+            "- none: Irrelevant or completely off-topic.\n\n"
+            "Key distinctions:\n"
+            "- Examples and concrete details that illustrate the answer = \"fully\" (not \"mostly\").\n"
+            "- Background context that helps understand the answer = \"mostly\" (not \"partial\").\n"
+            "- Use \"none\" ONLY for statements completely unrelated to the question.\n\n"
             f"USER INTENT: {intent}\n\n"
             f"USER QUESTION:\n{question}\n\n"
             f"STATEMENTS (JSON array):\n{json.dumps(statements, ensure_ascii=False)}\n\n"
-            "Return **only** a JSON array of objects in the form:\n"
-            "[{\"verdict\": \"fully|mostly|partial|minor|none\", \"reason\": \"<one sentence>\"}, …]"
+            "Return only a JSON array of objects:\n"
+            '[{"verdict": "fully|mostly|partial|minor|none", "reason": "<one sentence>"}]'
         )
-        text, cost = await chat_complete(self.model, [{"role": "user",   "content": prompt_user}], temperature=0.0)
+        text, cost = await chat_complete(self.model, [{"role": "user", "content": prompt}], temperature=0.0)
+        raw_json = extract_json_block(text)
+        verdicts = json.loads(raw_json)
 
-        try:
-            raw_json = extract_json_block(text)
-            verdicts = json.loads(raw_json)
-            assert isinstance(verdicts, list)
-
-            scores = [VERDICT_WEIGHTS.get(v.get("verdict", "").lower(), 0.0)
-                      for v in verdicts]
-            verdict_score = round(float(np.mean(scores)), 4) if scores else 0.0
-            return verdicts, verdict_score, cost or 0.0
-        except Exception as e:
-            raise RuntimeError(f"Failed to parse verdicts: {e}\n{text}")
+        scores = [VERDICT_WEIGHTS.get(v.get("verdict", "").lower(), 0.0) for v in verdicts]
+        verdict_score = round(score_agg(scores, temperature=self.temperature), 4) if scores else 0.0
+        return verdicts, verdict_score, cost or 0.0
 
     async def _summarize_reasons_via_llm(
         self,

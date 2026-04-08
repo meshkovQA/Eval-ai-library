@@ -153,3 +153,4 @@ experiments/TODO_experiments.md
 # Experiments: show data and results, hide scripts
 experiments/*.py
 experiments/__pycache__/
+article.tex

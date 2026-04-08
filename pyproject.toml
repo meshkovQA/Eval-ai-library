@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "eval-ai-library"
-version = "0.5.3"
+version = "0.5.5"
 description = "Comprehensive AI Model Evaluation Framework with support for multiple LLM providers"
 readme = "README.md"
 authors = [
@@ -110,8 +110,8 @@ Repository = "https://github.com/meshkovQA/Eval-ai-library"
 [project.scripts]
 eval-lib = "eval_lib.cli:main"
 
-[tool.setuptools]
-packages = ["eval_lib", "eval_lib.metrics", "eval_lib.agent_metrics", "eval_lib.datagenerator", "eval_lib.security_metrics", "eval_lib.tracing", "eval_lib.connector", "eval_lib.deterministic_metrics", "eval_lib.vector_metrics"]
+[tool.setuptools.packages.find]
+include = ["eval_lib*"]
 
 [tool.setuptools.package-data]
 eval_lib = ["py.typed", "static/*.js", "static/*.css"]

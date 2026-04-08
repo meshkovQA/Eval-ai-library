@@ -24,7 +24,8 @@ class ContextualRecallMetric(MetricPattern):
     async def _extract_claims(self, reference: str) -> Tuple[List[str], float]:
         prompt = (
             "Extract standalone factual claims from the following reference answer. "
-            "Each statement must be atomic, verifiable, and distinct.\n\n"
+            "Each statement must be atomic, verifiable, and distinct.\n"
+            "- Maximum 8 claims. Focus on the most important facts.\n\n"
             f"Reference:\n{reference}\n\nReturn a JSON array of strings."
         )
         text, cost = await chat_complete(self.model, [{"role": "user", "content": prompt}], temperature=0.0)

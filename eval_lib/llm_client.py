@@ -308,9 +308,32 @@ async def _litellm_chat_complete(
     llm: LLMDescriptor,
     messages: list[dict[str, str]],
     temperature: float,
+    *,
+    api_key: Optional[str] = None,
+    api_base: Optional[str] = None,
+    extra_kwargs: Optional[dict] = None,
 ):
-    """Universal chat completion via LiteLLM."""
+    """Universal chat completion via LiteLLM.
+
+    Optional kwargs `api_key`, `api_base`, and `extra_kwargs` are forwarded
+    directly to litellm.acompletion(). When set, they override anything that
+    would otherwise be picked up from environment variables — this is the
+    mechanism that lets multi-tenant callers (e.g. the eval-ai-platform
+    llm-gateway service) inject per-user credentials without touching
+    process-wide os.environ.
+
+    Precedence rules:
+        - explicit kwargs > _to_litellm_args(llm) (e.g. Zhipu's api_key)
+        - explicit kwargs > LiteLLM env-var lookup
+    """
     args = _to_litellm_args(llm)
+    if api_key is not None:
+        args["api_key"] = api_key
+    if api_base is not None:
+        args["api_base"] = api_base
+    if extra_kwargs:
+        args.update(extra_kwargs)
+
     try:
         response = await litellm.acompletion(
             messages=messages,
@@ -318,8 +341,11 @@ async def _litellm_chat_complete(
             **args,
         )
     except litellm.AuthenticationError as e:
+        provider_label = (
+            llm.provider.value if isinstance(llm.provider, Provider) else str(llm.provider)
+        )
         raise LLMConfigurationError(
-            f"❌ {llm.provider.value} authentication failed!\n\n"
+            f"❌ {provider_label} authentication failed!\n\n"
             f"Error: {str(e)}\n\n"
             f"Please check the relevant API key environment variable for your provider."
         )
@@ -454,6 +480,10 @@ async def chat_complete(
     llm: "str | tuple[str, str] | LLMDescriptor | CustomLLMClient",
     messages: list[dict[str, str]],
     temperature: float = 0.0,
+    *,
+    api_key: Optional[str] = None,
+    api_base: Optional[str] = None,
+    extra_kwargs: Optional[dict] = None,
 ):
     """
     Complete a chat conversation using the specified LLM.
@@ -462,6 +492,18 @@ async def chat_complete(
         llm: LLM specification (e.g., "gpt-4o-mini", "openai:gpt-4o", or LLMDescriptor)
         messages: List of message dicts with "role" and "content"
         temperature: Sampling temperature (0.0-2.0)
+        api_key: Optional override for the provider API key. When set, it is
+            forwarded directly to LiteLLM and supersedes the env var.
+            Used by multi-tenant hosts that store credentials per user.
+        api_base: Optional override for the provider base URL (e.g. for
+            self-hosted OpenAI-compatible servers or Azure deployments).
+        extra_kwargs: Optional dict of additional kwargs forwarded to
+            litellm.acompletion() — for niche cases like
+            `aws_access_key_id` for Bedrock or `vertex_project` for Vertex AI.
+
+    The optional kwargs are passed through to the LiteLLM-backed helper.
+    They are ignored for native helpers (Ollama, MLX) and CustomLLMClient,
+    where credentials are configured at construction time instead.
 
     Returns:
         Tuple of (response_text, cost_in_usd)
@@ -487,6 +529,19 @@ async def chat_complete(
     else:
         client = None
 
+    # Only the LiteLLM helper accepts the credential kwargs. Native helpers
+    # (Ollama, MLX) ignore them — they configure connections via env vars at
+    # client construction time.
+    if helper is _litellm_chat_complete:
+        return await helper(
+            client,
+            llm,
+            messages,
+            temperature,
+            api_key=api_key,
+            api_base=api_base,
+            extra_kwargs=extra_kwargs,
+        )
     return await helper(client, llm, messages, temperature)
 
 

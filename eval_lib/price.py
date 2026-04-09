@@ -1,45 +1,47 @@
+"""
+Manual price override table.
+
+Since 0.6.0 model pricing is sourced from LiteLLM's built-in `litellm.model_cost`
+table (~2600 entries, refreshed on every LiteLLM release). This file is kept as
+an *optional* override layer: anything you put here wins over LiteLLM, which is
+useful when:
+
+    - LiteLLM doesn't ship the model (private, regional, brand-new release).
+    - You have a private/custom model name that LiteLLM doesn't know about.
+    - You want to override prices for billing/contract reasons.
+
+Format is unchanged from earlier versions:
+
+    model_pricing = {
+        "my-model": {"input": 1.50, "output": 6.00},  # USD per 1M tokens
+    }
+
+Lookup goes through `eval_lib.model_catalog.get_cost_per_million()` which checks
+this table first, then falls back to LiteLLM. If a model is in BOTH places, the
+override here wins — so when LiteLLM catches up on a model with accurate pricing,
+remove the entry from this file to delegate to the canonical source.
+"""
 from typing import Dict
 
-# Model pricing (USD per 1M tokens)
+# Models LiteLLM doesn't ship at the time of writing. Each entry is "USD per
+# 1M tokens" for input and output. When LiteLLM adds one of these, drop it from
+# this dict to stop overriding.
 model_pricing: Dict[str, Dict[str, float]] = {
-    # Embeddings
-    "text-embedding-3-small": {"input": 0.02, "output": 0.0},
-    "text-embedding-3-large": {"input": 0.13, "output": 0.0},
-    # OpenAI - GPT-5
-    "gpt-5": {"input": 10.00, "output": 30.00},
-    "gpt-5-mini": {"input": 1.50, "output": 6.00},
-    "gpt-5-nano": {"input": 0.30, "output": 1.20},
-    # OpenAI - GPT-4.5
+    # OpenAI — preview SKUs not in LiteLLM
     "gpt-4.5-preview": {"input": 75.00, "output": 150.00},
-    # OpenAI - GPT-4.1
-    "gpt-4.1": {"input": 2.00, "output": 8.00},
-    "gpt-4.1-mini": {"input": 0.40, "output": 1.60},
-    "gpt-4.1-nano": {"input": 0.10, "output": 0.40},
-    # OpenAI - GPT-4o
-    "gpt-4o": {"input": 2.50, "output": 10.00},
-    "gpt-4o-mini": {"input": 0.15, "output": 0.60},
-    # OpenAI - o-series
-    "o4-mini": {"input": 1.10, "output": 4.40},
-    # Google Gemini
-    "gemini-2.5-pro": {"input": 1.25, "output": 10.00},
+    # Google Gemini — preview SKUs
     "gemini-2.5-pro-preview": {"input": 1.25, "output": 10.00},
-    "gemini-2.5-flash": {"input": 0.15, "output": 0.60},
     "gemini-2.5-flash-preview": {"input": 0.15, "output": 0.60},
-    "gemini-2.0-flash": {"input": 0.10, "output": 0.40},
-    "gemini-2.0-flash-lite": {"input": 0.075, "output": 0.30},
-    # Anthropic Claude
+    # Anthropic — date-suffixed model ids LiteLLM doesn't list
     "claude-opus-4-6-20250619": {"input": 15.00, "output": 75.00},
     "claude-opus-4-5-20250415": {"input": 15.00, "output": 75.00},
     "claude-sonnet-4-6-20250619": {"input": 3.00, "output": 15.00},
     "claude-sonnet-4-5-20250415": {"input": 3.00, "output": 15.00},
-    "claude-haiku-4-5-20251001": {"input": 0.80, "output": 4.00},
-    # DeepSeek
-    "deepseek-chat": {"input": 0.28, "output": 0.42},
+    # DeepSeek — newer SKUs
     "deepseek-v3.2": {"input": 0.28, "output": 0.42},
     "deepseek-v3.2-exp": {"input": 0.28, "output": 0.42},
     "deepseek-v3.1": {"input": 0.28, "output": 0.42},
     "deepseek-v3": {"input": 0.27, "output": 1.10},
-    "deepseek-reasoner": {"input": 0.55, "output": 2.19},
     "deepseek-r1": {"input": 0.55, "output": 2.19},
     "deepseek-r1-lite": {"input": 0.14, "output": 0.55},
     # Qwen (Alibaba) — USD approx from CNY
@@ -48,14 +50,14 @@ model_pricing: Dict[str, Dict[str, float]] = {
     "qwen-turbo": {"input": 0.14, "output": 0.28},
     "qwen-long": {"input": 0.07, "output": 0.28},
     "qwq-plus": {"input": 0.56, "output": 1.67},
-    # Zhipu GLM — USD approx from CNY
+    # Zhipu GLM — USD approx from CNY (no LiteLLM coverage)
     "glm-4-plus": {"input": 6.94, "output": 6.94},
     "glm-4-air": {"input": 0.14, "output": 0.14},
     "glm-4-airx": {"input": 1.39, "output": 1.39},
     "glm-4-long": {"input": 0.14, "output": 0.14},
     "glm-4-flash": {"input": 0.00, "output": 0.00},
     "glm-4-flashx": {"input": 0.03, "output": 0.03},
-    # Mistral
+    # Mistral — *-latest aliases
     "mistral-large-latest": {"input": 2.00, "output": 6.00},
     "mistral-small-latest": {"input": 0.10, "output": 0.30},
     "codestral-latest": {"input": 0.30, "output": 0.90},
@@ -70,7 +72,7 @@ model_pricing: Dict[str, Dict[str, float]] = {
     "mixtral-8x7b-32768": {"input": 0.24, "output": 0.24},
     "gemma2-9b-it": {"input": 0.20, "output": 0.20},
     "deepseek-r1-distill-llama-70b": {"input": 0.59, "output": 0.79},
-    # Grok (xAI)
+    # Grok (xAI) — most recent SKUs
     "grok-4.1": {"input": 3.00, "output": 15.00},
     "grok-4": {"input": 3.00, "output": 15.00},
     "grok-4-heavy": {"input": 15.00, "output": 75.00},

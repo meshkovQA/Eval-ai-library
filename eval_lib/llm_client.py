@@ -1,18 +1,44 @@
 # llm_client.py
-import openai
+"""
+Unified LLM client for eval-ai-library.
+
+Architecture (since 0.6.0):
+    - Standard cloud providers (OpenAI, Anthropic, Google, Azure, DeepSeek, Qwen,
+      Zhipu, Mistral, Groq, Grok) → routed through LiteLLM via _litellm_chat_complete().
+    - Ollama → kept on its native HTTP API (supports `think=false`, no /v1 suffix).
+    - MLX → kept on its custom path with <think> tag stripping.
+    - Custom (CustomLLMClient) → bypasses LiteLLM completely.
+
+The public API — chat_complete(llm, messages, temperature) → (text, cost) — is
+unchanged. Metric tests that mock chat_complete on a per-module basis are
+unaffected by this refactor; only tests/test_providers_and_models.py was rewritten.
+
+Cost calculation goes through eval_lib.model_catalog.get_cost_per_million(), which
+checks our optional override table in price.py first and then falls back to
+LiteLLM's litellm.model_cost (~2600 models, updated each LiteLLM release).
+"""
 import functools
-import anthropic
-import aiohttp
-from abc import ABC, abstractmethod
-from openai import AsyncAzureOpenAI
-from google import genai
-from google.genai.types import GenerateContentConfig
 import os
-from enum import Enum
+import re as _re
+from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Dict, Tuple, Optional
+from enum import Enum
 from types import SimpleNamespace
-from .price import model_pricing
+from typing import Optional, Tuple
+
+import aiohttp
+import litellm
+import openai
+
+from .model_catalog import get_cost_per_million
+
+# Make LiteLLM behave: silence its noisy loggers, drop unknown params instead of
+# erroring (different providers accept different sets of options), and disable
+# its own retry/fallback machinery (we layer that ourselves where needed).
+litellm.suppress_debug_info = True
+litellm.drop_params = True
+litellm.set_verbose = False
+litellm.num_retries = 0
 
 
 class CustomLLMClient(ABC):
@@ -32,9 +58,7 @@ class CustomLLMClient(ABC):
 
     @abstractmethod
     async def chat_complete(
-        self,
-        messages: list[dict[str, str]],
-        temperature: float
+        self, messages: list[dict[str, str]], temperature: float
     ) -> tuple[str, Optional[float]]:
         """
         Generate a response for the given messages.
@@ -49,9 +73,7 @@ class CustomLLMClient(ABC):
         pass
 
     async def get_embeddings(
-        self,
-        texts: list[str],
-        model: str = "text-embedding-3-small"
+        self, texts: list[str], model: str = "text-embedding-3-small"
     ) -> tuple[list[list[float]], Optional[float]]:
         """
         Get embeddings for texts (optional implementation).
@@ -79,10 +101,22 @@ class CustomLLMClient(ABC):
 
 class LLMConfigurationError(Exception):
     """Raised when LLM client configuration is missing or invalid."""
+
     pass
 
 
 class Provider(str, Enum):
+    """
+    Known eval-lib provider ids. This enum is *not* exhaustive — `LLMDescriptor`
+    accepts any string id, and unknown ids are routed through LiteLLM
+    automatically (see _to_litellm_args). The enum exists so that legacy code
+    can keep using `Provider.OPENAI` style constants for the well-known cases.
+
+    Because Provider subclasses str, comparisons `"ollama" == Provider.OLLAMA`
+    succeed transparently — so consumers that store `LLMDescriptor.provider`
+    as a plain string still match the enum members.
+    """
+
     OPENAI = "openai"
     AZURE = "azure"
     GOOGLE = "google"
@@ -98,41 +132,120 @@ class Provider(str, Enum):
     CUSTOM = "custom"
 
 
+def _coerce_provider(value: "str | Provider") -> "str":
+    """
+    Map a string provider id to its canonical form. Known ids are returned as
+    Provider enum members (so `==` comparisons against Provider.* still work);
+    unknown ids are returned as plain strings — they will be routed through
+    LiteLLM by _to_litellm_args using the string as the LiteLLM prefix directly.
+    """
+    if isinstance(value, Provider):
+        return value
+    try:
+        return Provider(value)
+    except ValueError:
+        return value  # unknown LiteLLM provider — passthrough as string
+
+
 @dataclass(frozen=True, slots=True)
 class LLMDescriptor:
     """'openai:gpt-4o'  →  provider=openai, model='gpt-4o'"""
-    provider: Provider
+
+    provider: "str | Provider"
     model: str
 
     @classmethod
-    def parse(cls, spec: str | Tuple[str, str] | "LLMDescriptor") -> "LLMDescriptor":
+    def parse(cls, spec: "str | Tuple[str, str] | LLMDescriptor") -> "LLMDescriptor":
         if isinstance(spec, LLMDescriptor):
             return spec
         if isinstance(spec, tuple):
             provider, model = spec
-            return cls(Provider(provider), model)
+            return cls(_coerce_provider(provider), model)
         try:
             provider, model = spec.split(":", 1)
         except ValueError:
             return cls(Provider.OPENAI, spec)
-        return cls(Provider(provider), model)
+        return cls(_coerce_provider(provider), model)
 
     def key(self) -> str:
         """Return a unique key for the LLM descriptor."""
         return f"{self.provider}:{self.model}"
 
 
+# ---------------------------------------------------------------------------
+# LiteLLM provider routing
+# ---------------------------------------------------------------------------
+
+# Map our Provider enum to the prefix LiteLLM expects in its model strings
+# (e.g. "openai/gpt-4o", "anthropic/claude-sonnet-4-5", "xai/grok-4").
+# Notes:
+#   - Grok lives under the "xai" namespace in LiteLLM, not "grok".
+#   - Qwen uses DashScope under the hood; LiteLLM exposes it as "dashscope".
+#   - Zhipu (GLM) is exposed as "openai_compatible" with a base_url override —
+#     see _to_litellm_args() for the special case.
+#   - Ollama and MLX are NOT in this map: they take custom code paths.
+#   - CUSTOM is NOT in this map: CustomLLMClient bypasses LiteLLM entirely.
+_PROVIDER_TO_LITELLM_PREFIX: dict[Provider, str] = {
+    Provider.OPENAI: "openai",
+    Provider.AZURE: "azure",
+    Provider.GOOGLE: "gemini",
+    Provider.ANTHROPIC: "anthropic",
+    Provider.DEEPSEEK: "deepseek",
+    Provider.QWEN: "dashscope",
+    Provider.MISTRAL: "mistral",
+    Provider.GROQ: "groq",
+    Provider.GROK: "xai",
+}
+
+
+def _to_litellm_args(llm: LLMDescriptor) -> dict:
+    """
+    Translate an LLMDescriptor into kwargs accepted by litellm.acompletion().
+
+    For most providers this is just `{"model": "<prefix>/<model>"}`. Zhipu (GLM)
+    needs the OpenAI-compatible base_url override because LiteLLM does not have
+    a first-class Zhipu integration.
+    """
+    if llm.provider == Provider.ZHIPU:
+        # GLM ships an OpenAI-compatible endpoint; route via the openai/ prefix
+        # plus an explicit base_url + api_key from env.
+        api_key = os.getenv("ZHIPU_API_KEY")
+        if not api_key:
+            raise LLMConfigurationError(
+                "❌ Missing Zhipu GLM configuration!\n\n"
+                "Environment variable 'ZHIPU_API_KEY' is not set.\n\n"
+                "To fix this, set the environment variable:\n"
+                "  export ZHIPU_API_KEY='your-api-key-here'"
+            )
+        return {
+            "model": f"openai/{llm.model}",
+            "api_key": api_key,
+            "api_base": "https://open.bigmodel.cn/api/paas/v4",
+        }
+
+    # Known eval-lib providers (Provider enum) get translated via the alias
+    # map (e.g. google → gemini). Unknown ids are assumed to already match a
+    # LiteLLM provider name verbatim (cohere, bedrock, openrouter, ...) and
+    # are passed through as-is.
+    if isinstance(llm.provider, Provider):
+        prefix = _PROVIDER_TO_LITELLM_PREFIX.get(llm.provider)
+        if prefix is None:
+            raise ValueError(
+                f"Provider {llm.provider.value} has no LiteLLM mapping. "
+                "It should be handled via a native helper or CustomLLMClient."
+            )
+    else:
+        # Unknown provider id — treat it as a LiteLLM provider name directly.
+        prefix = str(llm.provider)
+    return {"model": f"{prefix}/{llm.model}"}
+
+
 def _check_env_var(var_name: str, provider: str, required: bool = True) -> Optional[str]:
     """
     Check if environment variable is set and return its value.
 
-    Args:
-        var_name: Name of the environment variable
-        provider: Provider name for error message
-        required: Whether this variable is required
-
-    Returns:
-        Value of the environment variable or None if not required
+    Used by the surviving non-LiteLLM paths (Ollama, MLX) to give friendly
+    error messages when expected env vars are missing.
 
     Raises:
         LLMConfigurationError: If required variable is missing
@@ -154,94 +267,23 @@ def _check_env_var(var_name: str, provider: str, required: bool = True) -> Optio
 @functools.cache
 def _get_client(provider: Provider):
     """
-    Get or create LLM client for the specified provider.
+    Get or create an HTTP client for providers that bypass LiteLLM.
 
-    Args:
-        provider: LLM provider enum
-
-    Returns:
-        Configured client instance
+    Only Ollama and MLX use this — every other provider goes through LiteLLM,
+    which manages its own clients internally.
 
     Raises:
         LLMConfigurationError: If required configuration is missing
-        ValueError: If provider is not supported
+        ValueError: If provider is not supported here
     """
-    if provider == Provider.OPENAI:
-        _check_env_var("OPENAI_API_KEY", "OpenAI")
-        return openai.AsyncOpenAI()
-
-    if provider == Provider.AZURE:
-        _check_env_var("AZURE_OPENAI_API_KEY", "Azure OpenAI")
-        _check_env_var("AZURE_OPENAI_ENDPOINT", "Azure OpenAI")
-
-        return AsyncAzureOpenAI(
-            api_key=os.getenv("AZURE_OPENAI_API_KEY"),
-            azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT"),
-            api_version=os.getenv("AZURE_OPENAI_API_VERSION", "2024-02-01"),
-        )
-
-    if provider == Provider.GOOGLE:
-        _check_env_var("GOOGLE_API_KEY", "Google Gemini")
-        return genai.Client(api_key=os.getenv("GOOGLE_API_KEY"))
-
     if provider == Provider.OLLAMA:
-        api_key = _check_env_var(
-            "OLLAMA_API_KEY", "Ollama", required=False) or "ollama"
-        base_url = _check_env_var(
-            "OLLAMA_API_BASE_URL", "Ollama", required=False) or "http://localhost:11434/v1"
-
-        return openai.AsyncOpenAI(
-            api_key=api_key,
-            base_url=base_url
+        api_key = _check_env_var("OLLAMA_API_KEY", "Ollama", required=False) or "ollama"
+        base_url = (
+            _check_env_var("OLLAMA_API_BASE_URL", "Ollama", required=False)
+            or "http://localhost:11434/v1"
         )
 
-    if provider == Provider.ANTHROPIC:
-        _check_env_var("ANTHROPIC_API_KEY", "Anthropic Claude")
-        return anthropic.AsyncAnthropic(
-            api_key=os.getenv("ANTHROPIC_API_KEY"),
-        )
-
-    if provider == Provider.DEEPSEEK:
-        _check_env_var("DEEPSEEK_API_KEY", "DeepSeek")
-        return openai.AsyncOpenAI(
-            api_key=os.getenv("DEEPSEEK_API_KEY"),
-            base_url="https://api.deepseek.com/v1",
-        )
-
-    if provider == Provider.QWEN:
-        _check_env_var("DASHSCOPE_API_KEY", "Qwen (DashScope)")
-        return openai.AsyncOpenAI(
-            api_key=os.getenv("DASHSCOPE_API_KEY"),
-            base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",
-        )
-
-    if provider == Provider.ZHIPU:
-        _check_env_var("ZHIPU_API_KEY", "Zhipu GLM")
-        return openai.AsyncOpenAI(
-            api_key=os.getenv("ZHIPU_API_KEY"),
-            base_url="https://open.bigmodel.cn/api/paas/v4",
-        )
-
-    if provider == Provider.MISTRAL:
-        _check_env_var("MISTRAL_API_KEY", "Mistral AI")
-        return openai.AsyncOpenAI(
-            api_key=os.getenv("MISTRAL_API_KEY"),
-            base_url="https://api.mistral.ai/v1",
-        )
-
-    if provider == Provider.GROQ:
-        _check_env_var("GROQ_API_KEY", "Groq")
-        return openai.AsyncOpenAI(
-            api_key=os.getenv("GROQ_API_KEY"),
-            base_url="https://api.groq.com/openai/v1",
-        )
-
-    if provider == Provider.GROK:
-        _check_env_var("XAI_API_KEY", "Grok (xAI)")
-        return openai.AsyncOpenAI(
-            api_key=os.getenv("XAI_API_KEY"),
-            base_url="https://api.x.ai/v1",
-        )
+        return openai.AsyncOpenAI(api_key=api_key, base_url=base_url)
 
     if provider == Provider.MLX:
         base_url = os.getenv("MLX_API_BASE_URL", "http://localhost:8899/v1")
@@ -250,109 +292,53 @@ def _get_client(provider: Provider):
             base_url=base_url,
         )
 
-    raise ValueError(f"Unsupported provider: {provider}")
+    raise ValueError(
+        f"Provider {provider.value} is routed through LiteLLM and does not have "
+        "a dedicated client. Use chat_complete() instead of _get_client()."
+    )
 
 
-async def _openai_chat_complete(
-    client,
+# ---------------------------------------------------------------------------
+# LiteLLM-backed helper (handles all standard cloud providers)
+# ---------------------------------------------------------------------------
+
+
+async def _litellm_chat_complete(
+    client,  # unused — kept for _HELPERS signature parity
     llm: LLMDescriptor,
     messages: list[dict[str, str]],
     temperature: float,
 ):
-    """OpenAI chat completion."""
+    """Universal chat completion via LiteLLM."""
+    args = _to_litellm_args(llm)
     try:
-        response = await client.chat.completions.create(
-            model=llm.model,
+        response = await litellm.acompletion(
             messages=messages,
             temperature=temperature,
+            **args,
         )
-        text = response.choices[0].message.content.strip()
-        cost = _calculate_cost(llm, response.usage)
-        return text, cost
-    except Exception as e:
-        if "API key" in str(e) or "authentication" in str(e).lower():
-            raise LLMConfigurationError(
-                f"❌ OpenAI API authentication failed!\n\n"
-                f"Error: {str(e)}\n\n"
-                f"Please check that your OPENAI_API_KEY is valid.\n"
-                f"Get your API key at: https://platform.openai.com/api-keys"
-            )
-        raise
-
-
-async def _azure_chat_complete(
-    client,
-    llm: LLMDescriptor,
-    messages: list[dict[str, str]],
-    temperature: float,
-):
-    """Azure OpenAI chat completion."""
-    deployment_name = os.getenv("AZURE_OPENAI_DEPLOYMENT") or llm.model
-
-    if not deployment_name:
+    except litellm.AuthenticationError as e:
         raise LLMConfigurationError(
-            f"❌ Missing Azure OpenAI deployment name!\n\n"
-            f"Please set AZURE_OPENAI_DEPLOYMENT environment variable.\n"
-            f"Example: export AZURE_OPENAI_DEPLOYMENT='gpt-4o'"
+            f"❌ {llm.provider.value} authentication failed!\n\n"
+            f"Error: {str(e)}\n\n"
+            f"Please check the relevant API key environment variable for your provider."
         )
 
-    try:
-        response = await client.chat.completions.create(
-            model=deployment_name,
-            messages=messages,
-            temperature=temperature,
-        )
-        text = response.choices[0].message.content.strip()
-        cost = _calculate_cost(llm, response.usage)
-        return text, cost
-    except Exception as e:
-        if "API key" in str(e) or "authentication" in str(e).lower():
-            raise LLMConfigurationError(
-                f"❌ Azure OpenAI authentication failed!\n\n"
-                f"Error: {str(e)}\n\n"
-                f"Please check your Azure OpenAI configuration:\n"
-                f"  - AZURE_OPENAI_API_KEY\n"
-                f"  - AZURE_OPENAI_ENDPOINT\n"
-                f"  - AZURE_OPENAI_DEPLOYMENT"
-            )
-        raise
+    text = response.choices[0].message.content
+    if text is None:
+        text = ""
+    text = text.strip()
+
+    # response.usage from LiteLLM is normalized to OpenAI-style fields
+    # (prompt_tokens, completion_tokens) regardless of the underlying provider,
+    # so our existing _calculate_cost() works without changes.
+    cost = _calculate_cost(llm, response.usage)
+    return text, cost
 
 
-async def _google_chat_complete(
-    client,
-    llm: LLMDescriptor,
-    messages: list[dict[str, str]],
-    temperature: float,
-):
-    """Google GenAI / Gemini chat completion."""
-    prompt = "\n".join(m["content"] for m in messages)
-
-    try:
-        response = await client.aio.models.generate_content(
-            model=llm.model,
-            contents=prompt,
-            config=GenerateContentConfig(temperature=temperature),
-        )
-
-        text = response.text.strip()
-
-        um = response.usage_metadata
-        usage = SimpleNamespace(
-            prompt_tokens=um.prompt_token_count,
-            completion_tokens=um.candidates_token_count,
-        )
-
-        cost = _calculate_cost(llm, usage)
-        return text, cost
-    except Exception as e:
-        if "API key" in str(e) or "authentication" in str(e).lower() or "credentials" in str(e).lower():
-            raise LLMConfigurationError(
-                f"❌ Google Gemini API authentication failed!\n\n"
-                f"Error: {str(e)}\n\n"
-                f"Please check that your GOOGLE_API_KEY is valid.\n"
-                f"Get your API key at: https://aistudio.google.com/apikey"
-            )
-        raise
+# ---------------------------------------------------------------------------
+# Native helpers (kept because LiteLLM doesn't cover their special cases)
+# ---------------------------------------------------------------------------
 
 
 async def _ollama_chat_complete(
@@ -398,41 +384,6 @@ async def _ollama_chat_complete(
         )
 
 
-async def _anthropic_chat_complete(
-    client,
-    llm: LLMDescriptor,
-    messages: list[dict[str, str]],
-    temperature: float,
-):
-    """Anthropic Claude chat completion."""
-    try:
-        response = await client.messages.create(
-            model=llm.model,
-            messages=messages,
-            temperature=temperature,
-            max_tokens=4096,
-        )
-        if isinstance(response.content, list):
-            text = "".join(
-                block.text for block in response.content if block.type == "text").strip()
-        else:
-            text = response.content.strip()
-
-        cost = _calculate_cost(llm, response.usage)
-        return text, cost
-    except Exception as e:
-        if "API key" in str(e) or "authentication" in str(e).lower():
-            raise LLMConfigurationError(
-                f"❌ Anthropic Claude API authentication failed!\n\n"
-                f"Error: {str(e)}\n\n"
-                f"Please check that your ANTHROPIC_API_KEY is valid.\n"
-                f"Get your API key at: https://console.anthropic.com/settings/keys"
-            )
-        raise
-
-
-import re as _re
-
 _THINK_RE = _re.compile(r"<think>[\s\S]*?</think>\s*", _re.DOTALL)
 
 
@@ -474,24 +425,33 @@ async def _mlx_chat_complete(
         raise
 
 
+# ---------------------------------------------------------------------------
+# Provider → helper dispatch
+# ---------------------------------------------------------------------------
+
 _HELPERS = {
-    Provider.OPENAI: _openai_chat_complete,
-    Provider.AZURE: _azure_chat_complete,
-    Provider.GOOGLE: _google_chat_complete,
+    # LiteLLM-backed (10 providers, single helper)
+    Provider.OPENAI: _litellm_chat_complete,
+    Provider.AZURE: _litellm_chat_complete,
+    Provider.GOOGLE: _litellm_chat_complete,
+    Provider.ANTHROPIC: _litellm_chat_complete,
+    Provider.DEEPSEEK: _litellm_chat_complete,
+    Provider.QWEN: _litellm_chat_complete,
+    Provider.ZHIPU: _litellm_chat_complete,
+    Provider.MISTRAL: _litellm_chat_complete,
+    Provider.GROQ: _litellm_chat_complete,
+    Provider.GROK: _litellm_chat_complete,
+    # Native paths (special cases LiteLLM doesn't cover well)
     Provider.OLLAMA: _ollama_chat_complete,
-    Provider.ANTHROPIC: _anthropic_chat_complete,
-    Provider.DEEPSEEK: _openai_chat_complete,
-    Provider.QWEN: _openai_chat_complete,
-    Provider.ZHIPU: _openai_chat_complete,
-    Provider.MISTRAL: _openai_chat_complete,
-    Provider.GROQ: _openai_chat_complete,
-    Provider.GROK: _openai_chat_complete,
     Provider.MLX: _mlx_chat_complete,
 }
 
+# Set of providers that go through LiteLLM (used by _HELPERS validation in tests).
+_LITELLM_PROVIDERS = frozenset(_PROVIDER_TO_LITELLM_PREFIX.keys())
+
 
 async def chat_complete(
-    llm: str | tuple[str, str] | LLMDescriptor | CustomLLMClient,
+    llm: "str | tuple[str, str] | LLMDescriptor | CustomLLMClient",
     messages: list[dict[str, str]],
     temperature: float = 0.0,
 ):
@@ -516,12 +476,17 @@ async def chat_complete(
 
     # Standard providers
     llm = LLMDescriptor.parse(llm)
-    helper = _HELPERS.get(llm.provider)
+    # Known providers have a dedicated helper in _HELPERS. Anything else is
+    # an auto-discovered LiteLLM provider — route it through the LiteLLM
+    # passthrough helper, which uses the provider id as the LiteLLM prefix.
+    helper = _HELPERS.get(llm.provider, _litellm_chat_complete)
 
-    if helper is None:
-        raise ValueError(f"Unsupported provider: {llm.provider}")
+    # Native paths need an HTTP client; LiteLLM-backed paths don't.
+    if llm.provider in (Provider.OLLAMA, Provider.MLX):
+        client = _get_client(llm.provider)
+    else:
+        client = None
 
-    client = _get_client(llm.provider)
     return await helper(client, llm, messages, temperature)
 
 
@@ -532,22 +497,23 @@ def _calculate_cost(llm: LLMDescriptor, usage) -> Optional[float]:
     if not usage:
         return None
 
-    price = model_pricing.get(llm.model)
+    price = get_cost_per_million(llm.model)
     if not price:
         return None
 
     prompt = getattr(usage, "prompt_tokens", 0)
     completion = getattr(usage, "completion_tokens", 0)
 
-    return round(
-        prompt * price["input"] / 1_000_000 +
-        completion * price["output"] / 1_000_000,
-        6
-    )
+    return round(prompt * price["input"] / 1_000_000 + completion * price["output"] / 1_000_000, 6)
+
+
+# ---------------------------------------------------------------------------
+# Embeddings — still uses the OpenAI SDK directly (separate slice, untouched)
+# ---------------------------------------------------------------------------
 
 
 async def get_embeddings(
-    model: str | tuple[str, str] | LLMDescriptor | CustomLLMClient,
+    model: "str | tuple[str, str] | LLMDescriptor | CustomLLMClient",
     texts: list[str],
 ) -> tuple[list[list[float]], Optional[float]]:
     """
@@ -572,10 +538,10 @@ async def get_embeddings(
     llm = LLMDescriptor.parse(model)
 
     if llm.provider != Provider.OPENAI:
-        raise ValueError(
-            f"Only OpenAI embedding models are supported, got {llm.provider}")
+        raise ValueError(f"Only OpenAI embedding models are supported, got {llm.provider}")
 
-    client = _get_client(llm.provider)
+    _check_env_var("OPENAI_API_KEY", "OpenAI")
+    client = openai.AsyncOpenAI()
     return await _openai_get_embeddings(client, llm, texts)
 
 
@@ -587,9 +553,7 @@ async def _openai_get_embeddings(
     """OpenAI embeddings implementation."""
     try:
         response = await client.embeddings.create(
-            model=llm.model,
-            input=texts,
-            encoding_format="float"
+            model=llm.model, input=texts, encoding_format="float"
         )
 
         embeddings = [data.embedding for data in response.data]
@@ -612,11 +576,11 @@ def _calculate_embedding_cost(llm: LLMDescriptor, usage) -> Optional[float]:
     if not usage:
         return None
 
-    price = model_pricing.get(llm.model)
+    price = get_cost_per_million(llm.model)
     if not price:
         return None
 
-    total_tokens = getattr(usage, 'total_tokens', 0)
+    total_tokens = getattr(usage, "total_tokens", 0)
     input_price = price.get("input", 0)
 
     return round(total_tokens * input_price / 1_000_000, 6)

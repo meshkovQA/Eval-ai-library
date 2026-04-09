@@ -241,31 +241,59 @@ function renderStep1() {
     return html;
 }
 
-function renderEvalModelSection() {
-    const curModel = state.evalModel || '';
-    const configuredProviders = state.providers.filter(p => p.has_key || (p.key_optional && Object.values(p.extra_configured || {}).some(v => v)));
-    const evalOpts = [];
-    configuredProviders.forEach(p => {
-        p.models.forEach(m => {
-            const val = p.id === 'openai' ? m : `${p.id}:${m}`;
-            evalOpts.push({ value: val, label: `${p.name} / ${m}` });
-        });
-    });
+// Parse a stored eval model string ("openai:gpt-4o", "gpt-4o-mini") into
+// {providerId, model}. Bare strings (no colon) are assumed to be openai.
+function parseEvalModel(value) {
+    if (!value) return { providerId: '', model: '' };
+    const idx = value.indexOf(':');
+    if (idx === -1) return { providerId: 'openai', model: value };
+    return { providerId: value.slice(0, idx), model: value.slice(idx + 1) };
+}
 
-    let html = `<div class="section-card" style="margin-bottom:16px;display:flex;align-items:center;gap:16px;padding:12px 18px">
+// Build the canonical "provider:model" string used by the backend.
+// OpenAI is the default and can be passed bare; everything else needs the prefix.
+function formatEvalModel(providerId, model) {
+    if (!providerId || !model) return '';
+    if (providerId === 'openai') return model;
+    return `${providerId}:${model}`;
+}
+
+function renderEvalModelSection() {
+    const configuredProviders = state.providers.filter(p => p.has_key || (p.key_optional && Object.values(p.extra_configured || {}).some(v => v)));
+
+    // Resolve current provider/model from state.evalModel. If the stored
+    // provider isn't configured anymore, fall back to the first configured one.
+    let { providerId, model } = parseEvalModel(state.evalModel);
+    if (configuredProviders.length && !configuredProviders.find(p => p.id === providerId)) {
+        providerId = configuredProviders[0].id;
+        model = '';
+    }
+    const activeProvider = configuredProviders.find(p => p.id === providerId);
+    if (activeProvider && activeProvider.models.length && !activeProvider.models.includes(model)) {
+        model = activeProvider.models[0];
+    }
+    // Sync back so subsequent saves see the resolved values
+    state.evalModel = formatEvalModel(providerId, model);
+
+    const providerOpts = configuredProviders.map(p => ({
+        value: p.id,
+        label: `${p.name} (${p.models.length})`,
+    }));
+    const modelOpts = (activeProvider?.models || []).map(m => ({ value: m, label: m }));
+
+    let html = `<div class="section-card" style="margin-bottom:16px;display:flex;align-items:center;gap:12px;padding:12px 18px;flex-wrap:wrap">
         <div style="flex-shrink:0">
             <div style="font-size:0.75em;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.3px">Eval Model</div>
-        </div>
-        <div style="flex:1;max-width:400px">`;
+        </div>`;
 
-    if (evalOpts.length) {
-        html += renderCustomSelect('evalModelSelect', evalOpts, curModel, 'Select model...');
+    if (configuredProviders.length) {
+        html += `<div style="flex:0 0 200px">${renderCustomSelect('evalProviderSelect', providerOpts, providerId, 'Provider...')}</div>`;
+        html += `<div style="flex:1 1 260px;min-width:220px;max-width:380px">${renderCustomSelect('evalModelSelect', modelOpts, model, modelOpts.length ? 'Model...' : 'No models')}</div>`;
     } else {
-        html += `<span style="color:var(--text-muted);font-size:0.85em">Configure a provider in Settings tab first</span>`;
+        html += `<div style="flex:1"><span style="color:var(--text-muted);font-size:0.85em">Configure a provider in Settings tab first</span></div>`;
     }
 
-    html += `</div>
-        <div style="margin-left:auto;display:flex;align-items:center;gap:8px">`;
+    html += `<div style="margin-left:auto;display:flex;align-items:center;gap:8px">`;
     const configuredCount = configuredProviders.length;
     const totalCount = state.providers.length;
     html += `<span style="font-size:0.75em;color:var(--text-muted)">${configuredCount}/${totalCount} providers</span>`;
@@ -602,29 +630,27 @@ function renderTabSettings() {
     const a = state.apiConfig;
     let html = '';
 
-    // LLM Providers — compact list
+    // LLM Providers — dropdown selector + configuration panel for the chosen one
+    const isProviderReady = (p) => p.has_key || (p.key_optional && Object.values(p.extra_configured || {}).some(v => v));
+
+    // Pick a default active provider on first render: prefer one that's already configured
+    if (!state._activeProvider && state.providers.length) {
+        const firstReady = state.providers.find(isProviderReady);
+        state._activeProvider = (firstReady || state.providers[0]).id;
+    }
+
+    const providerOpts = state.providers.map(p => ({
+        value: p.id,
+        label: `${isProviderReady(p) ? '\u2713 ' : '\u25CB '}${p.name}`,
+    }));
+    const configuredCount = state.providers.filter(isProviderReady).length;
+
     html += `<div class="section-card">
         <div class="section-card-title">LLM Providers</div>
-        <p style="font-size:0.8em;color:var(--text-muted);margin-bottom:12px">Click a provider to configure its API key. Keys are stored locally.</p>
-        <div class="provider-chips" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px">`;
-
-    state.providers.forEach(p => {
-        const isActive = state._activeProvider === p.id;
-        const isReady = p.has_key || (p.key_optional && Object.values(p.extra_configured || {}).some(v => v));
-        const activeCls = isActive ? ' active' : '';
-        html += `<button class="provider-chip${activeCls}" onclick="toggleProviderConfig('${esc(p.id)}')" style="
-            display:inline-flex;align-items:center;gap:5px;
-            padding:5px 12px;border-radius:20px;border:1px solid ${isReady ? 'var(--success)' : 'var(--border)'};
-            background:${isActive ? 'var(--accent-light)' : (isReady ? 'var(--success-bg, rgba(34,197,94,0.08))' : 'var(--bg)')};
-            color:${isReady ? 'var(--success)' : 'var(--text-muted)'};
-            cursor:pointer;font-size:0.8em;font-weight:500;transition:all 0.15s;font-family:inherit;
-        ">
-            ${isReady ? '<span style="font-size:0.85em">&#10003;</span>' : '<span style="opacity:0.5">&#9679;</span>'}
-            ${esc(p.name)}
-        </button>`;
-    });
-
-    html += `</div>`;
+        <p style="font-size:0.8em;color:var(--text-muted);margin-bottom:12px">Pick a provider from the list and configure its API key. Keys are stored locally. ${configuredCount}/${state.providers.length} configured.</p>
+        <div style="max-width:340px;margin-bottom:14px">
+            ${renderCustomSelect('settingsProviderSelect', providerOpts, state._activeProvider || '', 'Select provider...')}
+        </div>`;
 
     // Active provider config panel
     const activeP = state.providers.find(p => p.id === state._activeProvider);
@@ -692,7 +718,7 @@ function renderTabSettings() {
 
             if (activeP.models.length) {
                 html += `<div style="margin-top:8px;font-size:0.75em;color:var(--text-muted)">
-                    Models: ${activeP.models.map(m => `<code style="background:var(--bg);padding:1px 5px;border-radius:3px;font-size:0.95em">${esc(m)}</code>`).join(' ')}
+                    ${activeP.models.length} models available &mdash; pick one when launching an evaluation.
                 </div>`;
             }
 
@@ -740,18 +766,11 @@ function renderTabSettings() {
     return html;
 }
 
-function toggleProviderConfig(providerId) {
-    if (state._activeProvider === providerId) {
-        state._activeProvider = null;
-    } else {
-        state._activeProvider = providerId;
-    }
-    renderStep(1);
-}
-
 function onEvalModelChange() {
-    const evalVal = getSelectValue('evalModelSelect');
-    if (evalVal) state.evalModel = evalVal;
+    // Recompose state.evalModel from the two cascade selects.
+    const providerId = getSelectValue('evalProviderSelect') || parseEvalModel(state.evalModel).providerId;
+    const model = getSelectValue('evalModelSelect') || parseEvalModel(state.evalModel).model;
+    if (providerId && model) state.evalModel = formatEvalModel(providerId, model);
 }
 
 function initStep1() {
@@ -766,8 +785,29 @@ function initStep1() {
     if (configSel) configSel.addEventListener('change', () => loadSelectedConfig());
     const methodSel = document.getElementById('apiMethod');
     if (methodSel) methodSel.addEventListener('change', () => {});
+
+    // Settings tab: provider dropdown swaps the configuration panel below
+    const settingsProvSel = document.getElementById('settingsProviderSelect');
+    if (settingsProvSel) settingsProvSel.addEventListener('change', (e) => {
+        state._activeProvider = e.detail || null;
+        renderStep(1);
+    });
+
+    // Eval-model cascade: changing the provider re-renders so the model
+    // dropdown is repopulated; changing the model just updates state.
+    const evalProvSel = document.getElementById('evalProviderSelect');
+    if (evalProvSel) evalProvSel.addEventListener('change', (e) => {
+        const newPid = e.detail;
+        const provider = state.providers.find(p => p.id === newPid);
+        const firstModel = provider?.models?.[0] || '';
+        state.evalModel = formatEvalModel(newPid, firstModel);
+        renderStep(1);
+    });
     const evalSel = document.getElementById('evalModelSelect');
-    if (evalSel) evalSel.addEventListener('change', (e) => { state.evalModel = e.detail; });
+    if (evalSel) evalSel.addEventListener('change', (e) => {
+        const providerId = getSelectValue('evalProviderSelect') || parseEvalModel(state.evalModel).providerId;
+        state.evalModel = formatEvalModel(providerId, e.detail);
+    });
 
     // Bind custom-select dropdowns in metric params to their hidden inputs
     document.querySelectorAll('.metric-cs-hidden').forEach(hidden => {
@@ -847,8 +887,10 @@ function saveStep1() {
     a.timeout_seconds = parseInt(document.getElementById('apiTimeout')?.value) || a.timeout_seconds;
     a.max_retries = parseInt(document.getElementById('apiRetries')?.value) || a.max_retries;
     a.delay_between_requests_ms = parseInt(document.getElementById('apiDelay')?.value) || a.delay_between_requests_ms;
-    const evalVal2 = getSelectValue('evalModelSelect');
-    if (evalVal2) state.evalModel = evalVal2;
+    // Compose the canonical "provider:model" from the cascade selects.
+    const provVal = getSelectValue('evalProviderSelect');
+    const modelVal = getSelectValue('evalModelSelect');
+    if (provVal && modelVal) state.evalModel = formatEvalModel(provVal, modelVal);
     const costEl = document.getElementById('costPer1m');
     if (costEl) state.costPer1mTokens = parseFloat(costEl.value) || 0;
 

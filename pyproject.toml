@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "eval-ai-library"
-version = "0.5.5"
+version = "0.6.1"
 description = "Comprehensive AI Model Evaluation Framework with support for multiple LLM providers"
 readme = "README.md"
 authors = [
@@ -28,7 +28,14 @@ keywords = ["ai", "evaluation", "llm", "rag", "metrics", "testing", "quality-ass
 requires-python = ">=3.9"
 
 dependencies = [
-    # Core LLM providers
+    # Unified LLM router — handles 100+ providers via a single API.
+    # Replaces hand-rolled per-provider chat completion paths in eval_lib/llm_client.py
+    # for everything except Ollama (native API) and MLX (custom <think> handling).
+    # Pinned exactly: LiteLLM ships almost daily with occasional regressions, so
+    # bump deliberately and re-run the suite when we want a newer version.
+    "litellm==1.77.1",
+    # Core LLM providers — kept because LiteLLM imports them lazily,
+    # and our get_embeddings() still uses the OpenAI SDK directly.
     "openai>=1.0.0",
     "anthropic>=0.18.0",
     "google-genai>=0.2.0",
@@ -73,6 +80,7 @@ lite = [
 ]
 # LLM as a judge — only LLM providers, no local models or document processing
 llm = [
+    "litellm==1.77.1",
     "openai>=1.0.0",
     "anthropic>=0.18.0",
     "google-genai>=0.2.0",

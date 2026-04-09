@@ -254,75 +254,123 @@ def delete_config(config_id):
 
 
 # --- Provider / API key management ---
+#
+# PROVIDERS holds metadata only (display name, env vars, flags). The list of
+# available models is no longer hand-maintained — it is fetched dynamically from
+# eval_lib.model_catalog (which wraps litellm.models_by_provider) inside
+# list_providers() below.
+#
+# The PROVIDERS dict itself is also built dynamically: a hand-curated list of
+# "first-class" providers (openai/anthropic/azure/...) with friendly env-var
+# conventions, plus an auto-generated entry for every additional LiteLLM
+# provider that ships at least one chat model. This means new LiteLLM
+# integrations show up in the connector UI as soon as you upgrade litellm,
+# without touching this file.
 
-PROVIDERS = {
+from eval_lib.model_catalog import (
+    get_all_litellm_chat_providers,
+    get_models_for_provider,
+    get_provider_display_name,
+    get_provider_env_vars,
+)
+
+# First-class providers — hand-tuned display names, env-var sets and flags.
+# These wrap eval-lib's own routing aliases (google → gemini, qwen → dashscope,
+# grok → xai) and the native paths (ollama, mlx, custom, zhipu).
+_FIRST_CLASS_PROVIDERS: dict[str, dict] = {
     "openai": {
         "name": "OpenAI",
         "env_var": "OPENAI_API_KEY",
-        "models": ["gpt-5", "gpt-5-mini", "gpt-5-nano", "gpt-4.1", "gpt-4.1-mini", "gpt-4.1-nano", "gpt-4o", "gpt-4o-mini", "gpt-4.5-preview", "o4-mini"],
     },
     "anthropic": {
         "name": "Anthropic",
         "env_var": "ANTHROPIC_API_KEY",
-        "models": ["claude-opus-4-6-20250619", "claude-opus-4-5-20250415", "claude-sonnet-4-6-20250619", "claude-sonnet-4-5-20250415", "claude-haiku-4-5-20251001"],
     },
     "google": {
         "name": "Google",
         "env_var": "GOOGLE_API_KEY",
-        "models": ["gemini-2.5-pro", "gemini-2.5-flash", "gemini-2.0-flash", "gemini-2.0-flash-lite"],
     },
     "azure": {
         "name": "Azure OpenAI",
         "env_var": "AZURE_OPENAI_API_KEY",
         "extra_vars": ["AZURE_OPENAI_ENDPOINT", "AZURE_OPENAI_API_VERSION"],
-        "models": ["gpt-4.1", "gpt-4.5-preview", "gpt-4o", "gpt-4o-mini", "gpt-4", "gpt-4-32k", "gpt-35-turbo"],
     },
     "ollama": {
         "name": "Ollama (Local)",
         "env_var": "OLLAMA_API_KEY",
         "extra_vars": ["OLLAMA_API_BASE_URL"],
-        "models": ["llama3.3", "llama3.1", "mistral", "mixtral", "phi4", "gemma2", "qwen2.5"],
         "key_optional": True,
     },
     "deepseek": {
         "name": "DeepSeek",
         "env_var": "DEEPSEEK_API_KEY",
-        "models": ["deepseek-chat", "deepseek-v3.2", "deepseek-v3.2-exp", "deepseek-v3.1", "deepseek-v3", "deepseek-reasoner", "deepseek-r1", "deepseek-r1-lite"],
     },
     "qwen": {
         "name": "Qwen (Alibaba)",
         "env_var": "DASHSCOPE_API_KEY",
-        "models": ["qwen-max", "qwen-plus", "qwen-turbo", "qwen-long", "qwq-plus"],
     },
     "zhipu": {
         "name": "Zhipu GLM",
         "env_var": "ZHIPU_API_KEY",
-        "models": ["glm-4-plus", "glm-4-air", "glm-4-airx", "glm-4-long", "glm-4-flash", "glm-4-flashx"],
     },
     "mistral": {
         "name": "Mistral AI",
         "env_var": "MISTRAL_API_KEY",
-        "models": ["mistral-large-latest", "mistral-small-latest", "codestral-latest", "pixtral-large-latest", "ministral-8b-latest"],
     },
     "groq": {
         "name": "Groq",
         "env_var": "GROQ_API_KEY",
-        "models": ["llama-3.3-70b-versatile", "llama-3.1-8b-instant", "llama-3.2-90b-vision-preview", "mixtral-8x7b-32768", "gemma2-9b-it", "deepseek-r1-distill-llama-70b"],
     },
     "grok": {
         "name": "Grok (xAI)",
         "env_var": "XAI_API_KEY",
-        "models": ["grok-4.1", "grok-4", "grok-4-heavy", "grok-4-fast", "grok-beta", "grok-3", "grok-2"],
     },
     "custom": {
         "name": "Custom LLM",
         "env_var": "CUSTOM_LLM_API_KEY",
         "extra_vars": ["CUSTOM_LLM_BASE_URL"],
-        "models": [],
         "key_optional": True,
         "is_custom_llm": True,
     },
 }
+
+# LiteLLM provider ids that are duplicates / aliases of a first-class provider.
+# Skipped during auto-discovery so we don't show two entries for the same backend.
+_FIRST_CLASS_LITELLM_ALIASES = {
+    "openai",     # → first_class "openai"
+    "anthropic",  # → first_class "anthropic"
+    "gemini",     # → first_class "google"
+    "azure",      # → first_class "azure"
+    "deepseek",   # → first_class "deepseek"
+    "dashscope",  # → first_class "qwen"
+    "mistral",    # → first_class "mistral"
+    "groq",       # → first_class "groq"
+    "xai",        # → first_class "grok"
+}
+
+
+def _build_providers() -> dict[str, dict]:
+    """
+    Compose the full provider dictionary at import time. Order:
+        1. First-class providers in their declared order (openai → custom).
+        2. All other LiteLLM providers with chat models, alphabetically.
+    """
+    providers: dict[str, dict] = dict(_FIRST_CLASS_PROVIDERS)
+    for pid in get_all_litellm_chat_providers():
+        if pid in _FIRST_CLASS_LITELLM_ALIASES or pid in providers:
+            continue
+        env_vars = get_provider_env_vars(pid)
+        primary = env_vars[0] if env_vars else f"{pid.upper()}_API_KEY"
+        extras = env_vars[1:]
+        providers[pid] = {
+            "name": get_provider_display_name(pid),
+            "env_var": primary,
+            "extra_vars": extras,
+        }
+    return providers
+
+
+PROVIDERS = _build_providers()
 
 
 def _get_api_keys_path() -> Path:
@@ -438,12 +486,16 @@ def list_providers():
         for ev in pinfo.get("extra_vars", []):
             extra[ev] = bool(os.environ.get(ev) or keys.get(ev))
 
+        # Pull models dynamically from LiteLLM via model_catalog. This replaces
+        # the old hand-maintained pinfo["models"] lists.
+        models = get_models_for_provider(pid)
+
         item = {
             "id": pid,
             "name": pinfo["name"],
             "env_var": env_var,
             "extra_vars": pinfo.get("extra_vars", []),
-            "models": pinfo["models"],
+            "models": models,
             "configured": has_key or pinfo.get("key_optional", False),
             "has_key": has_key,
             "key_optional": pinfo.get("key_optional", False),

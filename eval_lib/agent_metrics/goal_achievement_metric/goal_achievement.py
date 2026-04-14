@@ -35,7 +35,6 @@ class GoalAchievementRateMetric(ConversationalMetricPattern):
         self,
         model: str,
         threshold: float = 0.7,
-        temperature: float = 0.5,
         verbose: bool = False,
         user_goal: Optional[str] = None,
     ):
@@ -43,14 +42,11 @@ class GoalAchievementRateMetric(ConversationalMetricPattern):
         Args:
             model: LLM model name
             threshold: Success threshold (0.0-1.0)
-            temperature: Reserved for future multi-verdict aggregation; kept
-                for surface consistency with peer metrics.
             user_goal: Optional user-provided description of what the user
                 actually wanted out of the conversation. When set, skips the
                 goal-inference LLM call.
         """
         super().__init__(model=model, threshold=threshold, verbose=verbose)
-        self.temperature = temperature
         self.user_goal = user_goal
 
     # ==================== HELPERS ====================
@@ -66,11 +62,56 @@ class GoalAchievementRateMetric(ConversationalMetricPattern):
     def _prompt_label_help() -> str:
         return """Rate goal achievement (worst → best):
 
-none    – user did not get what they wanted at all
-minor   – user got a tiny fraction of what they wanted
-partial – user got part of what they wanted, significant gaps remain
-mostly  – user got what they wanted with minor gaps
-fully   – user fully got what they wanted"""
+none    – user did not get what they wanted at all; the desired outcome is
+          entirely absent or directly refused.
+minor   – user got only a tiny fraction of what they wanted; a token gesture
+          that does not meaningfully advance the goal.
+partial – user got part of what they wanted, but significant gaps remain;
+          they would still need to seek help elsewhere to finish.
+mostly  – user got what they wanted with only minor gaps; the outcome is
+          usable as-is, maybe with small follow-ups.
+fully   – user fully got what they wanted; the desired outcome was delivered
+          and the user either confirmed it or had no remaining asks.
+
+Scoring rules:
+- Judge OUTCOME, not effort. A long, polite reply that doesn't actually deliver
+  what the user wanted is "none" or "minor", not "mostly".
+- If the user expressed clear dissatisfaction at the end (frustration, "that's
+  wrong", giving up), cap the verdict at "partial" regardless of content.
+- If the user's goal was multi-part and only some parts were delivered, pick
+  the label that reflects the fraction actually delivered."""
+
+    @staticmethod
+    def _verdict_few_shot() -> str:
+        return """EXAMPLE 1 (fully):
+USER GOAL: Get a working fix for a KeyError in a Python script.
+DIALOGUE:
+1. User: My script crashes with KeyError: 'name'.
+   Assistant: Use data.get('name') to safely return None when missing.
+2. User: That worked, thanks!
+   Assistant: Glad to help.
+OBSERVED SIGNALS: positive=["That worked, thanks!"], negative=[], unmet=[]
+Verdict: {"verdict": "fully", "reason": "Assistant provided a direct working fix and the user explicitly confirmed success."}
+
+EXAMPLE 2 (partial):
+USER GOAL: Book a specific flight from NYC to SF for Friday morning.
+DIALOGUE:
+1. User: Book me NYC→SF for Friday morning.
+   Assistant: Here are three morning options.
+2. User: Pick the 8:30 one and book it.
+   Assistant: I cannot actually book flights, but here's a link to the airline.
+OBSERVED SIGNALS: positive=[], negative=[], unmet=["Actual booking not completed"]
+Verdict: {"verdict": "partial", "reason": "Options were shown but the actual booking request was not fulfilled; user still needs to take action elsewhere."}
+
+EXAMPLE 3 (none):
+USER GOAL: Understand why their deployment is failing.
+DIALOGUE:
+1. User: My deploy keeps failing with exit code 1. What's wrong?
+   Assistant: Exit code 1 means a generic error. You should check your logs.
+2. User: I checked, I don't see anything obvious. Help me debug?
+   Assistant: Deployment issues can have many causes. Good luck.
+OBSERVED SIGNALS: positive=[], negative=["Help me debug?"], unmet=["Actual debugging help"]
+Verdict: {"verdict": "none", "reason": "Assistant only offered generic platitudes and declined to engage with the actual debugging request."}"""
 
     # ==================== CORE EVALUATION STEPS ====================
 
@@ -127,13 +168,17 @@ fully   – user fully got what they wanted"""
         self, goal: str, dialogue: str, signals: Dict[str, List[str]]
     ) -> Tuple[Dict[str, str], float]:
         prompt = (
+            "You are an expert dialogue evaluator judging OUTCOMES, not effort. "
+            "Decide whether the user actually got what they wanted by the end "
+            "of the conversation.\n\n"
             f"{self._prompt_label_help()}\n\n"
+            f"{self._verdict_few_shot()}\n\n"
+            f"CASE TO EVALUATE:\n"
             f"USER GOAL: {goal}\n\n"
             f"DIALOGUE:\n{dialogue}\n\n"
             f"OBSERVED SIGNALS:\n{json.dumps(signals, ensure_ascii=False, indent=2)}\n\n"
-            "Judge the OUTCOME: did the user actually get what they wanted by the end?\n"
             "Return ONLY a JSON object:\n"
-            '{"verdict": "fully|mostly|partial|minor|none", "reason": "<one sentence>"}'
+            '{"verdict": "fully|mostly|partial|minor|none", "reason": "<one or two sentences>"}'
         )
         text, cost = await chat_complete(
             self.model,
@@ -211,7 +256,6 @@ fully   – user fully got what they wanted"""
             "final_score": final_score,
             "comment_final_score": "Base verdict weight minus 0.1 * count(negative_signals), floored at 0.",
             "threshold": self.threshold,
-            "temperature": self.temperature,
             "success": success,
             "final_reason": summary,
         }

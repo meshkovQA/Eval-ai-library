@@ -6,7 +6,7 @@ the user achieve their goal in a conversation.
 Score calculation: Softmax aggregation of success criteria verdicts
 """
 import json
-from typing import List, Dict, Any, Tuple, Union
+from typing import List, Dict, Any, Optional, Tuple, Union
 from eval_lib.testcases_schema import ConversationalEvalTestCase, EvalTestCase
 from eval_lib.metric_pattern import ConversationalMetricPattern, MetricPattern
 from eval_lib.llm_client import chat_complete
@@ -36,7 +36,9 @@ class TaskSuccessRateMetric(MetricPattern, ConversationalMetricPattern):
         model: str,
         threshold: float = 0.7,
         temperature: float = 0.5,
-        verbose: bool = False
+        verbose: bool = False,
+        task_description: Optional[str] = None,
+        success_criteria: Optional[List[str]] = None,
     ):
         """
         Initialize Task Success Rate metric.
@@ -45,6 +47,10 @@ class TaskSuccessRateMetric(MetricPattern, ConversationalMetricPattern):
             model: LLM model name
             threshold: Success threshold (0.0-1.0)
             temperature: Score aggregation temperature for softmax
+            task_description: Optional user-provided description of the task/goal.
+                When set, skips the goal-inference LLM call and uses this value directly.
+            success_criteria: Optional user-provided list of success criteria.
+                When set, skips the criteria-generation LLM call and uses this list directly.
         """
         super().__init__(model=model, threshold=threshold, verbose=verbose)
         self.temperature = temperature
@@ -54,6 +60,8 @@ class TaskSuccessRateMetric(MetricPattern, ConversationalMetricPattern):
         ConversationalMetricPattern.__init__(
             self, model=model, threshold=threshold, verbose=verbose)
         self.temperature = temperature
+        self.task_description = task_description
+        self.success_criteria = success_criteria
 
     # ==================== HELPER METHODS ====================
     @staticmethod
@@ -277,13 +285,23 @@ Criteria: [
         # Step 1: Format dialogue
         dialogue_text = self._render_dialogue(test_case.turns)
 
-        # Step 2: Infer user goal
-        user_goal, cost = await self._infer_user_goal(dialogue_text)
-        total_cost += cost
+        # Step 2: Resolve user goal — user-provided short-circuits LLM inference
+        if self.task_description:
+            user_goal = self.task_description
+            task_description_source = "user_provided"
+        else:
+            user_goal, cost = await self._infer_user_goal(dialogue_text)
+            total_cost += cost
+            task_description_source = "llm_inferred"
 
-        # Step 3: Generate success criteria
-        success_criteria, cost = await self._generate_success_criteria(user_goal, dialogue_text)
-        total_cost += cost
+        # Step 3: Resolve success criteria — user-provided short-circuits LLM generation
+        if self.success_criteria is not None:
+            success_criteria = list(self.success_criteria)
+            success_criteria_source = "user_provided"
+        else:
+            success_criteria, cost = await self._generate_success_criteria(user_goal, dialogue_text)
+            total_cost += cost
+            success_criteria_source = "llm_inferred"
 
         # Step 4: Generate verdicts for each criterion
         verdicts, verdict_score, cost = await self._generate_verdicts(
@@ -308,9 +326,13 @@ Criteria: [
             "number_of_turns": len(test_case.turns),
             "comment_number_of_turns": "Total conversation turns analyzed.",
             "user_goal": user_goal,
-            "comment_user_goal": "LLM-inferred primary goal the user wanted to achieve.",
+            "comment_user_goal": "Primary goal the user wanted to achieve (user-provided or LLM-inferred).",
+            "task_description_source": task_description_source,
+            "comment_task_description_source": "Whether user_goal came from the caller (user_provided) or LLM inference (llm_inferred).",
             "success_criteria": success_criteria,
-            "comment_success_criteria": f"Auto-generated checklist of {len(success_criteria)} observable criteria for task completion.",
+            "comment_success_criteria": f"Checklist of {len(success_criteria)} observable criteria for task completion (user-provided or LLM-generated).",
+            "success_criteria_source": success_criteria_source,
+            "comment_success_criteria_source": "Whether success_criteria came from the caller (user_provided) or LLM generation (llm_inferred).",
             "verdicts": verdicts,
             "comment_verdicts": "LLM-generated verdicts assessing each criterion (fully/mostly/partial/minor/none).",
             "verdict_weights": {i: VERDICT_WEIGHTS.get(v["verdict"], 0.0) for i, v in enumerate(verdicts)},

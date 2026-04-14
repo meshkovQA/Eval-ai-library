@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "eval-ai-library"
-version = "0.6.2"
+version = "0.7.1"
 description = "Comprehensive AI Model Evaluation Framework with support for multiple LLM providers"
 readme = "README.md"
 authors = [
@@ -27,22 +27,75 @@ classifiers = [
 keywords = ["ai", "evaluation", "llm", "rag", "metrics", "testing", "quality-assurance"]
 requires-python = ">=3.9"
 
+#
+# Required deps — what `pip install eval-ai-library` needs to run the core
+# LLM-as-a-judge metrics, the connector UI, and tracing. Heavy ML / document /
+# PII libraries live in optional extras (see [project.optional-dependencies]).
+#
+# Sizing: this list installs in ~50MB. Adding [full] brings it to ~3GB because
+# of torch + CUDA toolkit, so the split is intentional.
+#
 dependencies = [
     # Unified LLM router — handles 100+ providers via a single API.
-    # Replaces hand-rolled per-provider chat completion paths in eval_lib/llm_client.py
-    # for everything except Ollama (native API) and MLX (custom <think> handling).
-    # Pinned exactly: LiteLLM ships almost daily with occasional regressions, so
-    # bump deliberately and re-run the suite when we want a newer version.
+    # Pinned exactly: LiteLLM ships almost daily with occasional regressions.
     "litellm==1.77.1",
-    # Core LLM providers — kept because LiteLLM imports them lazily,
-    # and our get_embeddings() still uses the OpenAI SDK directly.
+    # OpenAI SDK — used directly by get_embeddings() (LiteLLM doesn't cover
+    # embeddings in our flow) and lazy-loaded by litellm for OpenAI calls.
+    "openai>=1.0.0",
+    # Anthropic + Google SDKs — litellm imports them lazily but they're tiny
+    # and most users hit at least one of them, so keep them in the base set.
+    "anthropic>=0.18.0",
+    "google-genai>=0.2.0",
+    # Schemas and numerics — used in core eval metrics (no escape hatch).
+    "pydantic>=2.0.0",
+    "numpy>=1.24.0",
+    # Connector UI lives behind a Flask blueprint.
+    "flask>=3.0.0",
+    # Tracing transport + Ollama native HTTP path.
+    "aiohttp>=3.8.0",
+    # Config files used by the connector.
+    "PyYAML>=6.0.0",
+]
+
+[project.optional-dependencies]
+# ----- minimal subsets ------------------------------------------------------
+# Tracing-only install (no LLM clients) — for users who only want to ship spans
+# to an external collector without running evals locally.
+lite = [
+    "pydantic>=2.0.0",
+    "aiohttp>=3.8.0",
+]
+# Alias for the base install — kept for backward compatibility with users who
+# wrote `pip install eval-ai-library[llm]` before the 0.7.0 split.
+llm = [
+    "litellm==1.77.1",
     "openai>=1.0.0",
     "anthropic>=0.18.0",
     "google-genai>=0.2.0",
     "pydantic>=2.0.0",
     "numpy>=1.24.0",
+    "flask>=3.0.0",
+    "aiohttp>=3.8.0",
+]
 
-    # Data generation dependencies
+# ----- feature extras -------------------------------------------------------
+# Local ML models for jailbreak / prompt-injection / harmful-content detection.
+# This is the BIG one — torch alone pulls ~800MB and the CUDA toolkit on Linux
+# adds several more GB. Only install if you actually run those security metrics.
+local-models = [
+    "torch>=2.0.0",
+    "transformers>=4.30.0",
+]
+
+# PII leakage detection via Microsoft Presidio. Pulls spaCy + a language model.
+pii = [
+    "presidio-analyzer>=2.2.0",
+    "spacy>=3.0.0,<3.8.0",
+]
+
+# Dataset generation from documents (DatasetGenerator, DocumentLoader). Pulls
+# the langchain document-loader stack and a pile of file-format parsers.
+datagen = [
     "langchain>=0.1.0",
     "langchain-community>=0.0.10",
     "langchain-core>=0.1.0",
@@ -55,40 +108,57 @@ dependencies = [
     "python-pptx>=0.6.21",
     "PyMuPDF>=1.23.0",
     "mammoth>=1.6.0",
-    "PyYAML>=6.0.0",
     "html2text>=2020.1.16",
     "markdown>=3.4.0",
     "pandas>=2.0.0",
     "striprtf>=0.0.26",
-    "transformers>=4.30.0",
+]
+
+# LangChain callback handler for tracing eval-lib spans into LangChain runs.
+langchain = [
+    "langchain-core>=0.1.0",
+]
+
+# Embedding-based metrics (semantic similarity, reference match) using a local
+# sentence-transformers model.
+vectors = [
+    "sentence-transformers>=2.0.0",
+]
+
+# Pure-deterministic metrics (regex / json schema / language detection).
+deterministic = [
+    "jsonschema>=4.0.0",
+    "langdetect>=1.0.9",
+]
+
+# Everything in one go — equivalent to the pre-0.7.0 default install.
+full = [
     "torch>=2.0.0",
+    "transformers>=4.30.0",
     "presidio-analyzer>=2.2.0",
     "spacy>=3.0.0,<3.8.0",
-
-    # Dashboard dependencies
-    "flask>=3.0.0",
-
-    # Tracing dependencies
-    "aiohttp>=3.8.0",
+    "langchain>=0.1.0",
+    "langchain-community>=0.0.10",
+    "langchain-core>=0.1.0",
+    "langchain-text-splitters>=0.2.0",
+    "pypdf>=3.0.0",
+    "python-docx>=0.8.11",
+    "openpyxl>=3.1.0",
+    "pillow>=10.0.0",
+    "pytesseract>=0.3.10",
+    "python-pptx>=0.6.21",
+    "PyMuPDF>=1.23.0",
+    "mammoth>=1.6.0",
+    "html2text>=2020.1.16",
+    "markdown>=3.4.0",
+    "pandas>=2.0.0",
+    "striprtf>=0.0.26",
+    "sentence-transformers>=2.0.0",
+    "jsonschema>=4.0.0",
+    "langdetect>=1.0.9",
 ]
 
-[project.optional-dependencies]
-# Lightweight installation for tracing only
-lite = [
-    "pydantic>=2.0.0",
-    "aiohttp>=3.8.0",
-]
-# LLM as a judge — only LLM providers, no local models or document processing
-llm = [
-    "litellm==1.77.1",
-    "openai>=1.0.0",
-    "anthropic>=0.18.0",
-    "google-genai>=0.2.0",
-    "pydantic>=2.0.0",
-    "numpy>=1.24.0",
-    "flask>=3.0.0",
-    "aiohttp>=3.8.0",
-]
+# ----- developer / docs -----------------------------------------------------
 dev = [
     "pytest>=7.0.0",
     "pytest-asyncio>=0.21.0",
@@ -96,13 +166,6 @@ dev = [
     "flake8>=6.0.0",
     "mypy>=1.0.0",
     "isort>=5.12.0",
-]
-vectors = [
-    "sentence-transformers>=2.0.0",
-]
-deterministic = [
-    "jsonschema>=4.0.0",
-    "langdetect>=1.0.9",
 ]
 docs = [
     "sphinx>=6.0.0",

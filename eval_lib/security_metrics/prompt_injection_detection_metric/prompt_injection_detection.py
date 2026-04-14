@@ -136,10 +136,12 @@ JSON:"""
             self._log(
                 f"Model loaded successfully on {self._device}", "\033[92m")
 
-        except ImportError:
+        except ImportError as e:
             raise RuntimeError(
-                "transformers and torch are required for model-based detection. "
-                "Install with: pip install transformers torch"
+                "PromptInjectionDetectionMetric requires the 'local-models' extra "
+                "(torch + transformers).\n"
+                "Install with: pip install eval-ai-library[local-models]\n"
+                f"Underlying error: {e}"
             )
         except Exception as e:
             raise RuntimeError(f"Failed to load DeBERTa model: {str(e)}")

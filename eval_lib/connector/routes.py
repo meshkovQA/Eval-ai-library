@@ -349,11 +349,18 @@ _FIRST_CLASS_LITELLM_ALIASES = {
 }
 
 
+_providers_cache: dict[str, dict] | None = None
+
+
 def _build_providers() -> dict[str, dict]:
     """
-    Compose the full provider dictionary at import time. Order:
+    Compose the full provider dictionary on first access. Order:
         1. First-class providers in their declared order (openai → custom).
         2. All other LiteLLM providers with chat models, alphabetically.
+
+    Result is memoised in `_providers_cache` so the first /api/connector/providers
+    request pays the discovery cost (and the litellm.validate_environment probes
+    that go with it), while subsequent requests are O(1).
     """
     providers: dict[str, dict] = dict(_FIRST_CLASS_PROVIDERS)
     for pid in get_all_litellm_chat_providers():
@@ -370,7 +377,22 @@ def _build_providers() -> dict[str, dict]:
     return providers
 
 
-PROVIDERS = _build_providers()
+def get_providers() -> dict[str, dict]:
+    """Return the (cached) provider dict, building it lazily on first call."""
+    global _providers_cache
+    if _providers_cache is None:
+        _providers_cache = _build_providers()
+    return _providers_cache
+
+
+def __getattr__(name):
+    # Module-level __getattr__ (PEP 562) lets us expose `PROVIDERS` as a
+    # lazily-built attribute. `from eval_lib.connector.routes import PROVIDERS`
+    # still works, but the build only happens on first access — `import
+    # eval_lib.connector.routes` no longer triggers the litellm probes.
+    if name == "PROVIDERS":
+        return get_providers()
+    raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
 
 
 def _get_api_keys_path() -> Path:
@@ -479,7 +501,7 @@ def list_providers():
     keys = _load_api_keys()
     custom_cfg = _load_custom_llm_config()
     result = []
-    for pid, pinfo in PROVIDERS.items():
+    for pid, pinfo in get_providers().items():
         env_var = pinfo["env_var"]
         has_key = bool(os.environ.get(env_var) or keys.get(env_var))
         extra = {}

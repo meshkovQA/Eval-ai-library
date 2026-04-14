@@ -158,10 +158,12 @@ JSON:"""
             self._presidio_loaded = True
             self._log("Presidio loaded successfully", "\033[92m")
 
-        except ImportError:
+        except ImportError as e:
             raise RuntimeError(
-                "presidio-analyzer is required for model-based PII detection. "
-                "Install with: pip install presidio-analyzer"
+                "PIILeakageMetric requires the 'pii' extra "
+                "(presidio-analyzer + spacy).\n"
+                "Install with: pip install eval-ai-library[pii]\n"
+                f"Underlying error: {e}"
             )
         except Exception as e:
             raise RuntimeError(f"Failed to load Presidio: {str(e)}")

@@ -7,7 +7,7 @@ A powerful library for evaluating AI models with support for multiple LLM provid
 and a wide range of evaluation metrics for RAG systems and AI agents.
 """
 
-__version__ = "0.6.2"
+__version__ = "0.7.1"
 __author__ = "Aleksandr Meshkov"
 
 # Core evaluation functions
@@ -65,7 +65,11 @@ from eval_lib.agent_metrics import (
     TaskSuccessRateMetric,
     RoleAdherenceMetric,
     KnowledgeRetentionMetric,
-    ToolsErrorMetric
+    ToolsErrorMetric,
+    GoalAchievementRateMetric,
+    ConversationalFlowRateMetric,
+    RepetitivePatternDetectionMetric,
+    FailureRateMetric,
 )
 
 # Security Metrics - Detection (confidence score 0.0-1.0)
@@ -105,18 +109,34 @@ from .dashboard_server import (
 )
 
 
+def _datagen_import_error(missing: ImportError) -> ImportError:
+    """Wrap a raw ImportError from the datagenerator package with a hint
+    pointing the user at the [datagen] extra."""
+    return ImportError(
+        "DatasetGenerator / DocumentLoader require the 'datagen' extra "
+        "(langchain + pdf/docx/xlsx parsers).\n"
+        "Install with: pip install eval-ai-library[datagen]\n"
+        f"Underlying error: {missing}"
+    )
+
+
 def __getattr__(name):
     """
-    Lazy loading for data generation components.
+    Lazy loading for data generation components. The actual heavy imports
+    (langchain, pypdf, mammoth, …) only fire when the user touches one of
+    these names — so a bare `import eval_lib` works on a slim install.
     """
-    if name == "DatasetGenerator":
-        from eval_lib.datagenerator.datagenerator import DatasetGenerator
-        return DatasetGenerator
-    if name == "DataGenerator":  # Alias for DatasetGenerator
-        from eval_lib.datagenerator.datagenerator import DatasetGenerator
+    if name in ("DatasetGenerator", "DataGenerator"):
+        try:
+            from eval_lib.datagenerator.datagenerator import DatasetGenerator
+        except ImportError as e:
+            raise _datagen_import_error(e) from e
         return DatasetGenerator
     if name == "DocumentLoader":
-        from eval_lib.datagenerator.document_loader import DocumentLoader
+        try:
+            from eval_lib.datagenerator.document_loader import DocumentLoader
+        except ImportError as e:
+            raise _datagen_import_error(e) from e
         return DocumentLoader
     raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
 
@@ -168,6 +188,10 @@ __all__ = [
     "RoleAdherenceMetric",
     "KnowledgeRetentionMetric",
     "ToolsErrorMetric",
+    "GoalAchievementRateMetric",
+    "ConversationalFlowRateMetric",
+    "RepetitivePatternDetectionMetric",
+    "FailureRateMetric",
 
     # Security Metrics - Detection (confidence 0.0-1.0)
     "PromptInjectionDetectionMetric",

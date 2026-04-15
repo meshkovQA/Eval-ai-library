@@ -255,17 +255,14 @@ def delete_config(config_id):
 
 # --- Provider / API key management ---
 #
-# PROVIDERS holds metadata only (display name, env vars, flags). The list of
-# available models is no longer hand-maintained — it is fetched dynamically from
-# eval_lib.model_catalog (which wraps litellm.models_by_provider) inside
-# list_providers() below.
+# There is NO hand-maintained "first-class" provider list. The full catalogue
+# of providers, their display names, required env vars and model lists all
+# come from LiteLLM (via eval_lib.model_catalog) — upgrade litellm and any
+# new integration shows up in the connector UI automatically.
 #
-# The PROVIDERS dict itself is also built dynamically: a hand-curated list of
-# "first-class" providers (openai/anthropic/azure/...) with friendly env-var
-# conventions, plus an auto-generated entry for every additional LiteLLM
-# provider that ships at least one chat model. This means new LiteLLM
-# integrations show up in the connector UI as soon as you upgrade litellm,
-# without touching this file.
+# The only hand-maintained piece is `_NATIVE_PROVIDERS`: providers that do NOT
+# go through LiteLLM and have dedicated code paths in llm_client.py (Ollama,
+# MLX, Zhipu, Custom LLM). They get appended to the end of the provider list.
 
 from eval_lib.model_catalog import (
     get_all_litellm_chat_providers,
@@ -274,56 +271,28 @@ from eval_lib.model_catalog import (
     get_provider_env_vars,
 )
 
-# First-class providers — hand-tuned display names, env-var sets and flags.
-# These wrap eval-lib's own routing aliases (google → gemini, qwen → dashscope,
-# grok → xai) and the native paths (ollama, mlx, custom, zhipu).
-_FIRST_CLASS_PROVIDERS: dict[str, dict] = {
-    "openai": {
-        "name": "OpenAI",
-        "env_var": "OPENAI_API_KEY",
-    },
-    "anthropic": {
-        "name": "Anthropic",
-        "env_var": "ANTHROPIC_API_KEY",
-    },
-    "google": {
-        "name": "Google",
-        "env_var": "GOOGLE_API_KEY",
-    },
-    "azure": {
-        "name": "Azure OpenAI",
-        "env_var": "AZURE_OPENAI_API_KEY",
-        "extra_vars": ["AZURE_OPENAI_ENDPOINT", "AZURE_OPENAI_API_VERSION"],
-    },
+# Providers that do not go through LiteLLM. Each has a native helper in
+# llm_client.py and its own config shape in the UI.
+_NATIVE_PROVIDERS: dict[str, dict] = {
     "ollama": {
         "name": "Ollama (Local)",
         "env_var": "OLLAMA_API_KEY",
         "extra_vars": ["OLLAMA_API_BASE_URL"],
         "key_optional": True,
+        "is_native": True,
     },
-    "deepseek": {
-        "name": "DeepSeek",
-        "env_var": "DEEPSEEK_API_KEY",
-    },
-    "qwen": {
-        "name": "Qwen (Alibaba)",
-        "env_var": "DASHSCOPE_API_KEY",
+    "mlx": {
+        "name": "MLX (Apple Silicon)",
+        "env_var": "MLX_API_BASE_URL",
+        "extra_vars": [],
+        "key_optional": True,
+        "is_native": True,
     },
     "zhipu": {
         "name": "Zhipu GLM",
         "env_var": "ZHIPU_API_KEY",
-    },
-    "mistral": {
-        "name": "Mistral AI",
-        "env_var": "MISTRAL_API_KEY",
-    },
-    "groq": {
-        "name": "Groq",
-        "env_var": "GROQ_API_KEY",
-    },
-    "grok": {
-        "name": "Grok (xAI)",
-        "env_var": "XAI_API_KEY",
+        "extra_vars": [],
+        "is_native": True,
     },
     "custom": {
         "name": "Custom LLM",
@@ -331,21 +300,8 @@ _FIRST_CLASS_PROVIDERS: dict[str, dict] = {
         "extra_vars": ["CUSTOM_LLM_BASE_URL"],
         "key_optional": True,
         "is_custom_llm": True,
+        "is_native": True,
     },
-}
-
-# LiteLLM provider ids that are duplicates / aliases of a first-class provider.
-# Skipped during auto-discovery so we don't show two entries for the same backend.
-_FIRST_CLASS_LITELLM_ALIASES = {
-    "openai",     # → first_class "openai"
-    "anthropic",  # → first_class "anthropic"
-    "gemini",     # → first_class "google"
-    "azure",      # → first_class "azure"
-    "deepseek",   # → first_class "deepseek"
-    "dashscope",  # → first_class "qwen"
-    "mistral",    # → first_class "mistral"
-    "groq",       # → first_class "groq"
-    "xai",        # → first_class "grok"
 }
 
 
@@ -354,17 +310,23 @@ _providers_cache: dict[str, dict] | None = None
 
 def _build_providers() -> dict[str, dict]:
     """
-    Compose the full provider dictionary on first access. Order:
-        1. First-class providers in their declared order (openai → custom).
-        2. All other LiteLLM providers with chat models, alphabetically.
+    Compose the full provider dictionary on first access.
+
+    Order:
+        1. Every LiteLLM provider with chat models, in alphabetical order.
+           Display name and env vars come from the model catalog (which in
+           turn queries litellm.validate_environment).
+        2. Native providers (Ollama, MLX, Zhipu, Custom) appended at the end.
 
     Result is memoised in `_providers_cache` so the first /api/connector/providers
     request pays the discovery cost (and the litellm.validate_environment probes
     that go with it), while subsequent requests are O(1).
     """
-    providers: dict[str, dict] = dict(_FIRST_CLASS_PROVIDERS)
+    providers: dict[str, dict] = {}
+
     for pid in get_all_litellm_chat_providers():
-        if pid in _FIRST_CLASS_LITELLM_ALIASES or pid in providers:
+        # Skip litellm ids that would clash with a native provider entry.
+        if pid in _NATIVE_PROVIDERS:
             continue
         env_vars = get_provider_env_vars(pid)
         primary = env_vars[0] if env_vars else f"{pid.upper()}_API_KEY"
@@ -373,7 +335,14 @@ def _build_providers() -> dict[str, dict]:
             "name": get_provider_display_name(pid),
             "env_var": primary,
             "extra_vars": extras,
+            "is_native": False,
         }
+
+    # Native providers come after the LiteLLM catalogue so they're grouped at
+    # the bottom of the UI list.
+    for pid, pinfo in _NATIVE_PROVIDERS.items():
+        providers[pid] = dict(pinfo)
+
     return providers
 
 

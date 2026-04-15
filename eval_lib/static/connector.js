@@ -242,7 +242,9 @@ function renderStep1() {
 }
 
 // Parse a stored eval model string ("openai:gpt-4o", "gpt-4o-mini") into
-// {providerId, model}. Bare strings (no colon) are assumed to be openai.
+// {providerId, model}. Bare strings without a colon are assumed to be OpenAI
+// purely for backwards compatibility with configs saved before the
+// prefix-everywhere migration — new configs are always saved with a prefix.
 function parseEvalModel(value) {
     if (!value) return { providerId: '', model: '' };
     const idx = value.indexOf(':');
@@ -250,11 +252,11 @@ function parseEvalModel(value) {
     return { providerId: value.slice(0, idx), model: value.slice(idx + 1) };
 }
 
-// Build the canonical "provider:model" string used by the backend.
-// OpenAI is the default and can be passed bare; everything else needs the prefix.
+// Build the canonical "provider:model" string used by the backend. Always
+// writes the prefix — there are no "default" providers anymore, so every
+// model is fully qualified.
 function formatEvalModel(providerId, model) {
     if (!providerId || !model) return '';
-    if (providerId === 'openai') return model;
     return `${providerId}:${model}`;
 }
 
@@ -625,6 +627,22 @@ function toggleMetricCard(name, event) {
     renderStep(1);
 }
 
+// Update the provider filter without destroying focus on the search input.
+// Re-render, then restore focus + caret position + selection on the filter box.
+function onProviderFilterChange(value) {
+    state._providerFilter = value || '';
+    const before = document.getElementById('providerFilterInput');
+    const caret = before ? before.selectionStart : (value || '').length;
+    renderStep(1);
+    const after = document.getElementById('providerFilterInput');
+    if (after) {
+        after.focus();
+        try {
+            after.setSelectionRange(caret, caret);
+        } catch (_) { /* input types may not support setSelectionRange */ }
+    }
+}
+
 // ---- Tab: Settings ----
 function renderTabSettings() {
     const a = state.apiConfig;
@@ -639,17 +657,41 @@ function renderTabSettings() {
         state._activeProvider = (firstReady || state.providers[0]).id;
     }
 
-    const providerOpts = state.providers.map(p => ({
+    // Client-side filter across the full LiteLLM-driven provider list.
+    const filterQuery = (state._providerFilter || '').trim().toLowerCase();
+    const matchesFilter = (p) => {
+        if (!filterQuery) return true;
+        return (
+            p.id.toLowerCase().includes(filterQuery) ||
+            (p.name || '').toLowerCase().includes(filterQuery)
+        );
+    };
+    const filteredProviders = state.providers.filter(matchesFilter);
+
+    const providerOpts = filteredProviders.map(p => ({
         value: p.id,
         label: `${isProviderReady(p) ? '\u2713 ' : '\u25CB '}${p.name}`,
     }));
     const configuredCount = state.providers.filter(isProviderReady).length;
+    const totalCount = state.providers.length;
+    const shownCount = filteredProviders.length;
 
     html += `<div class="section-card">
         <div class="section-card-title">LLM Providers</div>
-        <p style="font-size:0.8em;color:var(--text-muted);margin-bottom:12px">Pick a provider from the list and configure its API key. Keys are stored locally. ${configuredCount}/${state.providers.length} configured.</p>
+        <p style="font-size:0.8em;color:var(--text-muted);margin-bottom:12px">All providers and models come from LiteLLM — search the catalogue below, pick one, and configure its keys. ${configuredCount}/${totalCount} configured.</p>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px;max-width:340px">
+            <input
+                type="search"
+                class="form-input"
+                id="providerFilterInput"
+                placeholder="Filter providers (e.g. bedrock, cohere, anthropic)..."
+                value="${esc(state._providerFilter || '')}"
+                oninput="onProviderFilterChange(this.value)"
+                style="font-size:0.82em;flex:1">
+        </div>
+        <div style="font-size:0.72em;color:var(--text-muted);margin-bottom:8px">Showing ${shownCount} of ${totalCount} providers${filterQuery ? ' (filtered)' : ''}</div>
         <div style="max-width:340px;margin-bottom:14px">
-            ${renderCustomSelect('settingsProviderSelect', providerOpts, state._activeProvider || '', 'Select provider...')}
+            ${renderCustomSelect('settingsProviderSelect', providerOpts, state._activeProvider || '', providerOpts.length ? 'Select provider...' : 'No providers match filter')}
         </div>`;
 
     // Active provider config panel

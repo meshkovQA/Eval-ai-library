@@ -107,44 +107,57 @@ class LLMConfigurationError(Exception):
 
 class Provider(str, Enum):
     """
-    Known eval-lib provider ids. This enum is *not* exhaustive — `LLMDescriptor`
-    accepts any string id, and unknown ids are routed through LiteLLM
-    automatically (see _to_litellm_args). The enum exists so that legacy code
-    can keep using `Provider.OPENAI` style constants for the well-known cases.
+    Only the providers that have *native* code paths in this module —
+    everything else is handled as a plain string and routed through LiteLLM
+    by _to_litellm_args(). This enum is intentionally tiny: it exists so
+    native helpers in _HELPERS can be keyed off enum members, and so that
+    legacy code importing `Provider.OLLAMA` etc. keeps working.
 
-    Because Provider subclasses str, comparisons `"ollama" == Provider.OLLAMA`
-    succeed transparently — so consumers that store `LLMDescriptor.provider`
-    as a plain string still match the enum members.
+    LiteLLM-backed providers (OpenAI, Anthropic, Google, Azure, Bedrock,
+    Vertex AI, Cohere, Together, OpenRouter, …) are NOT members here — they
+    are passed through as raw string ids to LiteLLM. Upgrade `litellm` and
+    new integrations become available automatically, with zero changes to
+    this file.
     """
 
-    OPENAI = "openai"
-    AZURE = "azure"
-    GOOGLE = "google"
     OLLAMA = "ollama"
-    ANTHROPIC = "anthropic"
-    DEEPSEEK = "deepseek"
-    QWEN = "qwen"
-    ZHIPU = "zhipu"
-    MISTRAL = "mistral"
-    GROQ = "groq"
-    GROK = "grok"
     MLX = "mlx"
+    ZHIPU = "zhipu"
     CUSTOM = "custom"
 
 
-def _coerce_provider(value: "str | Provider") -> "str":
+# Legacy eval-lib provider ids → their canonical LiteLLM provider names.
+# Kept as a *string* alias map rather than enum members so that user code
+# still accepting the old prefixes ("google:gemini-...", "qwen:qwen-max",
+# "grok:grok-2") continues to work without reviving the old first-class
+# list. New code should use the LiteLLM names directly ("gemini:", "xai:",
+# "dashscope:").
+_LEGACY_PROVIDER_ALIASES: dict[str, str] = {
+    "google": "gemini",
+    "qwen": "dashscope",
+    "grok": "xai",
+}
+
+
+def _coerce_provider(value: "str | Provider") -> "str | Provider":
     """
-    Map a string provider id to its canonical form. Known ids are returned as
-    Provider enum members (so `==` comparisons against Provider.* still work);
-    unknown ids are returned as plain strings — they will be routed through
-    LiteLLM by _to_litellm_args using the string as the LiteLLM prefix directly.
+    Normalise a provider id.
+
+    - Native ids (ollama/mlx/zhipu/custom) become `Provider` enum members so
+      downstream dispatch can key on them.
+    - Legacy eval-lib aliases (`google`, `qwen`, `grok`) are rewritten to their
+      canonical LiteLLM names (`gemini`, `dashscope`, `xai`).
+    - Any other string id is returned as-is: LiteLLM is asked to handle it
+      directly by _to_litellm_args().
     """
     if isinstance(value, Provider):
         return value
+    if value in _LEGACY_PROVIDER_ALIASES:
+        return _LEGACY_PROVIDER_ALIASES[value]
     try:
         return Provider(value)
     except ValueError:
-        return value  # unknown LiteLLM provider — passthrough as string
+        return value
 
 
 @dataclass(frozen=True, slots=True)
@@ -156,6 +169,16 @@ class LLMDescriptor:
 
     @classmethod
     def parse(cls, spec: "str | Tuple[str, str] | LLMDescriptor") -> "LLMDescriptor":
+        """
+        Accept any of:
+            - LLMDescriptor instance (passthrough)
+            - (provider, model) tuple
+            - "provider:model" string
+            - bare "model" string — defaults provider to "openai" for
+              historical compatibility with `chat_complete("gpt-4o", ...)`.
+              Nothing *else* in the codebase special-cases OpenAI; this is
+              the one convenience we keep.
+        """
         if isinstance(spec, LLMDescriptor):
             return spec
         if isinstance(spec, tuple):
@@ -164,7 +187,7 @@ class LLMDescriptor:
         try:
             provider, model = spec.split(":", 1)
         except ValueError:
-            return cls(Provider.OPENAI, spec)
+            return cls("openai", spec)
         return cls(_coerce_provider(provider), model)
 
     def key(self) -> str:
@@ -175,36 +198,22 @@ class LLMDescriptor:
 # ---------------------------------------------------------------------------
 # LiteLLM provider routing
 # ---------------------------------------------------------------------------
-
-# Map our Provider enum to the prefix LiteLLM expects in its model strings
-# (e.g. "openai/gpt-4o", "anthropic/claude-sonnet-4-5", "xai/grok-4").
-# Notes:
-#   - Grok lives under the "xai" namespace in LiteLLM, not "grok".
-#   - Qwen uses DashScope under the hood; LiteLLM exposes it as "dashscope".
-#   - Zhipu (GLM) is exposed as "openai_compatible" with a base_url override —
-#     see _to_litellm_args() for the special case.
-#   - Ollama and MLX are NOT in this map: they take custom code paths.
-#   - CUSTOM is NOT in this map: CustomLLMClient bypasses LiteLLM entirely.
-_PROVIDER_TO_LITELLM_PREFIX: dict[Provider, str] = {
-    Provider.OPENAI: "openai",
-    Provider.AZURE: "azure",
-    Provider.GOOGLE: "gemini",
-    Provider.ANTHROPIC: "anthropic",
-    Provider.DEEPSEEK: "deepseek",
-    Provider.QWEN: "dashscope",
-    Provider.MISTRAL: "mistral",
-    Provider.GROQ: "groq",
-    Provider.GROK: "xai",
-}
+#
+# There is NO hand-maintained provider→prefix map. The provider id stored on
+# an LLMDescriptor is used verbatim as the LiteLLM prefix ("cohere/command-r",
+# "bedrock/anthropic.claude-3-5-sonnet-20240620-v1:0", "vertex_ai/gemini-1.5-pro"
+# etc.). _coerce_provider() already rewrites the three legacy eval-lib aliases
+# (google → gemini, qwen → dashscope, grok → xai) so the rest of this file
+# doesn't need to know about them.
 
 
 def _to_litellm_args(llm: LLMDescriptor) -> dict:
     """
     Translate an LLMDescriptor into kwargs accepted by litellm.acompletion().
 
-    For most providers this is just `{"model": "<prefix>/<model>"}`. Zhipu (GLM)
-    needs the OpenAI-compatible base_url override because LiteLLM does not have
-    a first-class Zhipu integration.
+    For everything LiteLLM knows about natively this is just
+    `{"model": "<provider>/<model>"}`. Zhipu (GLM) needs the OpenAI-compatible
+    base_url override because LiteLLM has no first-class Zhipu integration.
     """
     if llm.provider == Provider.ZHIPU:
         # GLM ships an OpenAI-compatible endpoint; route via the openai/ prefix
@@ -223,20 +232,10 @@ def _to_litellm_args(llm: LLMDescriptor) -> dict:
             "api_base": "https://open.bigmodel.cn/api/paas/v4",
         }
 
-    # Known eval-lib providers (Provider enum) get translated via the alias
-    # map (e.g. google → gemini). Unknown ids are assumed to already match a
-    # LiteLLM provider name verbatim (cohere, bedrock, openrouter, ...) and
-    # are passed through as-is.
-    if isinstance(llm.provider, Provider):
-        prefix = _PROVIDER_TO_LITELLM_PREFIX.get(llm.provider)
-        if prefix is None:
-            raise ValueError(
-                f"Provider {llm.provider.value} has no LiteLLM mapping. "
-                "It should be handled via a native helper or CustomLLMClient."
-            )
-    else:
-        # Unknown provider id — treat it as a LiteLLM provider name directly.
-        prefix = str(llm.provider)
+    # Everything else: treat the provider id (string or enum value) as the
+    # LiteLLM prefix directly. Unknown strings work automatically — whatever
+    # LiteLLM supports, we support.
+    prefix = llm.provider.value if isinstance(llm.provider, Provider) else str(llm.provider)
     return {"model": f"{prefix}/{llm.model}"}
 
 
@@ -454,26 +453,19 @@ async def _mlx_chat_complete(
 # ---------------------------------------------------------------------------
 # Provider → helper dispatch
 # ---------------------------------------------------------------------------
+#
+# Only native (non-LiteLLM) providers need an entry here. Anything else —
+# OpenAI, Anthropic, Google, Azure, Bedrock, Vertex AI, Cohere, OpenRouter,
+# Together AI, and every other provider LiteLLM supports — falls through to
+# _litellm_chat_complete via the default in chat_complete().
 
-_HELPERS = {
-    # LiteLLM-backed (10 providers, single helper)
-    Provider.OPENAI: _litellm_chat_complete,
-    Provider.AZURE: _litellm_chat_complete,
-    Provider.GOOGLE: _litellm_chat_complete,
-    Provider.ANTHROPIC: _litellm_chat_complete,
-    Provider.DEEPSEEK: _litellm_chat_complete,
-    Provider.QWEN: _litellm_chat_complete,
-    Provider.ZHIPU: _litellm_chat_complete,
-    Provider.MISTRAL: _litellm_chat_complete,
-    Provider.GROQ: _litellm_chat_complete,
-    Provider.GROK: _litellm_chat_complete,
-    # Native paths (special cases LiteLLM doesn't cover well)
+_HELPERS: dict[Provider, "callable"] = {
     Provider.OLLAMA: _ollama_chat_complete,
     Provider.MLX: _mlx_chat_complete,
+    # Zhipu still goes through LiteLLM, but with a special base_url injection
+    # in _to_litellm_args(). It's kept out of this dispatch so chat_complete()
+    # falls through to _litellm_chat_complete for it.
 }
-
-# Set of providers that go through LiteLLM (used by _HELPERS validation in tests).
-_LITELLM_PROVIDERS = frozenset(_PROVIDER_TO_LITELLM_PREFIX.keys())
 
 
 async def chat_complete(
@@ -592,7 +584,7 @@ async def get_embeddings(
 
     llm = LLMDescriptor.parse(model)
 
-    if llm.provider != Provider.OPENAI:
+    if llm.provider != "openai":
         raise ValueError(f"Only OpenAI embedding models are supported, got {llm.provider}")
 
     _check_env_var("OPENAI_API_KEY", "OpenAI")

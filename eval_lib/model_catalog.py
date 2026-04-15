@@ -76,21 +76,19 @@ _LITELLM_DISPLAY_NAMES: dict[str, str] = {
     "ollama_chat": "Ollama Chat",
 }
 
-# Map our provider id (the value of Provider enum) to the prefix used inside
-# LiteLLM's models_by_provider / model_cost tables.
+# Legacy eval-lib provider ids → their canonical LiteLLM names.
 #
-# Keep in sync with llm_client._PROVIDER_TO_LITELLM_PREFIX. Duplicated here
-# instead of imported to avoid a circular import (llm_client also reads from
-# this module via _calculate_cost).
+# These three aliases (google/qwen/grok) are the ONLY hand-maintained
+# provider mapping left. They exist so user code using the old eval-lib
+# prefixes ("google:gemini-2.0-flash", "qwen:qwen-max", "grok:grok-2")
+# continues to resolve to the correct LiteLLM models. Every other provider
+# goes through LiteLLM under its own name ("cohere", "bedrock", "vertex_ai",
+# "openrouter" etc.) with no translation layer.
+#
+# Keep in sync with llm_client._LEGACY_PROVIDER_ALIASES.
 _PROVIDER_TO_LITELLM: dict[str, str] = {
-    "openai": "openai",
-    "azure": "azure",
     "google": "gemini",
-    "anthropic": "anthropic",
-    "deepseek": "deepseek",
     "qwen": "dashscope",
-    "mistral": "mistral",
-    "groq": "groq",
     "grok": "xai",
     # zhipu has no first-class LiteLLM integration; we route it through
     # openai-compatible base_url. Models are listed manually below.

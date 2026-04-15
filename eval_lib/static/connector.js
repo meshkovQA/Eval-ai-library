@@ -37,6 +37,10 @@ const state = {
     },
     selectedMetrics: {},
     evalModel: 'gpt-4o-mini',
+    // Remembers the last model the user picked for each provider so that
+    // switching providers and then switching back restores the prior choice
+    // instead of resetting to the first model in the new provider's list.
+    _evalModelPerProvider: {},
     metricsInfo: [],
     testValues: {},
     providers: [],
@@ -276,10 +280,13 @@ function renderEvalModelSection() {
     }
     // Sync back so subsequent saves see the resolved values
     state.evalModel = formatEvalModel(providerId, model);
+    // Seed the per-provider memory so switching providers and back preserves
+    // whatever model the user was last using for each one.
+    if (providerId && model) state._evalModelPerProvider[providerId] = model;
 
     const providerOpts = configuredProviders.map(p => ({
         value: p.id,
-        label: `${p.name} (${p.models.length})`,
+        label: p.name,
     }));
     const modelOpts = (activeProvider?.models || []).map(m => ({ value: m, label: m }));
 
@@ -694,6 +701,21 @@ function renderTabSettings() {
             ${renderCustomSelect('settingsProviderSelect', providerOpts, state._activeProvider || '', providerOpts.length ? 'Select provider...' : 'No providers match filter')}
         </div>`;
 
+    // Configured providers summary — shown below the selector so the user can
+    // see at a glance which providers already have keys saved. The list is
+    // refreshed automatically after saveApiKey() / deleteApiKey() via
+    // loadProviders() → renderStep(1).
+    const configured = state.providers.filter(isProviderReady);
+    if (configured.length) {
+        const chips = configured
+            .map(p => `<span style="display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:999px;background:var(--bg-secondary);border:1px solid var(--border);font-size:0.72em;color:var(--text-secondary)">&#10003; ${esc(p.name)}</span>`)
+            .join('');
+        html += `<div style="margin-bottom:14px">
+            <div style="font-size:0.7em;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.3px;margin-bottom:6px">Configured (${configured.length})</div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px">${chips}</div>
+        </div>`;
+    }
+
     // Active provider config panel
     const activeP = state.providers.find(p => p.id === state._activeProvider);
     if (activeP) {
@@ -837,18 +859,28 @@ function initStep1() {
 
     // Eval-model cascade: changing the provider re-renders so the model
     // dropdown is repopulated; changing the model just updates state.
+    //
+    // When switching to a provider the user has picked a model for before,
+    // restore that previous pick (so toggling back and forth doesn't lose
+    // your selection). Otherwise fall back to the provider's first model.
     const evalProvSel = document.getElementById('evalProviderSelect');
     if (evalProvSel) evalProvSel.addEventListener('change', (e) => {
         const newPid = e.detail;
         const provider = state.providers.find(p => p.id === newPid);
-        const firstModel = provider?.models?.[0] || '';
-        state.evalModel = formatEvalModel(newPid, firstModel);
+        const models = provider?.models || [];
+        const remembered = state._evalModelPerProvider[newPid];
+        const chosen = (remembered && models.includes(remembered))
+            ? remembered
+            : (models[0] || '');
+        state.evalModel = formatEvalModel(newPid, chosen);
+        if (chosen) state._evalModelPerProvider[newPid] = chosen;
         renderStep(1);
     });
     const evalSel = document.getElementById('evalModelSelect');
     if (evalSel) evalSel.addEventListener('change', (e) => {
         const providerId = getSelectValue('evalProviderSelect') || parseEvalModel(state.evalModel).providerId;
         state.evalModel = formatEvalModel(providerId, e.detail);
+        if (providerId && e.detail) state._evalModelPerProvider[providerId] = e.detail;
     });
 
     // Bind custom-select dropdowns in metric params to their hidden inputs
@@ -1570,6 +1602,7 @@ function resetProject() {
     state.columnMapping = { input_column: 'input', expected_output_column: '', context_column: '', tools_called_column: '', expected_tools_column: '', template_variable_map: {} };
     state.selectedMetrics = {};
     state.evalModel = 'gpt-4o-mini';
+    state._evalModelPerProvider = {};
     showToast('New project');
     renderStep(state.currentStep);
 }
@@ -1585,7 +1618,12 @@ async function loadSelectedConfig() {
         }
         if (data.response_mapping) state.responseMapping = { ...state.responseMapping, ...data.response_mapping };
         if (data.dataset_column_mapping) state.columnMapping = { ...state.columnMapping, ...data.dataset_column_mapping };
-        if (data.eval_model) state.evalModel = data.eval_model;
+        if (data.eval_model) {
+            state.evalModel = data.eval_model;
+            // Reset per-provider memory; renderEvalModelSection will re-seed it
+            // from the loaded model on the next render.
+            state._evalModelPerProvider = {};
+        }
         if (data.cost_per_1m_tokens != null) state.costPer1mTokens = data.cost_per_1m_tokens;
         if (data.metrics) {
             state.selectedMetrics = {};

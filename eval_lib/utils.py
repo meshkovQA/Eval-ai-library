@@ -82,6 +82,7 @@ def _sanitize_json_string(raw: str) -> str:
     return re.sub(r",\s*([}\]])", r"\1", raw)
 
 
+
 def _try_fix_escaped_quotes(text: str) -> str:
     """Fix invalid backslash-escaped quotes outside JSON strings.
 

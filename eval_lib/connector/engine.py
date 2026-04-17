@@ -277,39 +277,59 @@ class ConnectorEngine:
 
         # Phase 1: API calls
         test_cases: List[EvalTestCase] = []
+        # multi_run_outputs[i] = list of outputs for row i (for OutcomeConsistencyMetric)
+        multi_run_outputs: Dict[int, List[str]] = {}
+        runs_per_query = max(1, config.runs_per_query)
 
         timeout = aiohttp.ClientTimeout(total=api.timeout_seconds)
+        total_requests = len(rows) * runs_per_query
+        progress.total_rows = total_requests
 
         async with aiohttp.ClientSession(timeout=timeout) as session:
+            request_num = 0
             for i, row in enumerate(rows):
                 if progress.status == JobStatus.CANCELLED:
                     return
 
-                try:
-                    t0 = time.time()
-                    tc = await self._process_row(
-                        session, api, mapping, col_map, row
-                    )
-                    elapsed = int((time.time() - t0) * 1000)
-                    progress.response_times_ms.append(elapsed)
-                    # Attach response_time to metadata
-                    if not hasattr(tc, '_meta') or tc._meta is None:
-                        tc._meta = {}
-                    tc._meta["response_time_ms"] = elapsed
-                    # Calculate cost if token_usage and cost_per_1m_tokens set
-                    tokens = tc._meta.get("token_usage")
-                    if tokens and config.cost_per_1m_tokens > 0:
-                        tc._meta["cost"] = round(tokens * config.cost_per_1m_tokens / 1_000_000, 6)
-                    test_cases.append(tc)
-                except Exception as e:
-                    progress.errors.append(f"Row {i+1}: {str(e)}")
+                row_outputs = []
+                primary_tc = None
 
-                progress.completed_rows = i + 1
-                if progress.response_times_ms:
-                    progress.avg_response_time_ms = sum(progress.response_times_ms) // len(progress.response_times_ms)
+                for run_idx in range(runs_per_query):
+                    if progress.status == JobStatus.CANCELLED:
+                        return
 
-                if api.delay_between_requests_ms > 0 and i < len(rows) - 1:
-                    await asyncio.sleep(api.delay_between_requests_ms / 1000)
+                    try:
+                        t0 = time.time()
+                        tc = await self._process_row(
+                            session, api, mapping, col_map, row
+                        )
+                        elapsed = int((time.time() - t0) * 1000)
+                        progress.response_times_ms.append(elapsed)
+                        if not hasattr(tc, '_meta') or tc._meta is None:
+                            tc._meta = {}
+                        tc._meta["response_time_ms"] = elapsed
+                        tokens = tc._meta.get("token_usage")
+                        if tokens and config.cost_per_1m_tokens > 0:
+                            tc._meta["cost"] = round(tokens * config.cost_per_1m_tokens / 1_000_000, 6)
+
+                        row_outputs.append(tc.actual_output)
+                        if primary_tc is None:
+                            primary_tc = tc
+                    except Exception as e:
+                        progress.errors.append(f"Row {i+1} run {run_idx+1}: {str(e)}")
+
+                    request_num += 1
+                    progress.completed_rows = request_num
+                    if progress.response_times_ms:
+                        progress.avg_response_time_ms = sum(progress.response_times_ms) // len(progress.response_times_ms)
+
+                    if api.delay_between_requests_ms > 0:
+                        await asyncio.sleep(api.delay_between_requests_ms / 1000)
+
+                if primary_tc:
+                    test_cases.append(primary_tc)
+                    if len(row_outputs) > 1:
+                        multi_run_outputs[len(test_cases) - 1] = row_outputs
 
         if progress.status == JobStatus.CANCELLED:
             return
@@ -339,6 +359,12 @@ class ConnectorEngine:
         for mc in config.metrics:
             try:
                 m = instantiate_metric(mc.metric_class, eval_model, mc.params)
+                # Pass multi-run outputs to OutcomeConsistencyMetric
+                if mc.metric_class == "OutcomeConsistencyMetric" and multi_run_outputs:
+                    m.multi_outputs = [
+                        multi_run_outputs.get(i, [tc.actual_output])
+                        for i, tc in enumerate(test_cases)
+                    ]
                 metrics.append(m)
             except Exception as e:
                 progress.errors.append(f"Metric {mc.metric_class}: {str(e)}")
@@ -523,6 +549,45 @@ class ConnectorEngine:
             elif isinstance(et_val, str) and et_val:
                 expected_tools = [t.strip() for t in et_val.split(",")]
 
+        # Extract reliability fields from API response
+        execution_trace = None
+        if mapping.execution_trace_path:
+            et = extract_path(resp_data, mapping.execution_trace_path)
+            if isinstance(et, list):
+                execution_trace = et
+
+        reasoning = None
+        if mapping.reasoning_path:
+            r = extract_path(resp_data, mapping.reasoning_path)
+            if r is not None:
+                reasoning = str(r)
+
+        agent_confidence = None
+        if mapping.agent_confidence_path:
+            ac = extract_path(resp_data, mapping.agent_confidence_path)
+            if isinstance(ac, (int, float)):
+                agent_confidence = float(ac)
+
+        planning_steps = None
+        if mapping.planning_steps_path:
+            ps = extract_path(resp_data, mapping.planning_steps_path)
+            if isinstance(ps, list):
+                planning_steps = [str(s) for s in ps]
+
+        resource_usage = None
+        if mapping.resource_usage_path:
+            ru = extract_path(resp_data, mapping.resource_usage_path)
+            if isinstance(ru, dict):
+                from eval_lib.testcases_schema import ResourceUsage
+                resource_usage = ResourceUsage(
+                    input_tokens=ru.get("input_tokens") or ru.get("prompt_tokens"),
+                    output_tokens=ru.get("output_tokens") or ru.get("completion_tokens"),
+                    total_tokens=ru.get("total_tokens"),
+                    duration_ms=ru.get("duration_ms"),
+                    cost=ru.get("cost"),
+                    model=ru.get("model"),
+                )
+
         tc = EvalTestCase(
             input=input_val,
             actual_output=actual_output,
@@ -530,6 +595,11 @@ class ConnectorEngine:
             retrieval_context=final_context,
             tools_called=tools_called,
             expected_tools=expected_tools,
+            execution_trace=execution_trace,
+            reasoning=reasoning,
+            agent_confidence=agent_confidence,
+            planning_steps=planning_steps,
+            resource_usage=resource_usage,
         )
         # Attach extra metadata for dashboard
         tc._meta = {

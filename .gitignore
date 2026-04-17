@@ -148,7 +148,6 @@ figures/
 tests
 examples
 .deepeval
-
 # Agents API service (not part of the library)
 Dockerfile
 docker-compose.yml

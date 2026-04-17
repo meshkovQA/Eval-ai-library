@@ -17,6 +17,10 @@ from eval_lib.agent_metrics import (
     RoleAdherenceMetric,
     KnowledgeRetentionMetric,
     ToolsErrorMetric,
+    ConversationalFlowRateMetric,
+    FailureRateMetric,
+    GoalAchievementRateMetric,
+    RepetitivePatternDetectionMetric,
 )
 from eval_lib.security_metrics import (
     PromptInjectionDetectionMetric,
@@ -223,6 +227,48 @@ METRIC_REGISTRY = {
         "params": [
             {"name": "threshold", "type": "float", "default": 0.7, "min": 0, "max": 1},
             {"name": "error_types", "type": "list", "default": None},
+        ],
+    },
+    # Agent Metrics - Conversational quality (0.7.1+)
+    "ConversationalFlowRateMetric": {
+        "class": ConversationalFlowRateMetric,
+        "category": "agent",
+        "description": "Grades overall dialogue naturalness and coherence",
+        "requires_model": True,
+        "required_fields": ["input", "actual_output"],
+        "params": [
+            {"name": "threshold", "type": "float", "default": 0.7, "min": 0, "max": 1},
+        ],
+    },
+    "FailureRateMetric": {
+        "class": FailureRateMetric,
+        "category": "agent",
+        "description": "Evaluates how the agent handles uncertainty — hallucination vs honest fallback",
+        "requires_model": True,
+        "required_fields": ["input", "actual_output"],
+        "params": [
+            {"name": "threshold", "type": "float", "default": 0.7, "min": 0, "max": 1},
+        ],
+    },
+    "GoalAchievementRateMetric": {
+        "class": GoalAchievementRateMetric,
+        "category": "agent",
+        "description": "Measures whether the user actually got what they wanted (outcome-oriented)",
+        "requires_model": True,
+        "required_fields": ["input", "actual_output"],
+        "params": [
+            {"name": "threshold", "type": "float", "default": 0.7, "min": 0, "max": 1},
+            {"name": "user_goal", "type": "string", "default": None},
+        ],
+    },
+    "RepetitivePatternDetectionMetric": {
+        "class": RepetitivePatternDetectionMetric,
+        "category": "agent",
+        "description": "Detects loops where the agent repeats same actions/responses without progress",
+        "requires_model": True,
+        "required_fields": ["input", "actual_output"],
+        "params": [
+            {"name": "threshold", "type": "float", "default": 0.7, "min": 0, "max": 1},
         ],
     },
     # Security Metrics - Detection

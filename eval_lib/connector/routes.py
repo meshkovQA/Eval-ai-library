@@ -329,8 +329,11 @@ def _build_providers() -> dict[str, dict]:
         if pid in _NATIVE_PROVIDERS:
             continue
         env_vars = get_provider_env_vars(pid)
-        primary = env_vars[0] if env_vars else f"{pid.upper()}_API_KEY"
-        extras = env_vars[1:]
+        # LiteLLM reports env vars in arbitrary order. Surface the API key
+        # first so the UI shows credentials before endpoint/version fields.
+        ordered = sorted(env_vars, key=lambda v: (0 if "API_KEY" in v else 1, v))
+        primary = ordered[0] if ordered else f"{pid.upper()}_API_KEY"
+        extras = ordered[1:]
         providers[pid] = {
             "name": get_provider_display_name(pid),
             "env_var": primary,
@@ -544,6 +547,106 @@ def save_api_key():
         pass
 
     return jsonify({"ok": True})
+
+
+@connector_bp.route("/api/connector/save-provider-config", methods=["POST"])
+def save_provider_config():
+    """Persist several env vars for one provider in a single call.
+
+    Body: {"provider": "<id>", "values": {"ENV_VAR": "value", ...}}
+
+    Empty string values clear the corresponding variable. Masked placeholders
+    that start with "•" are ignored, so the UI can safely send back the
+    rendered placeholder for fields the user did not touch.
+    """
+    body = request.get_json() or {}
+    provider = body.get("provider", "")
+    values = body.get("values") or {}
+    if not provider:
+        return jsonify({"error": "provider required"}), 400
+    if not isinstance(values, dict):
+        return jsonify({"error": "values must be an object"}), 400
+
+    pinfo = get_providers().get(provider)
+    if not pinfo:
+        return jsonify({"error": f"unknown provider: {provider}"}), 404
+    allowed = {pinfo["env_var"], *pinfo.get("extra_vars", [])}
+
+    keys = _load_api_keys()
+    for env_var, raw in values.items():
+        if env_var not in allowed:
+            continue
+        value = (raw or "").strip()
+        if value.startswith("•"):
+            continue
+        if value:
+            keys[env_var] = value
+            os.environ[env_var] = value
+        else:
+            keys.pop(env_var, None)
+            os.environ.pop(env_var, None)
+
+    _save_api_keys(keys)
+
+    try:
+        from eval_lib.llm_client import _get_client
+        _get_client.cache_clear()
+    except Exception:
+        pass
+
+    return jsonify({"ok": True})
+
+
+@connector_bp.route("/api/connector/test-provider", methods=["POST"])
+def test_provider():
+    """Send a tiny chat_complete ping to verify the provider's credentials.
+
+    Body: {"provider": "<id>", "model": "<deployment-or-model-name>"}
+
+    Returns: {"ok": true, "latency_ms": <int>} on success or
+             {"ok": false, "error": "<message>"} on failure.
+    """
+    body = request.get_json() or {}
+    provider = body.get("provider", "")
+    model = (body.get("model") or "").strip()
+    if not provider:
+        return jsonify({"ok": False, "error": "provider required"}), 400
+
+    pinfo = get_providers().get(provider)
+    if not pinfo:
+        return jsonify({"ok": False, "error": f"unknown provider: {provider}"}), 404
+
+    if not model:
+        models = get_models_for_provider(provider)
+        if not models:
+            return jsonify({
+                "ok": False,
+                "error": "no model specified and no models known for this provider",
+            }), 400
+        model = models[0]
+
+    spec = f"{provider}:{model}"
+
+    import time
+    from eval_lib.llm_client import chat_complete, LLMConfigurationError
+
+    t0 = time.perf_counter()
+    try:
+        text, _ = asyncio.run(chat_complete(
+            spec,
+            [{"role": "user", "content": "ping"}],
+            temperature=0.0,
+        ))
+    except LLMConfigurationError as e:
+        return jsonify({"ok": False, "error": str(e)}), 200
+    except Exception as e:
+        return jsonify({"ok": False, "error": f"{type(e).__name__}: {e}"}), 200
+
+    latency_ms = int((time.perf_counter() - t0) * 1000)
+    preview = (text or "").strip()
+    if len(preview) > 120:
+        preview = preview[:117] + "..."
+    return jsonify({"ok": True, "latency_ms": latency_ms, "model": spec, "reply": preview})
 
 
 @connector_bp.route("/api/connector/delete-api-key", methods=["POST"])

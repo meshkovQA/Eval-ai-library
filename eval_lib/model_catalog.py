@@ -18,6 +18,7 @@ either run locally or are user-defined.
 """
 from __future__ import annotations
 
+import os
 from typing import Optional
 
 import litellm
@@ -181,9 +182,14 @@ def get_provider_display_name(provider: str) -> str:
 
 def _detect_env_vars(litellm_name: str) -> list[str]:
     """
-    Ask LiteLLM which env vars are required to authenticate against this
-    provider, by validating a representative chat model. Returns a list of
-    env var names — possibly empty if LiteLLM can't determine them.
+    Ask LiteLLM which env vars authenticate this provider, by validating a
+    representative chat model.
+
+    LiteLLM's `validate_environment` only lists vars that are *currently missing
+    in process env* — once a user saves a key, that variable disappears from
+    the list. To get a stable answer we temporarily unset everything that looks
+    like a provider env var, ask LiteLLM, then restore the originals. This keeps
+    the UI panel rendering the same fields whether or not keys are already set.
     """
     sample = None
     for entry in litellm.models_by_provider.get(litellm_name, set()):
@@ -194,15 +200,18 @@ def _detect_env_vars(litellm_name: str) -> list[str]:
             break
     if not sample:
         return []
+    stashed: dict[str, str] = {}
+    for k in list(os.environ):
+        if k.endswith(("_API_KEY", "_API_BASE", "_API_VERSION", "_ENDPOINT", "_PROJECT", "_LOCATION", "_REGION", "_REGION_NAME", "_ACCOUNT_ID", "_PROJECT_ID")) \
+                or k.startswith(("AWS_", "AZURE_", "VERTEX_", "VERTEXAI_", "GOOGLE_", "GEMINI_")):
+            stashed[k] = os.environ.pop(k)
     try:
         result = litellm.validate_environment(model=sample)
-        missing = result.get("missing_keys") or []
-        # validate_environment lists vars *currently missing in env*; if some
-        # vars are already set we lose them. As a heuristic, also include any
-        # *_API_KEY-shaped vars from os.environ that match the provider name.
-        return list(missing)
+        return list(result.get("missing_keys") or [])
     except Exception:
         return []
+    finally:
+        os.environ.update(stashed)
 
 
 def get_all_litellm_chat_providers() -> list[str]:
@@ -221,50 +230,32 @@ def get_all_litellm_chat_providers() -> list[str]:
     return sorted(out)
 
 
+# Native providers that LiteLLM doesn't know about (local servers or
+# OpenAI-compatible passthroughs we route ourselves). For everything else we
+# ask LiteLLM via _detect_env_vars().
+_NATIVE_ENV_VARS: dict[str, list[str]] = {
+    "ollama": ["OLLAMA_API_BASE_URL"],
+    "mlx": ["MLX_API_BASE_URL"],
+    "zhipu": ["ZHIPU_API_KEY"],
+    "custom": ["CUSTOM_LLM_API_KEY", "CUSTOM_LLM_BASE_URL"],
+}
+
+
 def get_provider_env_vars(provider: str) -> list[str]:
     """
-    Best-effort detection of env vars needed for a provider. For known providers
-    we have hand-curated answers; for the rest we ask LiteLLM.
+    Return the env vars a provider needs, as reported by LiteLLM itself.
+
+    For native providers (ollama/mlx/zhipu/custom) LiteLLM has no entry, so we
+    keep a tiny hand-list. For every other id we resolve any legacy alias via
+    _PROVIDER_TO_LITELLM and ask LiteLLM directly. Last-resort fallback is a
+    generic <UPPER>_API_KEY guess for obscure providers LiteLLM can't introspect.
     """
-    known: dict[str, list[str]] = {
-        "openai": ["OPENAI_API_KEY"],
-        "anthropic": ["ANTHROPIC_API_KEY"],
-        "google": ["GOOGLE_API_KEY"],
-        "gemini": ["GOOGLE_API_KEY"],
-        "azure": ["AZURE_OPENAI_API_KEY", "AZURE_OPENAI_ENDPOINT", "AZURE_OPENAI_API_VERSION"],
-        "azure_ai": ["AZURE_AI_API_KEY", "AZURE_AI_API_BASE"],
-        "deepseek": ["DEEPSEEK_API_KEY"],
-        "qwen": ["DASHSCOPE_API_KEY"],
-        "dashscope": ["DASHSCOPE_API_KEY"],
-        "zhipu": ["ZHIPU_API_KEY"],
-        "mistral": ["MISTRAL_API_KEY"],
-        "groq": ["GROQ_API_KEY"],
-        "grok": ["XAI_API_KEY"],
-        "xai": ["XAI_API_KEY"],
-        "bedrock": ["AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY", "AWS_REGION_NAME"],
-        "vertex_ai": ["VERTEXAI_PROJECT", "VERTEXAI_LOCATION"],
-        "cohere": ["COHERE_API_KEY"],
-        "cohere_chat": ["COHERE_API_KEY"],
-        "openrouter": ["OPENROUTER_API_KEY"],
-        "fireworks_ai": ["FIREWORKS_AI_API_KEY"],
-        "together_ai": ["TOGETHERAI_API_KEY"],
-        "perplexity": ["PERPLEXITYAI_API_KEY"],
-        "deepinfra": ["DEEPINFRA_API_KEY"],
-        "cerebras": ["CEREBRAS_API_KEY"],
-        "cloudflare": ["CLOUDFLARE_API_KEY", "CLOUDFLARE_ACCOUNT_ID"],
-        "watsonx": ["WATSONX_API_KEY", "WATSONX_PROJECT_ID"],
-        "databricks": ["DATABRICKS_API_KEY", "DATABRICKS_API_BASE"],
-        "ollama": ["OLLAMA_API_BASE_URL"],
-        "mlx": ["MLX_API_BASE_URL"],
-        "custom": ["CUSTOM_LLM_API_KEY", "CUSTOM_LLM_BASE_URL"],
-    }
-    if provider in known:
-        return known[provider]
-    # Auto-detect via LiteLLM
-    detected = _detect_env_vars(provider)
+    if provider in _NATIVE_ENV_VARS:
+        return list(_NATIVE_ENV_VARS[provider])
+    litellm_name = _PROVIDER_TO_LITELLM.get(provider, provider)
+    detected = _detect_env_vars(litellm_name)
     if detected:
         return detected
-    # Last-resort guess: <UPPER>_API_KEY
     return [f"{provider.upper()}_API_KEY"]
 
 

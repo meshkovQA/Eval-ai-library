@@ -755,33 +755,62 @@ function renderTabSettings() {
                 </div>
             </div>`;
         } else {
-            // Standard provider config panel
+            // Standard provider config panel: one input per env var with a
+            // label, plus a single Save and Test connection at the bottom.
+            const allVars = [activeP.env_var, ...(activeP.extra_vars || [])];
+            const isSecret = (ev) => /API_KEY|SECRET|TOKEN|PASSWORD/i.test(ev);
+            const isConfiguredVar = (ev) =>
+                ev === activeP.env_var ? activeP.has_key : !!activeP.extra_configured?.[ev];
+            const fieldId = (ev) => `key_${activeP.id}_${ev}`;
+
             html += `<div style="border:1px solid var(--border);border-radius:var(--radius);padding:14px;background:var(--bg-secondary)">
                 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
                     <span style="font-weight:600;font-size:0.9em;color:var(--text)">${esc(activeP.name)}</span>
                     <span style="font-size:0.75em;color:${isConfigured ? 'var(--success)' : 'var(--text-muted)'}">${isConfigured ? '&#10003; Configured' : 'Not configured'}</span>
                 </div>
-                <div style="display:flex;gap:6px;align-items:center;margin-bottom:4px">
-                    <input class="form-input" id="key_${esc(activeP.env_var)}" type="password"
-                        placeholder="${activeP.has_key ? '••••••••••••' : activeP.env_var}"
-                        style="font-size:0.8em;flex:1">
-                    <button class="btn btn-sm btn-primary" onclick="saveApiKey('${esc(activeP.env_var)}', document.getElementById('key_${esc(activeP.env_var)}').value)" style="white-space:nowrap">Save</button>
-                    ${activeP.has_key ? `<button class="btn btn-sm btn-danger" onclick="if(confirm('Remove key?')) deleteApiKey('${esc(activeP.env_var)}')" style="padding:4px 8px" title="Remove key">&#10005;</button>` : ''}
-                </div>`;
+                <div style="display:flex;flex-direction:column;gap:8px">`;
 
-            if (activeP.extra_vars?.length) {
-                activeP.extra_vars.forEach(ev => {
-                    html += `<div style="display:flex;gap:6px;align-items:center;margin-top:6px">
-                        <input class="form-input" id="key_${esc(ev)}" type="text"
-                            placeholder="${activeP.extra_configured?.[ev] ? '••••••••' : ev}"
-                            style="font-size:0.8em;flex:1">
-                        <button class="btn btn-sm" onclick="saveApiKey('${esc(ev)}', document.getElementById('key_${esc(ev)}').value)" style="white-space:nowrap">Save</button>
+            if (isConfigured) {
+                // Read-only summary: list each env var with a check/cross,
+                // values stay hidden (they're secrets). To edit, user must
+                // clear and re-enter via the ✕ button.
+                allVars.forEach(ev => {
+                    const configured = isConfiguredVar(ev);
+                    html += `<div style="display:flex;align-items:center;gap:8px;padding:6px 8px;background:var(--bg);border:1px solid var(--border);border-radius:4px">
+                        <span style="font-size:0.78em;font-weight:600;color:var(--text-secondary);min-width:160px">${esc(ev)}</span>
+                        <span style="font-size:0.78em;color:${configured ? 'var(--success)' : 'var(--text-muted)'}">${configured ? '&#10003; set' : '&#9675; not set'}</span>
                     </div>`;
                 });
+
+                html += `
+                    <div style="display:flex;gap:6px;align-items:center;margin-top:6px;flex-wrap:wrap">
+                        <button class="btn btn-sm btn-primary" onclick="testProviderConnection('${esc(activeP.id)}')" style="white-space:nowrap">Test connection</button>
+                        <button class="btn btn-sm btn-danger" onclick="if(confirm('Remove all credentials for ${esc(activeP.name)}?')) clearProviderConfig('${esc(activeP.id)}')" style="padding:4px 8px" title="Clear and reconfigure">&#10005;</button>
+                        <span id="testResult_${esc(activeP.id)}" style="font-size:0.78em;margin-left:6px"></span>
+                    </div>`;
+            } else {
+                // Editable form: one input per env var + single Save button.
+                allVars.forEach(ev => {
+                    html += `<div>
+                        <label style="font-size:0.75em;font-weight:600;color:var(--text-secondary);display:block;margin-bottom:3px">${esc(ev)}</label>
+                        <input class="form-input" id="${fieldId(ev)}" type="${isSecret(ev) ? 'password' : 'text'}"
+                            placeholder="${ev}"
+                            data-env-var="${esc(ev)}"
+                            style="font-size:0.8em;width:100%">
+                    </div>`;
+                });
+
+                html += `
+                    <div style="display:flex;gap:6px;align-items:center;margin-top:6px;flex-wrap:wrap">
+                        <button class="btn btn-sm btn-primary" onclick="saveProviderConfig('${esc(activeP.id)}')" style="white-space:nowrap">Save</button>
+                        <span id="testResult_${esc(activeP.id)}" style="font-size:0.78em;margin-left:6px"></span>
+                    </div>`;
             }
 
+            html += `</div>`;
+
             if (activeP.models.length) {
-                html += `<div style="margin-top:8px;font-size:0.75em;color:var(--text-muted)">
+                html += `<div style="margin-top:10px;font-size:0.75em;color:var(--text-muted)">
                     ${activeP.models.length} models available &mdash; pick one when launching an evaluation.
                 </div>`;
             }
@@ -1504,6 +1533,98 @@ async function deleteApiKey(envVar) {
         renderStep(1);
         showToast('API key removed');
     } catch (e) { alert('Error: ' + e.message); }
+}
+
+// Save every env var for a provider in one POST. Empty inputs clear the
+// variable; placeholders ("••••") are skipped by the backend so untouched
+// fields keep their previous value.
+async function saveProviderConfig(providerId) {
+    const p = state.providers.find(x => x.id === providerId);
+    if (!p) return;
+    const vars = [p.env_var, ...(p.extra_vars || [])];
+    const values = {};
+    vars.forEach(ev => {
+        const el = document.getElementById(`key_${providerId}_${ev}`);
+        values[ev] = el ? el.value : '';
+    });
+
+    try {
+        const resp = await fetch('/api/connector/save-provider-config', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ provider: providerId, values }),
+        });
+        if (!resp.ok) {
+            const err = await resp.json().catch(() => ({}));
+            throw new Error(err.error || `HTTP ${resp.status}`);
+        }
+        await loadProviders();
+        renderStep(1);
+        showToast(`${p.name} saved`);
+    } catch (e) {
+        alert('Error saving credentials: ' + e.message);
+    }
+}
+
+// Wipe all env vars belonging to a provider.
+async function clearProviderConfig(providerId) {
+    const p = state.providers.find(x => x.id === providerId);
+    if (!p) return;
+    const vars = [p.env_var, ...(p.extra_vars || [])];
+    try {
+        await Promise.all(vars.map(ev => fetch('/api/connector/delete-api-key', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ env_var: ev }),
+        })));
+        await loadProviders();
+        renderStep(1);
+        showToast(`${p.name} credentials removed`);
+    } catch (e) {
+        alert('Error: ' + e.message);
+    }
+}
+
+// Send a real "ping" through chat_complete using the first available model
+// (or the one already picked in state.evalModel if it matches this provider).
+async function testProviderConnection(providerId) {
+    const p = state.providers.find(x => x.id === providerId);
+    if (!p) return;
+    const resultEl = document.getElementById(`testResult_${providerId}`);
+    if (resultEl) {
+        resultEl.style.color = 'var(--text-muted)';
+        resultEl.innerHTML = 'Testing…';
+    }
+
+    // Prefer the model the user has selected for this provider, else first model.
+    let model = '';
+    const parsed = parseEvalModel(state.evalModel);
+    if (parsed.providerId === providerId && parsed.model) model = parsed.model;
+    if (!model && p.models?.length) model = p.models[0];
+
+    try {
+        const resp = await fetch('/api/connector/test-provider', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ provider: providerId, model }),
+        });
+        const data = await resp.json().catch(() => ({}));
+        if (!resultEl) return;
+        if (data.ok) {
+            resultEl.style.color = 'var(--success)';
+            resultEl.innerHTML = `&#10003; OK (${data.latency_ms} ms) &mdash; ${esc(data.model || '')}`;
+        } else {
+            resultEl.style.color = 'var(--danger, #c0392b)';
+            const msg = (data.error || `HTTP ${resp.status}`).toString();
+            resultEl.textContent = '✕ ' + (msg.length > 200 ? msg.slice(0, 200) + '…' : msg);
+            resultEl.title = msg;
+        }
+    } catch (e) {
+        if (resultEl) {
+            resultEl.style.color = 'var(--danger, #c0392b)';
+            resultEl.textContent = '✕ ' + e.message;
+        }
+    }
 }
 
 async function saveCustomLlmConfig() {

@@ -26,6 +26,7 @@ VERDICT_WEIGHTS = {
 
 class AnswerRelevancyMetric(MetricPattern):
     name = "answerRelevancyMetric"
+    requires_actual_output = True
 
     def __init__(
         self,

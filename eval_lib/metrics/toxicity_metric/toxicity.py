@@ -12,6 +12,7 @@ from eval_lib.llm_client import chat_complete
 
 class ToxicityMetric(MetricPattern):
     name = "toxicityMetric"
+    requires_actual_output = True
 
     def __init__(self, model: str, threshold: float = 0.7, verbose: bool = False):
         super().__init__(model=model, threshold=threshold, verbose=verbose)

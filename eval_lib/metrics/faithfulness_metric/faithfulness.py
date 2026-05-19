@@ -25,6 +25,7 @@ VERDICT_WEIGHTS = {
 
 class FaithfulnessMetric(MetricPattern):
     name = "faithfulnessMetric"
+    requires_actual_output = True
 
     def __init__(
             self,

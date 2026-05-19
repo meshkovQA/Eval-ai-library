@@ -12,6 +12,7 @@ from eval_lib.llm_client import chat_complete
 
 class BiasMetric(MetricPattern):
     name = "biasMetric"
+    requires_actual_output = True
 
     def __init__(
         self,

@@ -2,12 +2,45 @@
 """
 Base classes for evaluation metrics with beautiful console logging.
 """
+import functools
 import json
 import time
 from typing import Type, Dict, Any, Union, Optional
 
 from eval_lib.testcases_schema import EvalTestCase, ConversationalEvalTestCase
 from eval_lib.llm_client import chat_complete
+
+
+def _is_empty_output(value: Any) -> bool:
+    """Return True for None, empty strings and whitespace-only strings."""
+    if value is None:
+        return True
+    if isinstance(value, str) and not value.strip():
+        return True
+    return False
+
+
+def _wrap_evaluate_with_empty_guard(original):
+    """Wrap a metric's async evaluate() with a guard for empty actual_output.
+
+    When the wrapped metric has `requires_actual_output = True` (the default)
+    and `test_case.actual_output` is empty/whitespace, the wrapper returns the
+    canonical zero-score result via `_empty_actual_output_result` instead of
+    delegating to the original evaluate — so the LLM is never given an empty
+    response to score. See issue #1.
+    """
+    @functools.wraps(original)
+    async def wrapper(self, test_case, *args, **kwargs):
+        if getattr(self, "requires_actual_output", True):
+            actual = getattr(test_case, "actual_output", None)
+            if _is_empty_output(actual):
+                result = self._empty_actual_output_result(test_case)
+                self.print_result(result)
+                return result
+        return await original(self, test_case, *args, **kwargs)
+
+    wrapper._empty_guard_wrapped = True
+    return wrapper
 
 
 class Colors:
@@ -28,13 +61,65 @@ class MetricPattern:
     """
     Base class for metrics that use a pattern-based approach to evaluation.
     This class is designed to be subclassed for specific metrics.
+
+    Subclasses set `requires_actual_output = True` to opt into a guard that
+    short-circuits evaluation to a zero score when `test_case.actual_output`
+    is empty or whitespace-only. This prevents the "LLM hallucinates relevance
+    from an empty answer" failure mode (issue #1) for RAG-style metrics.
+
+    The default is False because most non-RAG metric families have their own
+    semantics for empty output (security detection metrics judge the input;
+    resistance metrics treat an empty output as a successful refusal;
+    deterministic checks like NonEmptyMetric *want* to fail on empty answers
+    with their own message). Opt in only where the LLM would otherwise be
+    handed an empty answer to score.
     """
     name: str  # name of the metric
+    requires_actual_output: bool = False
+
+    def __init_subclass__(cls, **kwargs):
+        super().__init_subclass__(**kwargs)
+        # Wrap the subclass's evaluate() so every metric gets the empty-output
+        # guard for free, without each subclass having to remember to add it.
+        # If a subclass doesn't define its own evaluate() we leave it alone.
+        if "evaluate" in cls.__dict__:
+            original = cls.__dict__["evaluate"]
+            if not getattr(original, "_empty_guard_wrapped", False):
+                cls.evaluate = _wrap_evaluate_with_empty_guard(original)
 
     def __init__(self, model: str, threshold: float, verbose: bool = False):
         self.model = model
         self.threshold = threshold
         self.verbose = verbose
+
+    def _empty_actual_output_result(self, test_case: "EvalTestCase") -> Dict[str, Any]:
+        """Canonical zero-score result returned when actual_output is empty.
+
+        Centralised here so the shape stays consistent with what each metric
+        normally returns (same top-level keys + a marker in evaluation_log).
+        """
+        reason = (
+            "Assistant returned an empty response, so the metric cannot be "
+            "evaluated; defaulting to score 0."
+        )
+        result = {
+            "name": self.name,
+            "score": 0.0,
+            "success": False,
+            "reason": reason,
+            "evaluation_cost": 0.0,
+            "evaluation_log": {
+                "input_question": getattr(test_case, "input", None),
+                "answer": getattr(test_case, "actual_output", ""),
+                "skipped": True,
+                "skip_reason": "empty_actual_output",
+                "final_score": 0.0,
+                "threshold": self.threshold,
+                "success": False,
+                "final_reason": reason,
+            },
+        }
+        return result
 
     def _log(self, message: str, color: str = Colors.CYAN):
         """Log message with color if verbose mode is enabled"""

@@ -177,6 +177,7 @@ class PrecisionConfig:
 
 class AnswerPrecisionMetric(MetricPattern):
     name = "answerPrecisionMetric"
+    requires_actual_output = True
 
     def __init__(self, model: str, threshold: float = 0.8, verbose: bool = False, config: Optional[PrecisionConfig] = None):
         super().__init__(model=model, threshold=threshold, verbose=verbose)

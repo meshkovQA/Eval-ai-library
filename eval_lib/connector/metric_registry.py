@@ -177,7 +177,6 @@ METRIC_REGISTRY = {
             {"name": "name", "type": "string", "default": "CustomMetric"},
             {"name": "evaluation_criteria", "type": "list", "default": []},
             {"name": "temperature", "type": "float", "default": 0.8, "min": 0, "max": 2},
-            {"name": "max_evaluation_criteria", "type": "int", "default": 8, "min": 1, "max": 30},
         ],
     },
     # Agent Metrics

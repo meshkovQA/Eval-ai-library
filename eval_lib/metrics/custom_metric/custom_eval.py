@@ -33,6 +33,14 @@ from eval_lib.utils import score_agg, extract_json_block
 _PLACEHOLDER_RE = re.compile(r"\{\{(\w+)\}\}")
 
 
+# Hard safety ceiling on the number of criteria sent to the judge. Not a
+# tunable knob — the goal is only to catch accidental disasters (e.g. a user
+# pasting 500 rows from a spreadsheet into the criteria list) before they
+# turn into a runaway LLM bill. Real chat-list sizes are 3-10; if you legitimately
+# need more, raise this constant.
+_HARD_SAFETY_CAP = 50
+
+
 # Verdict weights for scoring.
 VERDICT_WEIGHTS = {
     "fully": 1.0,
@@ -59,7 +67,6 @@ class CustomEvalMetric(MetricPattern):
         name: str,
         evaluation_criteria: List[str],
         temperature: float = 0.8,
-        max_evaluation_criteria: int = 8,
         verbose: bool = False,
     ):
         """
@@ -67,16 +74,13 @@ class CustomEvalMetric(MetricPattern):
             model: LLM model id (e.g. "openai:gpt-4o-mini").
             threshold: Pass/fail threshold for the aggregated score (0.0-1.0).
             name: Human-readable metric name; surfaced as "Custom: <name>".
-            evaluation_criteria: Non-empty list of criteria. Each item must
+            evaluation_criteria: Non-empty list of criteria. Each item should
                 reference data via {{placeholders}}; criteria without any
-                placeholder are skipped at evaluate-time.
+                placeholder or with unknown placeholders are skipped at
+                evaluate-time (with a warning in evaluation_log).
             temperature: TCVA aggregation temperature (NOT LLM sampling — judge
                 calls always run at temperature=0). Low (~0.1) ≈ strict (min),
                 0.5 ≈ arithmetic mean, high (~1.5) ≈ lenient (max). Default 0.8.
-            max_evaluation_criteria: Hard cap on the number of criteria. Excess
-                items are truncated; a warning is recorded in evaluation_log.
-                Matches the convention used by faithfulness/answer_relevancy
-                (default 8).
             verbose: Enable per-result console logging.
         """
         super().__init__(model=model, threshold=threshold, verbose=verbose)
@@ -94,7 +98,6 @@ class CustomEvalMetric(MetricPattern):
         self.custom_name = name
         self.evaluation_criteria = cleaned
         self.temperature = temperature
-        self.max_evaluation_criteria = max(1, int(max_evaluation_criteria))
 
     # ==================== TEMPLATE CONTEXT ====================
 
@@ -311,16 +314,17 @@ JSON:"""
         # Step 1: resolve all addressable data for this test case.
         values = self._build_substitution_context(test_case)
 
-        # Step 2: hard cap before any LLM work. Truncating later would still
-        # cost a verdict call for the dropped criteria.
+        # Step 2: safety ceiling before any LLM work. This catches accidents
+        # (e.g. a user pasting hundreds of rows into the criteria list); typical
+        # usage is well under the cap and never triggers truncation.
         truncation_warning = None
         criteria = list(self.evaluation_criteria)
-        if len(criteria) > self.max_evaluation_criteria:
+        if len(criteria) > _HARD_SAFETY_CAP:
             truncation_warning = (
                 f"evaluation_criteria had {len(criteria)} items; "
-                f"truncated to max_evaluation_criteria={self.max_evaluation_criteria}."
+                f"truncated to safety ceiling of {_HARD_SAFETY_CAP}."
             )
-            criteria = criteria[: self.max_evaluation_criteria]
+            criteria = criteria[:_HARD_SAFETY_CAP]
 
         # Step 3: filter out criteria that cannot be evaluated.
         kept, skipped = self._filter_criteria(criteria, values)
@@ -345,8 +349,7 @@ JSON:"""
                 "final_score": 0.0,
                 "threshold": self.threshold,
                 "temperature": self.temperature,
-                "max_evaluation_criteria": self.max_evaluation_criteria,
-                "success": False,
+                    "success": False,
                 "summary": reason,
             }
             if truncation_warning:
@@ -399,7 +402,6 @@ JSON:"""
             "comment_final_score": f"TCVA aggregation of verdict weights (temperature={self.temperature}).",
             "threshold": self.threshold,
             "temperature": self.temperature,
-            "max_evaluation_criteria": self.max_evaluation_criteria,
             "success": success,
             "summary": summary,
         }

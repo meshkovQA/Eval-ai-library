@@ -734,7 +734,6 @@ function _customMetricDefaults() {
         evaluation_criteria: [],
         threshold: 0.5,
         temperature: 0.8,
-        max_evaluation_criteria: 8,
     };
 }
 
@@ -776,8 +775,6 @@ function saveCustomMetricsParams() {
         let val = el.value;
         if (field === 'threshold' || field === 'temperature') {
             val = val === '' ? null : parseFloat(val);
-        } else if (field === 'max_evaluation_criteria') {
-            val = val === '' ? 8 : Math.max(1, parseInt(val, 10) || 8);
         } else if (field === 'evaluation_criteria') {
             // One criterion per non-empty line.
             val = (val || '').split('\n').map(s => s.trim()).filter(s => s);
@@ -820,7 +817,7 @@ function renderTabMetricsCustomCategory() {
                     </div>
                     <div class="metric-param" style="grid-column:1 / -1">
                         <label>evaluation_criteria <span class="param-hint">one per line, must include {{placeholders}}</span></label>
-                        <textarea rows="6" data-custom-id="${cm.id}" data-custom-field="evaluation_criteria" placeholder="Each item in {{follow_up_questions}} is topically connected to {{input}}&#10;The set of {{follow_up_questions}} is diverse — no near-duplicates&#10;Each item in {{follow_up_questions}} is within scope and answerable next turn">${esc((cm.evaluation_criteria || []).join('\n'))}</textarea>
+                        <textarea rows="6" data-custom-id="${cm.id}" data-custom-field="evaluation_criteria" placeholder="{{actual_output}} directly answers {{input}}&#10;{{actual_output}} is factually grounded in {{retrieval_context}}&#10;{{actual_output}} is concise and free of filler">${esc((cm.evaluation_criteria || []).join('\n'))}</textarea>
                     </div>
                     <div class="metric-param">
                         <label>threshold <span class="param-hint">0.0 - 1.0</span></label>
@@ -829,10 +826,6 @@ function renderTabMetricsCustomCategory() {
                     <div class="metric-param">
                         <label>temperature <span class="param-hint">aggregation strictness: low=strict, high=lenient</span></label>
                         <input type="number" step="0.05" min="0" max="2" value="${cm.temperature != null ? cm.temperature : 0.8}" data-custom-id="${cm.id}" data-custom-field="temperature">
-                    </div>
-                    <div class="metric-param">
-                        <label>max_evaluation_criteria <span class="param-hint">hard cap on judged items</span></label>
-                        <input type="number" step="1" min="1" max="30" value="${cm.max_evaluation_criteria != null ? cm.max_evaluation_criteria : 8}" data-custom-id="${cm.id}" data-custom-field="max_evaluation_criteria">
                     </div>
                 </div>
             </div>`;
@@ -1703,7 +1696,6 @@ function _buildMetricsPayload() {
             evaluation_criteria: cm.evaluation_criteria || [],
             threshold: cm.threshold,
             temperature: cm.temperature,
-            max_evaluation_criteria: cm.max_evaluation_criteria != null ? cm.max_evaluation_criteria : 8,
         },
     }));
     return [...builtIn, ...custom];
@@ -1994,7 +1986,6 @@ async function loadSelectedConfig() {
                         evaluation_criteria: Array.isArray(p.evaluation_criteria) ? p.evaluation_criteria : [],
                         threshold: p.threshold != null ? p.threshold : 0.5,
                         temperature: p.temperature != null ? p.temperature : 0.8,
-                        max_evaluation_criteria: p.max_evaluation_criteria != null ? p.max_evaluation_criteria : 8,
                     });
                 } else {
                     state.selectedMetrics[m.metric_class] = { enabled: true, params: m.params || {} };

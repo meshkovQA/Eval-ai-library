@@ -154,12 +154,22 @@ JSON:"""
         """Collect available values + variable->column aliases from the test case.
 
         Sources (in priority order, later overrides earlier):
-          - test_case._meta["dataset_row"]  (raw dataset row from connector)
-          - built-in fields from EvalTestCase (input, actual_output, expected_output, retrieval_context)
-          - test_case._meta["system_prompt"]
+          1. test_case._meta["dataset_row"]   (raw dataset row from connector)
+          2. test_case.extra_fields           (user-provided ad-hoc fields)
+          3. built-in fields from EvalTestCase (input, actual_output, expected_output, retrieval_context)
+          4. test_case._meta["system_prompt"] (extracted by connector from API response)
 
-        Returns (values_by_name, variable_map). variable_map allows {{var}} in templates
-        to alias dataset columns (mirrors connector substitute_template behavior).
+        Rationale for the order:
+          - dataset_row is the lowest-priority "background" source (any column may
+            collide with a metric-relevant name by accident).
+          - extra_fields is the explicit user-extension hook for arbitrary data,
+            so it overrides dataset noise but must NOT be able to silently
+            replace semantic schema fields like {{input}} or {{actual_output}}.
+          - The remaining built-ins + system_prompt always win.
+
+        Returns (values_by_name, variable_map). variable_map allows {{var}} in
+        templates to alias dataset columns (mirrors connector substitute_template
+        behavior).
         """
         meta = getattr(test_case, "_meta", None) or {}
         values: Dict[str, Any] = {}
@@ -167,6 +177,9 @@ JSON:"""
         row = meta.get("dataset_row") or {}
         if isinstance(row, dict):
             values.update(row)
+
+        if test_case.extra_fields:
+            values.update(test_case.extra_fields)
 
         values["input"] = test_case.input
         values["actual_output"] = test_case.actual_output

@@ -53,6 +53,12 @@ class EvalTestCase(BaseModel):
     planning_steps: Optional[List[str]] = None
     resource_usage: Optional[ResourceUsage] = None
 
+    # User-provided ad-hoc fields available to metrics that support placeholder
+    # substitution (e.g. CustomEvalMetric). Use this for any data that is not
+    # part of the fixed schema — e.g. `follow_up_questions`, `confidence_score`,
+    # `tags` — and reference it from a metric prompt as {{field_name}}.
+    extra_fields: Optional[Dict[str, Any]] = None
+
 
 class ConversationalEvalTestCase(BaseModel):
     turns: List[EvalTestCase]

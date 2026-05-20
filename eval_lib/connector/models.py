@@ -44,6 +44,11 @@ class ResponseMapping(BaseModel):
     agent_confidence_path: Optional[str] = None
     planning_steps_path: Optional[str] = None
     resource_usage_path: Optional[str] = None
+    # Arbitrary user-defined fields pulled from the API response and exposed to
+    # metrics via EvalTestCase.extra_fields. Key = placeholder name the user
+    # writes in custom metric criteria (e.g. "follow_up_questions"); value =
+    # JSON path inside the response payload.
+    extra_field_paths: Dict[str, str] = {}
 
 
 class DatasetColumnMapping(BaseModel):

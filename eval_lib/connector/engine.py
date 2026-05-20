@@ -588,6 +588,18 @@ class ConnectorEngine:
                     model=ru.get("model"),
                 )
 
+        # Extra fields: arbitrary user-defined paths into the API response,
+        # surfaced to metrics through EvalTestCase.extra_fields. None values
+        # (missing paths) are filtered out so {{placeholder}} resolution in
+        # CustomEvalMetric treats them as "unknown" rather than empty.
+        extra_fields = {}
+        for field_name, path in (mapping.extra_field_paths or {}).items():
+            if not field_name or not path:
+                continue
+            value = extract_path(resp_data, path)
+            if value is not None:
+                extra_fields[field_name] = value
+
         tc = EvalTestCase(
             input=input_val,
             actual_output=actual_output,
@@ -600,6 +612,7 @@ class ConnectorEngine:
             agent_confidence=agent_confidence,
             planning_steps=planning_steps,
             resource_usage=resource_usage,
+            extra_fields=extra_fields or None,
         )
         # Attach extra metadata for dashboard and per-row template substitution
         tc._meta = {

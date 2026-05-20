@@ -20,6 +20,7 @@ const state = {
     },
     testResponse: null,
     responseMapping: {
+        extra_field_paths: {},
         actual_output_path: '',
         retrieval_context_path: '',
         tools_called_path: '',
@@ -99,6 +100,9 @@ function validateStep(step) {
         if (!state.apiConfig.body_template.trim() && state.apiConfig.method !== 'GET') return 'Request body is required';
         const builtInCount = Object.values(state.selectedMetrics).filter(v => v.enabled).length;
         if (builtInCount + state.customMetrics.length === 0) return 'Select at least one metric';
+        // A custom metric without criteria would fail at job-start with a backend error — fail fast here.
+        const emptyCustom = state.customMetrics.find(cm => !(cm.evaluation_criteria || []).length);
+        if (emptyCustom) return `Custom metric "${emptyCustom.name || 'CustomMetric'}" has no evaluation_criteria`;
     }
     if (step === 2) {
         if (!state.datasetId) return 'Upload a dataset first';
@@ -484,6 +488,9 @@ function renderTabMapping() {
         </div>
     </div>`;
 
+    // Extra fields — user-defined name → JSON path, surfaced to custom metrics as {{name}}.
+    html += renderExtraFieldsSection();
+
     // JSON tree from test response
     if (state.testResponse?.response_body) {
         html += `<div class="section-card">
@@ -499,6 +506,71 @@ function renderTabMapping() {
     }
 
     return html;
+}
+
+// ---- Extra fields (Response tab) ----
+// Pulled from the API response by JSON path and surfaced to metrics via
+// EvalTestCase.extra_fields. Custom metrics reference them as {{name}}.
+function renderExtraFieldsSection() {
+    const entries = Object.entries(state.responseMapping.extra_field_paths || {});
+    let html = `<div class="section-card">
+        <div class="section-card-title">Extra fields <span class="optional">(optional)</span></div>
+        <p style="font-size:0.8em;color:var(--text-muted);margin-bottom:12px">
+            Pull arbitrary fields from the API response and expose them to <strong>Custom metrics</strong> as <code>{{name}}</code> placeholders. Example: name=<code>follow_up_questions</code>, path=<code>data.followups</code>.
+            These land in <code>EvalTestCase.extra_fields</code>; do not use built-in names like <code>input</code> or <code>actual_output</code>.
+        </p>
+        <div class="kv-list" id="extraFieldsList">`;
+    entries.forEach(([name, path], i) => {
+        html += `<div class="kv-row" data-extra-idx="${i}">
+            <input class="form-input" placeholder="name (e.g. follow_up_questions)" value="${esc(name)}" data-extra-name="${i}" oninput="updateExtraFieldsFromInputs()">
+            <input class="form-input" placeholder="JSON path (e.g. data.followups)" value="${esc(path)}" data-extra-path="${i}" oninput="updateExtraFieldsFromInputs()">
+            <button class="btn btn-small btn-danger" onclick="removeExtraField(${i})">×</button>
+        </div>`;
+    });
+    html += `</div>
+        <button class="btn btn-small" style="margin-top:8px" onclick="addExtraField()">+ Add extra field</button>
+    </div>`;
+    return html;
+}
+
+// We store extra_field_paths as Dict[name -> path], but render it as an ordered
+// list so the user can have empty rows while typing. Re-serialize by index on
+// every input event; empty name/path rows are silently dropped on submit.
+function updateExtraFieldsFromInputs() {
+    const list = document.getElementById('extraFieldsList');
+    if (!list) return;
+    const next = {};
+    list.querySelectorAll('.kv-row').forEach(row => {
+        const nameEl = row.querySelector('[data-extra-name]');
+        const pathEl = row.querySelector('[data-extra-path]');
+        const name = (nameEl?.value || '').trim();
+        const path = (pathEl?.value || '').trim();
+        if (name && path) next[name] = path;
+    });
+    state.responseMapping.extra_field_paths = next;
+}
+
+function addExtraField() {
+    // Commit existing rows first so we don't lose in-progress typing on re-render.
+    updateExtraFieldsFromInputs();
+    // Add a UI-only placeholder pair so the new row renders. It's dropped on
+    // submit if the user never fills both fields.
+    const map = state.responseMapping.extra_field_paths || {};
+    // Find a unique placeholder key.
+    let i = 1;
+    while ((`new_field_${i}`) in map) i++;
+    map[`new_field_${i}`] = '';
+    state.responseMapping.extra_field_paths = map;
+    const tab = document.querySelector('.tab-bar .tab-item.active');
+    renderStep(state.currentStep);
+}
+
+function removeExtraField(idx) {
+    const entries = Object.entries(state.responseMapping.extra_field_paths || {});
+    if (idx < 0 || idx >= entries.length) return;
+    entries.splice(idx, 1);
+    state.responseMapping.extra_field_paths = Object.fromEntries(entries);
+    renderStep(state.currentStep);
 }
 
 // ---- Tab: Columns (dataset column mapping) ----
@@ -659,10 +731,10 @@ function toggleMetricCard(name, event) {
 function _customMetricDefaults() {
     return {
         name: 'CustomMetric',
-        criteria: '',
-        evaluation_steps: [],
+        evaluation_criteria: [],
         threshold: 0.5,
         temperature: 0.8,
+        max_evaluation_criteria: 8,
     };
 }
 
@@ -704,8 +776,10 @@ function saveCustomMetricsParams() {
         let val = el.value;
         if (field === 'threshold' || field === 'temperature') {
             val = val === '' ? null : parseFloat(val);
-        } else if (field === 'evaluation_steps') {
-            // One step per non-empty line — easier than comma-separation when steps contain commas.
+        } else if (field === 'max_evaluation_criteria') {
+            val = val === '' ? 8 : Math.max(1, parseInt(val, 10) || 8);
+        } else if (field === 'evaluation_criteria') {
+            // One criterion per non-empty line.
             val = (val || '').split('\n').map(s => s.trim()).filter(s => s);
         }
         item[field] = val;
@@ -713,8 +787,12 @@ function saveCustomMetricsParams() {
 }
 
 function renderTabMetricsCustomCategory() {
-    const hint = `Use <code>{{column_name}}</code> placeholders inside <em>criteria</em> or <em>evaluation steps</em> to inject values from the dataset row or the connector response into the judge prompt. ` +
-        `Available names: any dataset column, your <code>template_variable_map</code> aliases, <code>{{input}}</code>, <code>{{actual_output}}</code>, <code>{{expected_output}}</code>, <code>{{retrieval_context}}</code>, and <code>{{system_prompt}}</code> (if the response mapping fills it). Unknown placeholders are left as-is.`;
+    const hint =
+        `Write one <strong>criterion per line</strong>. Each criterion must reference the data it cares about via <code>{{placeholders}}</code> — ` +
+        `the metric extracts those values, lists them in a DATA block above the criteria, and asks the judge to verdict each criterion against that data. ` +
+        `Criteria with no placeholders, or with unknown placeholders, are skipped (with a warning in the result log).` +
+        `<br><br>Available names: any dataset column, <code>{{input}}</code>, <code>{{actual_output}}</code>, <code>{{expected_output}}</code>, ` +
+        `<code>{{retrieval_context}}</code>, <code>{{system_prompt}}</code> (if mapped in the Response tab), plus any field you put in <code>EvalTestCase.extra_fields</code> when calling the library programmatically.`;
 
     let html = `<div class="custom-metrics-intro">${hint}</div>`;
 
@@ -737,24 +815,24 @@ function renderTabMetricsCustomCategory() {
                 </div>
                 <div class="metric-card-params" onclick="event.stopPropagation()">
                     <div class="metric-param">
-                        <label>name</label>
+                        <label>name <span class="param-hint">shown in dashboard</span></label>
                         <input type="text" value="${esc(cm.name || '')}" data-custom-id="${cm.id}" data-custom-field="name" oninput="onCustomMetricNameInput('${cm.id}', this.value)">
                     </div>
                     <div class="metric-param" style="grid-column:1 / -1">
-                        <label>criteria <span class="param-hint">supports {{placeholders}}</span></label>
-                        <textarea rows="3" data-custom-id="${cm.id}" data-custom-field="criteria" placeholder="e.g. Judge whether {{actual_output}} correctly answers {{input}} given context {{retrieval_context}}.">${esc(cm.criteria || '')}</textarea>
-                    </div>
-                    <div class="metric-param" style="grid-column:1 / -1">
-                        <label>evaluation_steps <span class="param-hint">one per line, optional, supports {{placeholders}}</span></label>
-                        <textarea rows="4" data-custom-id="${cm.id}" data-custom-field="evaluation_steps" placeholder="Leave empty to auto-generate from criteria.&#10;Or write one sub-criterion per line, e.g.&#10;Answer is factually grounded in {{retrieval_context}}&#10;Tone matches {{system_prompt}}">${esc((cm.evaluation_steps || []).join('\n'))}</textarea>
+                        <label>evaluation_criteria <span class="param-hint">one per line, must include {{placeholders}}</span></label>
+                        <textarea rows="6" data-custom-id="${cm.id}" data-custom-field="evaluation_criteria" placeholder="Each item in {{follow_up_questions}} is topically connected to {{input}}&#10;The set of {{follow_up_questions}} is diverse — no near-duplicates&#10;Each item in {{follow_up_questions}} is within scope and answerable next turn">${esc((cm.evaluation_criteria || []).join('\n'))}</textarea>
                     </div>
                     <div class="metric-param">
-                        <label>threshold</label>
+                        <label>threshold <span class="param-hint">0.0 - 1.0</span></label>
                         <input type="number" step="0.05" min="0" max="1" value="${cm.threshold != null ? cm.threshold : 0.5}" data-custom-id="${cm.id}" data-custom-field="threshold">
                     </div>
                     <div class="metric-param">
-                        <label>temperature</label>
+                        <label>temperature <span class="param-hint">aggregation strictness: low=strict, high=lenient</span></label>
                         <input type="number" step="0.05" min="0" max="2" value="${cm.temperature != null ? cm.temperature : 0.8}" data-custom-id="${cm.id}" data-custom-field="temperature">
+                    </div>
+                    <div class="metric-param">
+                        <label>max_evaluation_criteria <span class="param-hint">hard cap on judged items</span></label>
+                        <input type="number" step="1" min="1" max="30" value="${cm.max_evaluation_criteria != null ? cm.max_evaluation_criteria : 8}" data-custom-id="${cm.id}" data-custom-field="max_evaluation_criteria">
                     </div>
                 </div>
             </div>`;
@@ -1622,10 +1700,10 @@ function _buildMetricsPayload() {
         metric_class: 'CustomEvalMetric',
         params: {
             name: cm.name,
-            criteria: cm.criteria,
-            evaluation_steps: cm.evaluation_steps || [],
+            evaluation_criteria: cm.evaluation_criteria || [],
             threshold: cm.threshold,
             temperature: cm.temperature,
+            max_evaluation_criteria: cm.max_evaluation_criteria != null ? cm.max_evaluation_criteria : 8,
         },
     }));
     return [...builtIn, ...custom];
@@ -1873,7 +1951,7 @@ function resetProject() {
         timeout_seconds: 60, max_retries: 1, delay_between_requests_ms: 0,
     };
     state.testResponse = null;
-    state.responseMapping = { actual_output_path: '', retrieval_context_path: '', tools_called_path: '', token_usage_path: '', system_prompt_path: '' };
+    state.responseMapping = { actual_output_path: '', retrieval_context_path: '', tools_called_path: '', token_usage_path: '', system_prompt_path: '', extra_field_paths: {} };
     state.costPer1mTokens = 0;
     state.columnMapping = { input_column: 'input', expected_output_column: '', context_column: '', tools_called_column: '', expected_tools_column: '', template_variable_map: {} };
     state.selectedMetrics = {};
@@ -1913,10 +1991,10 @@ async function loadSelectedConfig() {
                     state.customMetrics.push({
                         id: `cm_${Date.now()}_${state._customMetricSeq}`,
                         name: p.name || 'CustomMetric',
-                        criteria: p.criteria || '',
-                        evaluation_steps: Array.isArray(p.evaluation_steps) ? p.evaluation_steps : [],
+                        evaluation_criteria: Array.isArray(p.evaluation_criteria) ? p.evaluation_criteria : [],
                         threshold: p.threshold != null ? p.threshold : 0.5,
                         temperature: p.temperature != null ? p.temperature : 0.8,
+                        max_evaluation_criteria: p.max_evaluation_criteria != null ? p.max_evaluation_criteria : 8,
                     });
                 } else {
                     state.selectedMetrics[m.metric_class] = { enabled: true, params: m.params || {} };

@@ -824,3 +824,66 @@
     .tab-bar { overflow-x: auto; }
     .tab-item { padding: 8px 14px; font-size: 0.8em; white-space: nowrap; }
 }
+
+/* ---- Custom Metrics tab ---- */
+.custom-metrics-intro {
+    padding: 10px 12px;
+    margin-bottom: 12px;
+    border: 1px dashed var(--border);
+    border-radius: 4px;
+    background: var(--bg-secondary, var(--bg));
+    color: var(--text-secondary);
+    font-size: 0.82em;
+    line-height: 1.5;
+}
+.custom-metrics-intro code {
+    padding: 1px 5px;
+    background: var(--bg);
+    border: 1px solid var(--border-light);
+    border-radius: 3px;
+    font-size: 0.95em;
+    color: var(--accent);
+}
+.custom-metrics-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.custom-metrics-empty {
+    padding: 24px;
+    text-align: center;
+    color: var(--text-secondary);
+    border: 1px dashed var(--border);
+    border-radius: 4px;
+    font-size: 0.85em;
+}
+.custom-metric-card .metric-card-params { display: block; }
+.custom-metric-card .metric-card-params {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+.custom-metric-card .metric-param { margin-bottom: 0; }
+.custom-metric-card .metric-param textarea {
+    width: 100%;
+    padding: 6px 8px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text);
+    font-family: inherit;
+    font-size: 0.85em;
+    border-radius: 0;
+    resize: vertical;
+    min-height: 56px;
+}
+.param-hint {
+    color: var(--text-secondary);
+    font-size: 0.85em;
+    font-weight: normal;
+    margin-left: 4px;
+    opacity: 0.8;
+}
+.btn-small {
+    padding: 4px 10px;
+    font-size: 0.78em;
+}

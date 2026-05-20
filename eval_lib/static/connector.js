@@ -36,6 +36,11 @@ const state = {
         template_variable_map: {},
     },
     selectedMetrics: {},
+    // Custom metric instances. Multiple CustomEvalMetric configurations can
+    // coexist; on submit each item is expanded into its own MetricConfig with
+    // metric_class="CustomEvalMetric" and per-instance params.
+    customMetrics: [],
+    _customMetricSeq: 0,
     evalModel: 'gpt-4o-mini',
     // Remembers the last model the user picked for each provider so that
     // switching providers and then switching back restores the prior choice
@@ -92,7 +97,8 @@ function validateStep(step) {
     if (step === 1) {
         if (!state.apiConfig.base_url.trim()) return 'Base URL is required';
         if (!state.apiConfig.body_template.trim() && state.apiConfig.method !== 'GET') return 'Request body is required';
-        if (Object.values(state.selectedMetrics).filter(v => v.enabled).length === 0) return 'Select at least one metric';
+        const builtInCount = Object.values(state.selectedMetrics).filter(v => v.enabled).length;
+        if (builtInCount + state.customMetrics.length === 0) return 'Select at least one metric';
     }
     if (step === 2) {
         if (!state.datasetId) return 'Upload a dataset first';
@@ -201,7 +207,7 @@ function switchTab(tab) {
 }
 
 function renderTabBar() {
-    const metricsCount = Object.values(state.selectedMetrics).filter(v => v.enabled).length;
+    const metricsCount = Object.values(state.selectedMetrics).filter(v => v.enabled).length + state.customMetrics.length;
     const tabs = [
         { id: 'connection', label: 'Connection', extra: '' },
         { id: 'mapping', label: 'Response', extra: state.testResponse?.response_body ? '<span class="tab-dot"></span>' : '' },
@@ -555,27 +561,39 @@ function renderTabColumns() {
 // ---- Tab: Metrics (card grid with sub-tabs) ----
 function switchMetricsCat(cat) {
     saveMetricParams();
+    saveCustomMetricsParams();
     state.activeMetricsCat = cat;
     renderStep(1);
 }
 
 function renderTabMetrics() {
     let html = '';
-    const categories = { rag: 'RAG', agent: 'Agent', security: 'Security', deterministic: 'Deterministic', vector: 'Vector' };
+    const categories = { rag: 'RAG', agent: 'Agent', security: 'Security', deterministic: 'Deterministic', vector: 'Vector', custom: 'Custom' };
 
     // Sub-tab bar
     html += '<div class="metrics-subtabs">';
     for (const [cat, label] of Object.entries(categories)) {
-        const metrics = state.metricsInfo.filter(m => m.category === cat);
-        if (!metrics.length) continue;
-        const count = metrics.filter(m => state.selectedMetrics[m.name]?.enabled).length;
+        let count;
+        if (cat === 'custom') {
+            // The Custom tab is always available — it hosts user-defined CustomEvalMetric instances.
+            count = state.customMetrics.length;
+        } else {
+            // Skip the built-in CustomEvalMetric card from RAG (it now lives in the Custom tab as a multi-instance manager).
+            const metrics = state.metricsInfo.filter(m => m.category === cat && m.name !== 'CustomEvalMetric');
+            if (!metrics.length) continue;
+            count = metrics.filter(m => state.selectedMetrics[m.name]?.enabled).length;
+        }
         const cls = cat === state.activeMetricsCat ? 'metrics-subtab active' : 'metrics-subtab';
         html += `<button class="${cls}" onclick="switchMetricsCat('${cat}')">${label}${count ? ` <span class="tab-badge">${count}</span>` : ''}</button>`;
     }
     html += '</div>';
 
-    // Render cards for active category
-    const metrics = state.metricsInfo.filter(m => m.category === state.activeMetricsCat);
+    if (state.activeMetricsCat === 'custom') {
+        return html + renderTabMetricsCustomCategory();
+    }
+
+    // Render cards for active category (CustomEvalMetric is excluded here)
+    const metrics = state.metricsInfo.filter(m => m.category === state.activeMetricsCat && m.name !== 'CustomEvalMetric');
     html += '<div class="metrics-grid-cards">';
     metrics.forEach(m => {
         const sel = state.selectedMetrics[m.name] || { enabled: false, params: {} };
@@ -632,6 +650,120 @@ function toggleMetricCard(name, event) {
     if (!state.selectedMetrics[name]) state.selectedMetrics[name] = { enabled: false, params: {} };
     state.selectedMetrics[name].enabled = !state.selectedMetrics[name].enabled;
     renderStep(1);
+}
+
+// ---- Custom metrics tab ----
+
+// Defaults pulled from the CustomEvalMetric registry entry (kept in sync with
+// metric_registry.py so the form matches the backend signature).
+function _customMetricDefaults() {
+    return {
+        name: 'CustomMetric',
+        criteria: '',
+        evaluation_steps: [],
+        threshold: 0.5,
+        temperature: 0.8,
+    };
+}
+
+// Live-update only the header label so the user sees their name typed in
+// without losing input focus. Other fields are read out on save/submit.
+function onCustomMetricNameInput(id, value) {
+    const item = state.customMetrics.find(c => c.id === id);
+    if (!item) return;
+    item.name = value;
+    const headerEl = document.querySelector(`.custom-metric-card[data-custom-id="${id}"] .metric-card-name`);
+    if (headerEl) {
+        const idx = state.customMetrics.findIndex(c => c.id === id);
+        headerEl.textContent = `Custom #${idx + 1}: ${value || 'CustomMetric'}`;
+    }
+}
+
+function addCustomMetric() {
+    saveCustomMetricsParams();
+    state._customMetricSeq += 1;
+    const id = `cm_${Date.now()}_${state._customMetricSeq}`;
+    state.customMetrics.push({ id, ...(_customMetricDefaults()) });
+    renderStep(1);
+}
+
+function removeCustomMetric(id) {
+    saveCustomMetricsParams();
+    state.customMetrics = state.customMetrics.filter(c => c.id !== id);
+    renderStep(1);
+}
+
+// Reads all inputs of the custom-metrics form back into state.customMetrics.
+// Called on tab switches and before submit so user edits survive re-renders.
+function saveCustomMetricsParams() {
+    document.querySelectorAll('[data-custom-id][data-custom-field]').forEach(el => {
+        const id = el.dataset.customId;
+        const field = el.dataset.customField;
+        const item = state.customMetrics.find(c => c.id === id);
+        if (!item) return;
+        let val = el.value;
+        if (field === 'threshold' || field === 'temperature') {
+            val = val === '' ? null : parseFloat(val);
+        } else if (field === 'evaluation_steps') {
+            // One step per non-empty line — easier than comma-separation when steps contain commas.
+            val = (val || '').split('\n').map(s => s.trim()).filter(s => s);
+        }
+        item[field] = val;
+    });
+}
+
+function renderTabMetricsCustomCategory() {
+    const hint = `Use <code>{{column_name}}</code> placeholders inside <em>criteria</em> or <em>evaluation steps</em> to inject values from the dataset row or the connector response into the judge prompt. ` +
+        `Available names: any dataset column, your <code>template_variable_map</code> aliases, <code>{{input}}</code>, <code>{{actual_output}}</code>, <code>{{expected_output}}</code>, <code>{{retrieval_context}}</code>, and <code>{{system_prompt}}</code> (if the response mapping fills it). Unknown placeholders are left as-is.`;
+
+    let html = `<div class="custom-metrics-intro">${hint}</div>`;
+
+    html += '<div class="custom-metrics-list">';
+    if (!state.customMetrics.length) {
+        html += `<div class="custom-metrics-empty">No custom metrics yet. Click <strong>Add Custom Metric</strong> to define one.</div>`;
+    } else {
+        state.customMetrics.forEach((cm, idx) => {
+            html += `<div class="metric-card-item selected custom-metric-card" data-custom-id="${cm.id}">
+                <div class="metric-card-header" style="justify-content:space-between">
+                    <div style="display:flex;align-items:center;gap:8px">
+                        <div class="metric-card-check">✓</div>
+                        <div class="metric-card-name">Custom #${idx + 1}: ${esc(cm.name || 'CustomMetric')}</div>
+                    </div>
+                    <button class="btn btn-small btn-danger" onclick="removeCustomMetric('${cm.id}')">Remove</button>
+                </div>
+                <div class="metric-card-tags">
+                    <span class="metric-card-tag">input</span>
+                    <span class="metric-card-tag">actual_output</span>
+                </div>
+                <div class="metric-card-params" onclick="event.stopPropagation()">
+                    <div class="metric-param">
+                        <label>name</label>
+                        <input type="text" value="${esc(cm.name || '')}" data-custom-id="${cm.id}" data-custom-field="name" oninput="onCustomMetricNameInput('${cm.id}', this.value)">
+                    </div>
+                    <div class="metric-param" style="grid-column:1 / -1">
+                        <label>criteria <span class="param-hint">supports {{placeholders}}</span></label>
+                        <textarea rows="3" data-custom-id="${cm.id}" data-custom-field="criteria" placeholder="e.g. Judge whether {{actual_output}} correctly answers {{input}} given context {{retrieval_context}}.">${esc(cm.criteria || '')}</textarea>
+                    </div>
+                    <div class="metric-param" style="grid-column:1 / -1">
+                        <label>evaluation_steps <span class="param-hint">one per line, optional, supports {{placeholders}}</span></label>
+                        <textarea rows="4" data-custom-id="${cm.id}" data-custom-field="evaluation_steps" placeholder="Leave empty to auto-generate from criteria.&#10;Or write one sub-criterion per line, e.g.&#10;Answer is factually grounded in {{retrieval_context}}&#10;Tone matches {{system_prompt}}">${esc((cm.evaluation_steps || []).join('\n'))}</textarea>
+                    </div>
+                    <div class="metric-param">
+                        <label>threshold</label>
+                        <input type="number" step="0.05" min="0" max="1" value="${cm.threshold != null ? cm.threshold : 0.5}" data-custom-id="${cm.id}" data-custom-field="threshold">
+                    </div>
+                    <div class="metric-param">
+                        <label>temperature</label>
+                        <input type="number" step="0.05" min="0" max="2" value="${cm.temperature != null ? cm.temperature : 0.8}" data-custom-id="${cm.id}" data-custom-field="temperature">
+                    </div>
+                </div>
+            </div>`;
+        });
+    }
+    html += '</div>';
+
+    html += `<div style="margin-top:12px"><button class="btn btn-primary" onclick="addCustomMetric()">+ Add Custom Metric</button></div>`;
+    return html;
 }
 
 // Update the provider filter without destroying focus on the search input.
@@ -998,6 +1130,7 @@ function saveStep1() {
     if (costEl) state.costPer1mTokens = parseFloat(costEl.value) || 0;
 
     saveMetricParams();
+    saveCustomMetricsParams();
 }
 
 function addHeader() {
@@ -1346,11 +1479,13 @@ async function testConnectionStep3() {
 
 function renderStep4() {
     const enabledMetrics = Object.entries(state.selectedMetrics).filter(([_, v]) => v.enabled).map(([k]) => k);
+    const customLabels = state.customMetrics.map(cm => `Custom: ${cm.name || 'CustomMetric'}`);
+    const allMetricLabels = [...enabledMetrics, ...customLabels];
     const issues = [];
     if (!state.apiConfig.base_url) issues.push('No API URL configured');
     if (!state.datasetId) issues.push('No dataset uploaded');
     if (!state.responseMapping.actual_output_path) issues.push('No response mapping for actual_output');
-    if (!enabledMetrics.length) issues.push('No metrics selected');
+    if (!allMetricLabels.length) issues.push('No metrics selected');
 
     let html = renderStepHeader('Execute Evaluation', 'Review and run', null);
 
@@ -1361,7 +1496,7 @@ function renderStep4() {
             <div><strong style="color:var(--text)">Input column:</strong> ${esc(state.columnMapping.input_column)}</div>
             <div><strong style="color:var(--text)">Response path:</strong> ${esc(state.responseMapping.actual_output_path)}</div>
             <div><strong style="color:var(--text)">Eval model:</strong> ${esc(state.evalModel)}</div>
-            <div><strong style="color:var(--text)">Metrics (${enabledMetrics.length}):</strong> ${enabledMetrics.join(', ') || 'None'}</div>
+            <div><strong style="color:var(--text)">Metrics (${allMetricLabels.length}):</strong> ${allMetricLabels.join(', ') || 'None'}</div>
         </div>
     </div>`;
 
@@ -1379,9 +1514,8 @@ function renderStep4() {
 }
 
 async function startJob() {
-    const enabledMetrics = Object.entries(state.selectedMetrics)
-        .filter(([_, v]) => v.enabled)
-        .map(([name, v]) => ({ metric_class: name, params: v.params }));
+    saveCustomMetricsParams();
+    const enabledMetrics = _buildMetricsPayload();
 
     const jobName = `connector_${Date.now()}`;
     const config = {
@@ -1475,6 +1609,27 @@ async function cancelJob() {
 }
 
 // ---- Metrics save ----
+
+// Combines enabled built-in metrics + every customMetrics entry into the
+// MetricConfig[] payload the backend expects. Custom items each become their
+// own MetricConfig with metric_class="CustomEvalMetric" — duplicates are fine,
+// the registry treats them as independent instances.
+function _buildMetricsPayload() {
+    const builtIn = Object.entries(state.selectedMetrics)
+        .filter(([_, v]) => v.enabled)
+        .map(([name, v]) => ({ metric_class: name, params: v.params }));
+    const custom = state.customMetrics.map(cm => ({
+        metric_class: 'CustomEvalMetric',
+        params: {
+            name: cm.name,
+            criteria: cm.criteria,
+            evaluation_steps: cm.evaluation_steps || [],
+            threshold: cm.threshold,
+            temperature: cm.temperature,
+        },
+    }));
+    return [...builtIn, ...custom];
+}
 
 function saveMetricParams() {
     document.querySelectorAll('[data-metric][data-param]').forEach(el => {
@@ -1661,7 +1816,7 @@ async function saveProjectConfig() {
         api_config: state.apiConfig,
         response_mapping: state.responseMapping,
         dataset_column_mapping: state.columnMapping,
-        metrics: Object.entries(state.selectedMetrics).filter(([_, v]) => v.enabled).map(([n, v]) => ({ metric_class: n, params: v.params })),
+        metrics: _buildMetricsPayload(),
         eval_model: state.evalModel,
         cost_per_1m_tokens: state.costPer1mTokens,
     };
@@ -1690,7 +1845,7 @@ async function saveProjectConfigAs() {
         api_config: state.apiConfig,
         response_mapping: state.responseMapping,
         dataset_column_mapping: state.columnMapping,
-        metrics: Object.entries(state.selectedMetrics).filter(([_, v]) => v.enabled).map(([n, v]) => ({ metric_class: n, params: v.params })),
+        metrics: _buildMetricsPayload(),
         eval_model: state.evalModel,
         cost_per_1m_tokens: state.costPer1mTokens,
     };
@@ -1722,6 +1877,8 @@ function resetProject() {
     state.costPer1mTokens = 0;
     state.columnMapping = { input_column: 'input', expected_output_column: '', context_column: '', tools_called_column: '', expected_tools_column: '', template_variable_map: {} };
     state.selectedMetrics = {};
+    state.customMetrics = [];
+    state._customMetricSeq = 0;
     state.evalModel = 'gpt-4o-mini';
     state._evalModelPerProvider = {};
     showToast('New project');
@@ -1748,7 +1905,23 @@ async function loadSelectedConfig() {
         if (data.cost_per_1m_tokens != null) state.costPer1mTokens = data.cost_per_1m_tokens;
         if (data.metrics) {
             state.selectedMetrics = {};
-            data.metrics.forEach(m => { state.selectedMetrics[m.metric_class] = { enabled: true, params: m.params || {} }; });
+            state.customMetrics = [];
+            data.metrics.forEach(m => {
+                if (m.metric_class === 'CustomEvalMetric') {
+                    state._customMetricSeq += 1;
+                    const p = m.params || {};
+                    state.customMetrics.push({
+                        id: `cm_${Date.now()}_${state._customMetricSeq}`,
+                        name: p.name || 'CustomMetric',
+                        criteria: p.criteria || '',
+                        evaluation_steps: Array.isArray(p.evaluation_steps) ? p.evaluation_steps : [],
+                        threshold: p.threshold != null ? p.threshold : 0.5,
+                        temperature: p.temperature != null ? p.temperature : 0.8,
+                    });
+                } else {
+                    state.selectedMetrics[m.metric_class] = { enabled: true, params: m.params || {} };
+                }
+            });
         }
         state.activeConfigId = val;
         state.testResponse = null;

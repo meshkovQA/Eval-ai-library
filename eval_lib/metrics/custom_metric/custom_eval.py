@@ -4,11 +4,15 @@ Custom Evaluation Metric with Verdict-based Scoring
 Breaks down evaluation into multiple criteria with individual verdicts
 """
 import json
-from typing import Dict, Any, List, Tuple
+import re
+from typing import Dict, Any, List, Tuple, Optional
 from eval_lib.metric_pattern import MetricPattern
 from eval_lib.testcases_schema import EvalTestCase
 from eval_lib.llm_client import chat_complete
 from eval_lib.utils import score_agg, extract_json_block
+
+
+_PLACEHOLDER_RE = re.compile(r"\{\{(\w+)\}\}")
 
 
 # Verdict weights for scoring
@@ -143,6 +147,64 @@ Return JSON array with exactly {len(evaluation_steps)} verdicts:
 
 JSON:"""
 
+    # ==================== TEMPLATE SUBSTITUTION ====================
+
+    @staticmethod
+    def _build_substitution_context(test_case: EvalTestCase) -> Tuple[Dict[str, Any], Dict[str, str]]:
+        """Collect available values + variable->column aliases from the test case.
+
+        Sources (in priority order, later overrides earlier):
+          - test_case._meta["dataset_row"]  (raw dataset row from connector)
+          - built-in fields from EvalTestCase (input, actual_output, expected_output, retrieval_context)
+          - test_case._meta["system_prompt"]
+
+        Returns (values_by_name, variable_map). variable_map allows {{var}} in templates
+        to alias dataset columns (mirrors connector substitute_template behavior).
+        """
+        meta = getattr(test_case, "_meta", None) or {}
+        values: Dict[str, Any] = {}
+
+        row = meta.get("dataset_row") or {}
+        if isinstance(row, dict):
+            values.update(row)
+
+        values["input"] = test_case.input
+        values["actual_output"] = test_case.actual_output
+        if test_case.expected_output is not None:
+            values["expected_output"] = test_case.expected_output
+        if test_case.retrieval_context:
+            values["retrieval_context"] = "\n".join(test_case.retrieval_context)
+
+        sys_prompt = meta.get("system_prompt")
+        if sys_prompt:
+            values["system_prompt"] = sys_prompt
+
+        variable_map = meta.get("template_variable_map") or {}
+        if not isinstance(variable_map, dict):
+            variable_map = {}
+
+        return values, variable_map
+
+    @staticmethod
+    def _substitute(text: str, values: Dict[str, Any], variable_map: Dict[str, str]) -> str:
+        """Replace {{name}} placeholders. Resolves name via variable_map alias first."""
+        if not text or "{{" not in text:
+            return text
+
+        def replacer(match: "re.Match[str]") -> str:
+            var_name = match.group(1)
+            resolved = variable_map.get(var_name, var_name)
+            value = values.get(resolved)
+            if value is None and resolved != var_name:
+                value = values.get(var_name)
+            if value is None:
+                return match.group(0)
+            if isinstance(value, (dict, list)):
+                return json.dumps(value, ensure_ascii=False)
+            return str(value)
+
+        return _PLACEHOLDER_RE.sub(replacer, text)
+
     # ==================== CORE EVALUATION ====================
 
     async def _generate_evaluation_steps(self, main_criteria: str) -> Tuple[List[str], float]:
@@ -254,19 +316,30 @@ JSON:"""
         """
         total_cost = 0.0
 
-        # Step 1: Generate evaluation steps if not provided
+        # Step 0: Resolve {{placeholders}} in criteria / evaluation_steps from
+        # the current test case (dataset row + system_prompt + built-in fields).
+        # We work with local copies so the metric instance remains reusable across
+        # rows where placeholders resolve to different values.
+        values, variable_map = self._build_substitution_context(test_case)
+        rendered_criteria = self._substitute(self.criteria, values, variable_map)
+
+        # Step 1: Generate evaluation steps if not provided. We use the rendered
+        # criteria for generation, and the user-provided steps (if any) are
+        # rendered per-row so {{column}} works inside each step too.
         if not self.evaluation_steps:
             evaluation_steps, cost = await self._generate_evaluation_steps(
-                self.criteria
+                rendered_criteria
             )
             total_cost += cost
-            self.evaluation_steps = evaluation_steps
         else:
-            evaluation_steps = self.evaluation_steps
+            evaluation_steps = [
+                self._substitute(step, values, variable_map)
+                for step in self.evaluation_steps
+            ]
 
         # Step 2: Generate verdicts for each criterion
         verdicts, final_score, cost = await self._generate_verdicts(
-            self.criteria,
+            rendered_criteria,
             evaluation_steps,
             test_case
         )
@@ -298,10 +371,12 @@ JSON:"""
             "actual_output": test_case.actual_output,
             "expected_output": test_case.expected_output,
             "retrieval_context": test_case.retrieval_context,
-            "main_criteria": self.criteria,
-            "comment_main_criteria": "High-level evaluation criteria provided by user.",
+            "main_criteria": rendered_criteria,
+            "comment_main_criteria": "High-level evaluation criteria provided by user (with {{placeholders}} resolved from the current test case).",
+            "main_criteria_template": self.criteria,
+            "comment_main_criteria_template": "Original criteria template before placeholder substitution.",
             "evaluation_criteria": evaluation_steps,
-            "comment_evaluation_criteria": f"Specific sub-criteria ({len(evaluation_steps)} items) used for verdict-based evaluation.",
+            "comment_evaluation_criteria": f"Specific sub-criteria ({len(evaluation_steps)} items) used for verdict-based evaluation (placeholders resolved per row).",
             "verdicts": verdicts,
             "comment_verdicts": "Individual verdicts for each criterion (fully/mostly/partial/minor/none).",
             "verdict_weights": {

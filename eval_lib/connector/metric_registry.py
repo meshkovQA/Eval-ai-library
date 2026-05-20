@@ -169,13 +169,14 @@ METRIC_REGISTRY = {
     "CustomEvalMetric": {
         "class": CustomEvalMetric,
         "category": "rag",
-        "description": "Custom verdict-based evaluation with user-defined criteria",
+        "description": "Custom verdict-based evaluation with user-defined criteria. Supports {{column}} placeholders (dataset columns + {{system_prompt}}, {{retrieval_context}}) in criteria and evaluation_steps.",
         "requires_model": True,
         "required_fields": ["input", "actual_output"],
         "params": [
             {"name": "threshold", "type": "float", "default": 0.5, "min": 0, "max": 1},
             {"name": "name", "type": "string", "default": "CustomMetric"},
             {"name": "criteria", "type": "text", "default": ""},
+            {"name": "evaluation_steps", "type": "list", "default": []},
             {"name": "temperature", "type": "float", "default": 0.8, "min": 0, "max": 2},
         ],
     },

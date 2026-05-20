@@ -601,10 +601,12 @@ class ConnectorEngine:
             planning_steps=planning_steps,
             resource_usage=resource_usage,
         )
-        # Attach extra metadata for dashboard
+        # Attach extra metadata for dashboard and per-row template substitution
         tc._meta = {
             "token_usage": token_usage,
             "system_prompt": system_prompt,
+            "dataset_row": dict(row),
+            "template_variable_map": dict(col_map.template_variable_map),
         }
         return tc
 

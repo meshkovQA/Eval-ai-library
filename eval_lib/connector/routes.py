@@ -1,9 +1,11 @@
 import asyncio
 import json
+import logging
 import os
+import re
 import uuid
 from pathlib import Path
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 
 from flask import Blueprint, request, jsonify, Response
 
@@ -18,16 +20,50 @@ from eval_lib.connector.engine import ConnectorEngine, test_api_connection
 
 connector_bp = Blueprint("connector", __name__)
 
+_log = logging.getLogger(__name__)
+
 # In-memory dataset storage (keyed by dataset_id)
 _datasets: Dict[str, Dict[str, Any]] = {}
 
 # Cache directory (set during blueprint registration)
 _cache_dir = ".eval_cache"
 
+# Identifiers that become filesystem paths must be restricted to a safe
+# character set, otherwise a value like "../../etc/passwd" would let a request
+# escape the cache directory (path traversal).
+_SAFE_ID_RE = re.compile(r"^[A-Za-z0-9_-]{1,128}$")
+
 
 def set_cache_dir(cache_dir: str):
     global _cache_dir
     _cache_dir = cache_dir
+
+
+def _safe_id(value: Any) -> Optional[str]:
+    """Return the value if it is a safe path component, else None.
+
+    Accepts only letters, digits, underscore and hyphen — enough for the
+    uuid-derived dataset/config ids and user-chosen project names, while
+    rejecting separators ('/', '\\'), '..' and absolute paths.
+    """
+    if not isinstance(value, str):
+        return None
+    return value if _SAFE_ID_RE.match(value) else None
+
+
+def _resolve_within(base: Path, *parts: str) -> Optional[Path]:
+    """Join parts onto base and confirm the result stays inside base.
+
+    Defence-in-depth on top of _safe_id: even if the regex is loosened later,
+    a resolved path that escapes the base directory is rejected.
+    """
+    base = base.resolve()
+    candidate = (base / Path(*parts)).resolve()
+    try:
+        candidate.relative_to(base)
+    except ValueError:
+        return None
+    return candidate
 
 
 def _get_datasets_dir() -> Path:
@@ -59,14 +95,20 @@ def upload_dataset():
 
     try:
         columns, rows = parse_dataset(content, f.filename)
-    except Exception as e:
-        return jsonify({"error": str(e)}), 400
+    except Exception:
+        # Full detail goes to the server log; the client gets a generic message
+        # so internal paths / stack frames are not exposed.
+        _log.exception("Failed to parse uploaded dataset")
+        return jsonify({"error": "Could not parse dataset. Check the file format."}), 400
 
     dataset_id = str(uuid.uuid4())[:8]
     _datasets[dataset_id] = {"columns": columns, "rows": rows}
 
-    # Persist to disk
-    ds_path = _get_datasets_dir() / f"{dataset_id}.json"
+    # Persist to disk. dataset_id is uuid-derived (always safe), but route the
+    # write through _resolve_within so the path is provably inside the cache dir.
+    ds_path = _resolve_within(_get_datasets_dir(), f"{dataset_id}.json")
+    if not ds_path:
+        return jsonify({"error": "Could not persist dataset"}), 500
     ds_path.write_text(json.dumps({"columns": columns, "rows": rows}, ensure_ascii=False), encoding="utf-8")
 
     preview = rows[:10]
@@ -80,6 +122,8 @@ def upload_dataset():
 
 @connector_bp.route("/api/connector/dataset/<dataset_id>")
 def get_dataset(dataset_id):
+    if not _safe_id(dataset_id):
+        return jsonify({"error": "Invalid dataset id"}), 400
     data = _load_dataset(dataset_id)
     if not data:
         return jsonify({"error": "Dataset not found"}), 404
@@ -88,18 +132,22 @@ def get_dataset(dataset_id):
 
 @connector_bp.route("/api/connector/dataset/<dataset_id>", methods=["DELETE"])
 def delete_dataset(dataset_id):
+    if not _safe_id(dataset_id):
+        return jsonify({"error": "Invalid dataset id"}), 400
     _datasets.pop(dataset_id, None)
-    ds_path = _get_datasets_dir() / f"{dataset_id}.json"
-    if ds_path.exists():
+    ds_path = _resolve_within(_get_datasets_dir(), f"{dataset_id}.json")
+    if ds_path and ds_path.exists():
         ds_path.unlink()
     return jsonify({"ok": True})
 
 
 def _load_dataset(dataset_id):
+    if not _safe_id(dataset_id):
+        return None
     if dataset_id in _datasets:
         return _datasets[dataset_id]
-    ds_path = _get_datasets_dir() / f"{dataset_id}.json"
-    if ds_path.exists():
+    ds_path = _resolve_within(_get_datasets_dir(), f"{dataset_id}.json")
+    if ds_path and ds_path.exists():
         data = json.loads(ds_path.read_text(encoding="utf-8"))
         _datasets[dataset_id] = data
         return data
@@ -123,8 +171,9 @@ def api_test_connection():
             body_template=body.get("body_template", ""),
             timeout_seconds=body.get("timeout_seconds", 60),
         )
-    except Exception as e:
-        return jsonify({"error": f"Invalid config: {e}"}), 400
+    except Exception:
+        _log.exception("Invalid API connection config in test-connection")
+        return jsonify({"error": "Invalid API connection config."}), 400
 
     sample_row = body.get("sample_row", {})
     variable_map = body.get("variable_map", {})
@@ -169,14 +218,16 @@ def start_job():
 
     try:
         config = _parse_job_config(body.get("config", {}))
-    except Exception as e:
-        return jsonify({"error": f"Invalid config: {e}"}), 400
+    except Exception:
+        _log.exception("Invalid job config in start-job")
+        return jsonify({"error": "Invalid job config."}), 400
 
     engine = ConnectorEngine()
     try:
         job_id = engine.start_job(config, data["rows"], cache_dir=_cache_dir)
-    except RuntimeError as e:
-        return jsonify({"error": str(e)}), 409
+    except RuntimeError:
+        # The only RuntimeError start_job raises is "a job is already running".
+        return jsonify({"error": "A job is already running."}), 409
 
     return jsonify({"job_id": job_id})
 
@@ -207,13 +258,19 @@ def save_config():
     if not body:
         return jsonify({"error": "No JSON body"}), 400
 
+    # config_id may be supplied by the client (updating an existing config), so
+    # it must be validated before it becomes a file name.
     config_id = body.get("id") or str(uuid.uuid4())[:8]
+    if not _safe_id(config_id):
+        return jsonify({"error": "Invalid config id"}), 400
     body["id"] = config_id
 
     from datetime import datetime
     body["created_at"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-    config_path = _get_configs_dir() / f"{config_id}.json"
+    config_path = _resolve_within(_get_configs_dir(), f"{config_id}.json")
+    if not config_path:
+        return jsonify({"error": "Invalid config id"}), 400
     config_path.write_text(json.dumps(body, ensure_ascii=False, indent=2), encoding="utf-8")
 
     return jsonify({"config_id": config_id})
@@ -238,8 +295,10 @@ def list_configs():
 
 @connector_bp.route("/api/connector/config/<config_id>")
 def load_config(config_id):
-    config_path = _get_configs_dir() / f"{config_id}.json"
-    if not config_path.exists():
+    if not _safe_id(config_id):
+        return jsonify({"error": "Invalid config id"}), 400
+    config_path = _resolve_within(_get_configs_dir(), f"{config_id}.json")
+    if not config_path or not config_path.exists():
         return jsonify({"error": "Config not found"}), 404
     data = json.loads(config_path.read_text(encoding="utf-8"))
     return jsonify(data)
@@ -247,8 +306,10 @@ def load_config(config_id):
 
 @connector_bp.route("/api/connector/config/<config_id>", methods=["DELETE"])
 def delete_config(config_id):
-    config_path = _get_configs_dir() / f"{config_id}.json"
-    if config_path.exists():
+    if not _safe_id(config_id):
+        return jsonify({"error": "Invalid config id"}), 400
+    config_path = _resolve_within(_get_configs_dir(), f"{config_id}.json")
+    if config_path and config_path.exists():
         config_path.unlink()
     return jsonify({"ok": True})
 
@@ -367,6 +428,25 @@ def __getattr__(name):
     raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
 
 
+def _write_secret_file(path: Path, content: str):
+    """Write a file that contains credentials with owner-only permissions (0600).
+
+    The connector is a local desktop tool, so API keys live on disk next to the
+    cache. We cannot avoid storing them, but we restrict the file so other OS
+    users / processes cannot read it. The file is created with 0600 from the
+    start (via os.open) so there is no window where the secret is world-readable.
+    """
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fd = os.open(str(path), os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
+    with os.fdopen(fd, "w", encoding="utf-8") as fh:
+        fh.write(content)
+    # Re-assert permissions in case the file pre-existed with looser bits.
+    try:
+        os.chmod(path, 0o600)
+    except OSError:
+        pass
+
+
 def _get_api_keys_path() -> Path:
     d = Path(_cache_dir) / "api_keys.json"
     d.parent.mkdir(parents=True, exist_ok=True)
@@ -382,7 +462,7 @@ def _load_api_keys() -> dict:
 
 def _save_api_keys(keys: dict):
     p = _get_api_keys_path()
-    p.write_text(json.dumps(keys, ensure_ascii=False, indent=2), encoding="utf-8")
+    _write_secret_file(p, json.dumps(keys, ensure_ascii=False, indent=2))
 
 
 def _apply_api_keys():
@@ -426,8 +506,9 @@ def _load_custom_llm_config() -> dict:
 
 
 def _save_custom_llm_config(cfg: dict):
+    # Contains an api_key field — write with owner-only permissions.
     p = _get_custom_llm_config_path()
-    p.write_text(json.dumps(cfg, ensure_ascii=False, indent=2), encoding="utf-8")
+    _write_secret_file(p, json.dumps(cfg, ensure_ascii=False, indent=2))
 
 
 @connector_bp.route("/api/connector/custom-llm-config", methods=["GET"])
@@ -638,9 +719,17 @@ def test_provider():
             temperature=0.0,
         ))
     except LLMConfigurationError as e:
+        # Our own controlled error type — its message is a user-facing hint
+        # (e.g. "API key not set"), safe to surface.
         return jsonify({"ok": False, "error": str(e)}), 200
     except Exception as e:
-        return jsonify({"ok": False, "error": f"{type(e).__name__}: {e}"}), 200
+        # Unknown provider/SDK error: log the detail server-side, return only
+        # the exception class name so internals are not exposed to the client.
+        _log.exception("test-provider failed for %s", spec)
+        return jsonify({
+            "ok": False,
+            "error": f"Provider check failed ({type(e).__name__}).",
+        }), 200
 
     latency_ms = int((time.perf_counter() - t0) * 1000)
     preview = (text or "").strip()

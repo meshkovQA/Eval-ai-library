@@ -9,8 +9,10 @@ This is the core of the Trace Receiver system. It:
 Thread-safe singleton (same pattern as ConnectorEngine).
 """
 
+import os
 import re
 import json
+import hmac
 import hashlib
 import asyncio
 import threading
@@ -68,7 +70,7 @@ class TraceStore:
         with self._lock:
             self._projects.pop(project, None)
         path = self._project_path(project)
-        if path.exists():
+        if path and path.exists():
             path.unlink()
 
     def list_projects(self) -> List[Dict[str, Any]]:
@@ -92,10 +94,59 @@ class TraceStore:
         return result
 
     # ---- API key ----
+    #
+    # Project API keys are hashed before storage. We use scrypt — a memory-hard
+    # KDF — with a per-key random salt. Stored format:
+    #     scrypt$<salt_hex>$<derived_hex>
+    # Legacy projects created before this change stored a bare SHA-256 hex
+    # digest; validate_api_key still accepts those for backward compatibility.
 
-    @staticmethod
-    def hash_api_key(key: str) -> str:
-        return hashlib.sha256(key.encode()).hexdigest()
+    # scrypt cost parameters (CPU/memory). n must be a power of two.
+    _SCRYPT_N = 2 ** 14
+    _SCRYPT_R = 8
+    _SCRYPT_P = 1
+    _SCRYPT_DKLEN = 32
+
+    @classmethod
+    def hash_api_key(cls, key: str) -> str:
+        """Derive a salted scrypt hash for storage. New format only."""
+        salt = os.urandom(16)
+        derived = hashlib.scrypt(
+            key.encode("utf-8"),
+            salt=salt,
+            n=cls._SCRYPT_N,
+            r=cls._SCRYPT_R,
+            p=cls._SCRYPT_P,
+            dklen=cls._SCRYPT_DKLEN,
+        )
+        return f"scrypt${salt.hex()}${derived.hex()}"
+
+    @classmethod
+    def _verify_api_key(cls, key: str, stored: str) -> bool:
+        """Constant-time check of a presented key against a stored hash.
+
+        Handles both the new salted-scrypt format and the legacy bare SHA-256
+        digest produced by older versions.
+        """
+        if stored.startswith("scrypt$"):
+            try:
+                _, salt_hex, expected_hex = stored.split("$", 2)
+                salt = bytes.fromhex(salt_hex)
+                expected = bytes.fromhex(expected_hex)
+            except (ValueError, TypeError):
+                return False
+            derived = hashlib.scrypt(
+                key.encode("utf-8"),
+                salt=salt,
+                n=cls._SCRYPT_N,
+                r=cls._SCRYPT_R,
+                p=cls._SCRYPT_P,
+                dklen=len(expected),
+            )
+            return hmac.compare_digest(derived, expected)
+        # Legacy SHA-256 digest — constant-time compare, no early exit.
+        legacy = hashlib.sha256(key.encode("utf-8")).hexdigest()
+        return hmac.compare_digest(legacy, stored)
 
     def validate_api_key(self, project: str, api_key: str) -> bool:
         state = self._projects.get(project)
@@ -103,7 +154,7 @@ class TraceStore:
             return False
         if not state.config.api_key_hash:
             return True  # No key configured — open access
-        return self.hash_api_key(api_key) == state.config.api_key_hash
+        return self._verify_api_key(api_key, state.config.api_key_hash)
 
     # ---- Trace ingestion ----
 
@@ -345,14 +396,33 @@ class TraceStore:
 
     # ---- Persistence ----
 
-    def _project_path(self, project: str) -> Path:
-        return Path(self._cache_dir) / "trace_projects" / f"{project}.json"
+    # Project names become file names, so they must not contain path
+    # separators or traversal sequences.
+    _SAFE_PROJECT_RE = re.compile(r"^[A-Za-z0-9_-]{1,128}$")
+
+    def _project_path(self, project: str) -> Optional[Path]:
+        """Resolve the on-disk path for a project, or None if the name is unsafe.
+
+        The name is both regex-validated and confirmed to resolve inside the
+        trace_projects directory (defence in depth against path traversal).
+        """
+        if not isinstance(project, str) or not self._SAFE_PROJECT_RE.match(project):
+            return None
+        base = (Path(self._cache_dir) / "trace_projects").resolve()
+        candidate = (base / f"{project}.json").resolve()
+        try:
+            candidate.relative_to(base)
+        except ValueError:
+            return None
+        return candidate
 
     def _save_project(self, project: str):
         state = self._projects.get(project)
         if not state:
             return
         path = self._project_path(project)
+        if not path:
+            return
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(state.model_dump_json(indent=2))
 

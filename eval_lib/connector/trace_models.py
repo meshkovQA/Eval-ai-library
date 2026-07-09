@@ -47,6 +47,8 @@ class StoredTrace(BaseModel):
     tools_called: Optional[List[str]] = None
     spans: Optional[List[Dict[str, Any]]] = None
     span_count: int = 0
+    cost_usd: Optional[float] = None
+    cost_source: Optional[str] = None  # "reported" | "estimated"
     received_at: str = Field(default_factory=lambda: datetime.now().isoformat())
     matched_query_index: Optional[int] = None
     run_index: int = 0

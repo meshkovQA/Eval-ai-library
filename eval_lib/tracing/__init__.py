@@ -1,8 +1,9 @@
-from .tracer import tracer, AgentTracer
-from .decorators import trace_llm, trace_tool, trace_step
-from .types import SpanType, TraceSpan
 from .config import TracingConfig
+from .decorators import trace_llm, trace_step, trace_tool
+from .sender import FileSink, HTTPSink, InMemorySink, Sink, TraceSender
 from .trace_utils import extract_test_case_data
+from .tracer import AgentTracer, tracer
+from .types import SpanType, TraceSpan
 
 
 # Framework-specific callbacks each depend on their own SDK (langchain_core,
@@ -53,6 +54,11 @@ __all__ = [
     "SpanType",
     "TraceSpan",
     "TracingConfig",
+    "TraceSender",
+    "Sink",
+    "HTTPSink",
+    "InMemorySink",
+    "FileSink",
     "extract_test_case_data",
     *_LAZY.keys(),
 ]

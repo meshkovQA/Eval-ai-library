@@ -6,22 +6,28 @@ This is the core of the Trace Receiver system. It:
 3. Triggers evaluation when enough traces are collected
 4. Stores results in DashboardCache for display
 
+Storage is pluggable through :class:`~eval_lib.connector.trace_storage.TraceStorage`.
+Default is in-memory (``InMemoryStorage``); passing a
+``FileBackedStorage`` restores the historical file-cache behaviour, and
+external services (evalix) can plug in Postgres / ClickHouse.
+
 Thread-safe singleton (same pattern as ConnectorEngine).
 """
 
 import os
 import re
-import json
 import hmac
 import hashlib
 import asyncio
 import threading
-from pathlib import Path
 from typing import Dict, List, Optional, Any
 from datetime import datetime
 
 from eval_lib.connector.trace_models import (
     TraceProjectConfig, StoredTrace, TraceProjectState, MatchingStrategy,
+)
+from eval_lib.connector.trace_storage import (
+    TraceStorage, InMemoryStorage, FileBackedStorage,
 )
 from eval_lib.connector.metric_registry import instantiate_metric
 from eval_lib.testcases_schema import EvalTestCase, TraceStep, ResourceUsage
@@ -29,12 +35,17 @@ from eval_lib.evaluate import evaluate
 
 
 class TraceStore:
-    """Singleton store for receiving and managing traces from remote agents."""
+    """Singleton store for receiving and managing traces from remote agents.
+
+    Instantiate with ``TraceStore(storage=…)`` on first use to plug in a
+    custom persistence backend; subsequent ``TraceStore()`` calls return
+    the same instance.
+    """
 
     _instance = None
     _lock = threading.Lock()
 
-    def __new__(cls):
+    def __new__(cls, storage: Optional[TraceStorage] = None):
         if cls._instance is None:
             with cls._lock:
                 if cls._instance is None:
@@ -42,11 +53,28 @@ class TraceStore:
                     cls._instance._projects: Dict[str, TraceProjectState] = {}
                     cls._instance._cache_dir = ".eval_cache"
                     cls._instance._initialized = False
+                    cls._instance.storage = storage or InMemoryStorage()
+                    # Warm cache from storage — matters for FileBackedStorage
+                    # and any custom backend that survives process restarts.
+                    for name in cls._instance.storage.list_projects():
+                        loaded = cls._instance.storage.load_project(name)
+                        if loaded is not None:
+                            cls._instance._projects[name] = loaded
         return cls._instance
 
     def set_cache_dir(self, cache_dir: str):
+        """Backward-compatible: swap in a FileBackedStorage rooted at ``cache_dir``.
+
+        Call this once at startup (see ``cli.py``) to preserve on-disk
+        JSON persistence of trace projects.
+        """
         self._cache_dir = cache_dir
-        self._load_state()
+        self.storage = FileBackedStorage(cache_dir)
+        self._projects.clear()
+        for name in self.storage.list_projects():
+            loaded = self.storage.load_project(name)
+            if loaded is not None:
+                self._projects[name] = loaded
         self._initialized = True
 
     # ---- Project management ----
@@ -60,18 +88,24 @@ class TraceStore:
         self._build_query_index(state)
         with self._lock:
             self._projects[config.project] = state
-        self._save_project(config.project)
+        self.storage.save_project(config.project, state)
         return state
 
     def get_project(self, project: str) -> Optional[TraceProjectState]:
-        return self._projects.get(project)
+        cached = self._projects.get(project)
+        if cached is not None:
+            return cached
+        # Fall through to storage — supports persistent backends where
+        # a fresh process hasn't warmed the in-memory cache yet.
+        loaded = self.storage.load_project(project)
+        if loaded is not None:
+            self._projects[project] = loaded
+        return loaded
 
     def delete_project(self, project: str):
         with self._lock:
             self._projects.pop(project, None)
-        path = self._project_path(project)
-        if path and path.exists():
-            path.unlink()
+        self.storage.delete_project(project)
 
     def list_projects(self) -> List[Dict[str, Any]]:
         result = []
@@ -175,6 +209,8 @@ class TraceStore:
             tools_called=trace_data.get("tools_called"),
             spans=trace_data.get("spans"),
             span_count=trace_data.get("span_count", 0),
+            cost_usd=trace_data.get("cost_usd"),
+            cost_source=trace_data.get("cost_source"),
         )
 
         # Check for duplicate trace_id
@@ -196,7 +232,10 @@ class TraceStore:
         with self._lock:
             state.traces.append(trace)
 
-        self._save_project(project)
+        # Persist both the trace and the updated project state — a
+        # persistent backend can then reconstruct after a restart.
+        self.storage.save_trace(project, trace)
+        self.storage.save_project(project, state)
 
         # Check if auto-evaluation should trigger
         if query_idx is not None:
@@ -268,17 +307,17 @@ class TraceStore:
 
         thread = threading.Thread(
             target=self._run_evaluation_thread,
-            args=(project, self._cache_dir),
+            args=(project,),
             daemon=True,
         )
         thread.start()
         return job_id
 
-    def _run_evaluation_thread(self, project: str, cache_dir: str):
+    def _run_evaluation_thread(self, project: str):
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
         try:
-            loop.run_until_complete(self._run_evaluation(project, cache_dir))
+            loop.run_until_complete(self._run_evaluation(project))
         except Exception as e:
             state = self._projects.get(project)
             if state:
@@ -286,7 +325,7 @@ class TraceStore:
         finally:
             loop.close()
 
-    async def _run_evaluation(self, project: str, cache_dir: str):
+    async def _run_evaluation(self, project: str):
         state = self._projects.get(project)
         if not state:
             return
@@ -388,52 +427,16 @@ class TraceStore:
                     trace.evaluation_status = "completed"
                     trace.evaluation_session_id = session_name
 
+            self.storage.save_eval_result(
+                project,
+                {
+                    "session_name": session_name,
+                    "completed_at": datetime.now().isoformat(),
+                    "trace_count": len(test_cases),
+                },
+            )
             state.status = "completed"
         except Exception as e:
             state.status = f"failed: {e}"
 
-        self._save_project(project)
-
-    # ---- Persistence ----
-
-    # Project names become file names, so they must not contain path
-    # separators or traversal sequences.
-    _SAFE_PROJECT_RE = re.compile(r"^[A-Za-z0-9_-]{1,128}$")
-
-    def _project_path(self, project: str) -> Optional[Path]:
-        """Resolve the on-disk path for a project, or None if the name is unsafe.
-
-        The name is both regex-validated and confirmed to resolve inside the
-        trace_projects directory (defence in depth against path traversal).
-        """
-        if not isinstance(project, str) or not self._SAFE_PROJECT_RE.match(project):
-            return None
-        base = (Path(self._cache_dir) / "trace_projects").resolve()
-        candidate = (base / f"{project}.json").resolve()
-        try:
-            candidate.relative_to(base)
-        except ValueError:
-            return None
-        return candidate
-
-    def _save_project(self, project: str):
-        state = self._projects.get(project)
-        if not state:
-            return
-        path = self._project_path(project)
-        if not path:
-            return
-        path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(state.model_dump_json(indent=2))
-
-    def _load_state(self):
-        projects_dir = Path(self._cache_dir) / "trace_projects"
-        if not projects_dir.exists():
-            return
-        for path in projects_dir.glob("*.json"):
-            try:
-                data = json.loads(path.read_text())
-                state = TraceProjectState(**data)
-                self._projects[state.config.project] = state
-            except Exception:
-                pass
+        self.storage.save_project(project, state)

@@ -29,30 +29,33 @@ class AgentTracer:
 
         self.enabled = TracingConfig.is_enabled()
         self.sender = TraceSender() if self.enabled else None
-        self._current_trace_id: Optional[str] = None
         self._initialized = True
 
     def start_trace(self, name: str = "agent_trace") -> str:
-        """Start a new trace and return its ID"""
+        """Start a new trace and return its ID.
+
+        The identifier is bound to the current async task / thread via
+        :mod:`contextvars` — concurrent ``asyncio.gather`` traces don't
+        clobber each other.
+        """
         if not self.enabled:
             return ""
 
         trace_id = str(uuid.uuid4())
         set_trace_id(trace_id)
-        self._current_trace_id = trace_id
+        set_current_span_id(None)
         return trace_id
 
     def end_trace(self):
-        """End the current trace and send all its spans"""
+        """End the current trace and send all its spans."""
         if not self.enabled:
             return
 
-        trace_id = self._current_trace_id or get_trace_id()
+        trace_id = get_trace_id()
         if trace_id and self.sender:
             # Send complete trace with all spans
             self.sender.flush_trace(trace_id)
 
-        self._current_trace_id = None
         clear_context()
 
     def start_span(
@@ -101,10 +104,16 @@ class AgentTracer:
 
         if self.sender:
             self.sender.add_span(span)
+            # In streaming mode (TRACING_STREAM=true) ship the span
+            # immediately so a crash later in the run doesn't cost the
+            # data we already have.
+            self.sender.flush_span(span)
 
-        # Restore the parent span
-        if span.parent_span_id:
-            set_current_span_id(span.parent_span_id)
+        # Restore the parent span — including the case where the parent
+        # is ``None`` (span was a root). Skipping this branch used to
+        # cause the next sibling span to nest under the just-closed one
+        # (see the ``tools_called`` regression test).
+        set_current_span_id(span.parent_span_id)
 
     @contextmanager
     def trace(
@@ -132,26 +141,36 @@ class AgentTracer:
         output_tokens: Optional[int] = None,
         total_tokens: Optional[int] = None,
         response_time: Optional[float] = None,
-        **kwargs
+        cost_usd: Optional[float] = None,
+        cost_source: Optional[str] = None,
+        **kwargs,
     ):
         """
-        Set trace-level metadata (model, tokens, input/output, timing).
+        Set trace-level metadata (model, tokens, input/output, timing, cost).
         Call this before end_trace() to include metadata in the trace.
 
         Args:
-            model: The model name used (e.g., "gpt-4o-mini")
-            input: The input/prompt sent to the agent
-            output: The final output/response of the agent
-            input_tokens: Number of input tokens used
-            output_tokens: Number of output tokens generated
-            total_tokens: Total tokens (input + output)
-            response_time: Response time in seconds
-            **kwargs: Any additional metadata to include
+            model: The model name used (e.g., "gpt-4o-mini").
+            input: The input/prompt sent to the agent.
+            output: The final output/response of the agent.
+            input_tokens: Number of input tokens used.
+            output_tokens: Number of output tokens generated.
+            total_tokens: Total tokens (input + output).
+            response_time: Response time in seconds.
+            cost_usd: Total run cost in USD — first-class field in the
+                trace payload. When the caller has an authoritative cost
+                (``total_cost_usd`` from ``claude_agent_sdk``), pass it
+                here so consumers can rank runs by spend without having
+                to reconstruct pricing.
+            cost_source: Provenance tag for ``cost_usd``. Typical values:
+                ``"reported"`` (from the SDK) or ``"estimated"`` (derived
+                from model + tokens via ``eval_lib.model_catalog``).
+            **kwargs: Any additional metadata to include.
         """
         if not self.enabled or not self.sender:
             return
 
-        trace_id = self._current_trace_id or get_trace_id()
+        trace_id = get_trace_id()
         if not trace_id:
             return
 
@@ -170,6 +189,10 @@ class AgentTracer:
             metadata["total_tokens"] = total_tokens
         if response_time is not None:
             metadata["response_time"] = response_time
+        if cost_usd is not None:
+            metadata["cost_usd"] = cost_usd
+        if cost_source is not None:
+            metadata["cost_source"] = cost_source
         metadata.update(kwargs)
 
         self.sender.set_trace_metadata(trace_id, metadata)

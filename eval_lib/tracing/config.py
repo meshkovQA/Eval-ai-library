@@ -1,9 +1,15 @@
+"""Tracing configuration read from environment variables.
+
+The base install is designed to Just Work with three env vars:
+``TRACING_ENABLED``, ``TRACING_URL`` and ``TRACING_PROJECT``. Everything
+else is opt-in tuning knob for integrations."""
+
 import os
 from typing import Optional
 
 
 class TracingConfig:
-    """Tracing configuration from environment variables"""
+    """Tracing configuration from environment variables."""
 
     @staticmethod
     def is_enabled() -> bool:
@@ -22,9 +28,33 @@ class TracingConfig:
         return os.getenv("TRACING_API_KEY")
 
     @staticmethod
-    def get_batch_size() -> int:
-        return int(os.getenv("TRACING_BATCH_SIZE", "20"))
+    def get_sink_kind() -> str:
+        """One of ``http`` (default), ``memory``, ``file``.
+
+        Used by :class:`~eval_lib.tracing.sender.TraceSender` to pick the
+        default sink when no explicit sink instance is passed. Ignored
+        when a caller passes ``sink=...`` at construction time.
+        """
+        return os.getenv("TRACING_SINK", "http").lower()
 
     @staticmethod
-    def get_flush_interval() -> float:
-        return float(os.getenv("TRACING_FLUSH_INTERVAL", "5.0"))
+    def get_sink_path() -> str:
+        """Path used by ``FileSink`` (JSONL append). Default: ``traces.jsonl``."""
+        return os.getenv("TRACING_SINK_PATH", "traces.jsonl")
+
+    @staticmethod
+    def is_strict() -> bool:
+        """When true, send failures raise instead of being logged.
+
+        Useful in CI / tests where a silent tracing outage would hide a
+        misconfigured receiver.
+        """
+        return os.getenv("TRACING_STRICT", "false").lower() == "true"
+
+    @staticmethod
+    def is_stream() -> bool:
+        """When true, every :meth:`AgentTracer.end_span` immediately
+        flushes that span to the receiver as a ``partial_span`` — so a
+        long-running session that crashes still has its spans on record.
+        """
+        return os.getenv("TRACING_STREAM", "false").lower() == "true"

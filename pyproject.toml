@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "eval-ai-library"
-version = "0.7.13"
+version = "0.7.14"
 description = "Comprehensive AI Model Evaluation Framework with support for multiple LLM providers"
 readme = "README.md"
 authors = [
@@ -61,9 +61,24 @@ dependencies = [
 # ----- minimal subsets ------------------------------------------------------
 # Tracing-only install (no LLM clients) — for users who only want to ship spans
 # to an external collector without running evals locally.
+#
+# Because "extras" only *add* deps, this list on its own does not shrink the
+# base install: `pip install eval-ai-library[tracing]` still pulls litellm etc.
+# from base. To get a genuinely slim install (e.g. testgen-studio needs
+# eval_lib.tracing but not litellm), install with --no-deps and then this
+# extra separately:
+#     pip install pydantic aiohttp typing_extensions
+#     pip install --no-deps eval-ai-library
 lite = [
     "pydantic>=2.0.0",
     "aiohttp>=3.8.0",
+]
+# Same shape as `lite`, but named after the concrete use case so
+# integrations (testgen-studio, evalix) can pin it explicitly.
+tracing = [
+    "pydantic>=2.0.0",
+    "aiohttp>=3.8.0",
+    "typing_extensions>=4.0.0",
 ]
 # Alias for the base install — kept for backward compatibility with users who
 # wrote `pip install eval-ai-library[llm]` before the 0.7.0 split.

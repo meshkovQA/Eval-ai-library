@@ -143,6 +143,8 @@ class AgentTracer:
         response_time: Optional[float] = None,
         cost_usd: Optional[float] = None,
         cost_source: Optional[str] = None,
+        session_id: Optional[str] = None,
+        user_id: Optional[str] = None,
         **kwargs,
     ):
         """
@@ -165,6 +167,14 @@ class AgentTracer:
             cost_source: Provenance tag for ``cost_usd``. Typical values:
                 ``"reported"`` (from the SDK) or ``"estimated"`` (derived
                 from model + tokens via ``eval_lib.model_catalog``).
+            session_id: Groups multiple traces into one logical session.
+                Use the same value across all sub-agent traces that are
+                part of the same user request — downstream (evalix
+                Runtime eval) will render them as one session with a
+                combined timeline.
+            user_id: Owner of the session — application-defined stable
+                identifier for the human running the agent. Enables the
+                "all sessions of user X" view. Optional.
             **kwargs: Any additional metadata to include.
         """
         if not self.enabled or not self.sender:
@@ -193,6 +203,10 @@ class AgentTracer:
             metadata["cost_usd"] = cost_usd
         if cost_source is not None:
             metadata["cost_source"] = cost_source
+        if session_id is not None:
+            metadata["session_id"] = session_id
+        if user_id is not None:
+            metadata["user_id"] = user_id
         metadata.update(kwargs)
 
         self.sender.set_trace_metadata(trace_id, metadata)

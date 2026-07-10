@@ -474,7 +474,7 @@ class TraceSender:
             "model", "input", "output",
             "input_tokens", "output_tokens", "total_tokens",
             "response_time", "cost_usd", "cost_source",
-            "num_turns", "session_id",
+            "num_turns", "session_id", "user_id",
         )
         if trace_meta:
             for key in FIRST_CLASS:

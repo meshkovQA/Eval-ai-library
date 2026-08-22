@@ -186,8 +186,22 @@ def _normalize_quotes(text: str) -> str:
     return text
 
 
-def substitute_template(template: str, row: Dict[str, Any], variable_map: Dict[str, str]) -> str:
-    """Replace {{variable}} placeholders in template with values from dataset row."""
+def substitute_template(
+    template: str,
+    row: Dict[str, Any],
+    variable_map: Dict[str, str],
+    escape_for_json: bool = False,
+) -> str:
+    """Replace {{variable}} placeholders in template with values from dataset row.
+
+    When escape_for_json=True, scalar values are JSON-escaped as string content
+    (without surrounding quotes) so raw newlines, quotes, backslashes and other
+    control characters inside a placeholder don't break the surrounding JSON
+    template. Callers that render a JSON body should pass True (see
+    `looks_like_json_body`), otherwise the API receives invalid JSON and
+    responds without the expected fields — the dashboard then shows
+    actual_output="None" with no obvious cause.
+    """
     template = _normalize_quotes(template)
 
     def replacer(match):
@@ -195,10 +209,35 @@ def substitute_template(template: str, row: Dict[str, Any], variable_map: Dict[s
         col_name = variable_map.get(var_name, var_name)
         value = row.get(col_name, "")
         if isinstance(value, (dict, list)):
-            return json.dumps(value, ensure_ascii=False)
-        return str(value)
+            rendered = json.dumps(value, ensure_ascii=False)
+            # A JSON-serialised dict/list is already valid JSON; no extra
+            # escaping needed even inside a JSON body.
+            return rendered
+        rendered = str(value)
+        if escape_for_json:
+            # json.dumps wraps strings in double quotes; strip them so the
+            # caller's template quotes stay intact around the placeholder.
+            return json.dumps(rendered, ensure_ascii=False)[1:-1]
+        return rendered
 
     return re.sub(r'\{\{(\w+)\}\}', replacer, template)
+
+
+def looks_like_json_body(template: str) -> bool:
+    """Heuristic: does this body template render a JSON payload?
+
+    Used to decide whether placeholder values need JSON-escaping. We do not
+    parse the template (it contains placeholders and is not valid JSON yet);
+    instead we check that the stripped template starts and ends with matching
+    JSON delimiters. Callers may still force JSON-escaping via the request's
+    Content-Type header.
+    """
+    if not template:
+        return False
+    stripped = template.strip()
+    if not stripped:
+        return False
+    return (stripped[0], stripped[-1]) in (("{", "}"), ("[", "]"))
 
 
 class ConnectorEngine:
@@ -453,8 +492,12 @@ class ConnectorEngine:
 
     async def _process_row(self, session, api, mapping, col_map, row):
         """Send HTTP request for a single dataset row and build EvalTestCase."""
+        json_body = looks_like_json_body(api.body_template)
         body_str = substitute_template(
-            api.body_template, row, col_map.template_variable_map
+            api.body_template,
+            row,
+            col_map.template_variable_map,
+            escape_for_json=json_body,
         )
 
         url = substitute_template(api.base_url, row, col_map.template_variable_map)
@@ -473,16 +516,47 @@ class ConnectorEngine:
             kwargs["data"] = body_str.encode("utf-8")
             kwargs["headers"]["Content-Type"] = "application/json"
 
+        resp_data = None
+        last_status = None
+        last_text = None
+        last_error = None
         for attempt in range(max(1, api.max_retries)):
             try:
                 async with session.request(api.method.value, url, **kwargs) as resp:
+                    last_status = resp.status
                     resp_text = await resp.text()
+                    last_text = resp_text
                     resp_data = json.loads(resp_text)
                     break
             except Exception as e:
+                last_error = e
                 if attempt == api.max_retries - 1:
-                    raise
+                    # Surface a useful error instead of silently returning None
+                    # from every extract_path below. Include the HTTP status
+                    # (if any) and a short preview of the response body — the
+                    # common failure mode is an invalid-JSON request producing
+                    # a 4xx body without the expected fields.
+                    preview = (last_text or "")[:200]
+                    raise RuntimeError(
+                        f"API request failed (status={last_status}, "
+                        f"error={type(e).__name__}: {e}). "
+                        f"Response preview: {preview!r}"
+                    ) from e
                 await asyncio.sleep(1)
+
+        # Non-2xx responses that happened to be valid JSON never raise above,
+        # so guard the extraction here: if the mapped path yields nothing on
+        # such a response, flag it so the row shows a real error in the UI
+        # instead of a silent actual_output="None".
+        if last_status is not None and not (200 <= last_status < 300):
+            probe = extract_path(resp_data, mapping.actual_output_path)
+            if probe is None:
+                preview = json.dumps(resp_data, ensure_ascii=False)[:200]
+                raise RuntimeError(
+                    f"API returned status={last_status} and no value at "
+                    f"actual_output path '{mapping.actual_output_path}'. "
+                    f"Response preview: {preview}"
+                )
 
         # Extract fields from response
         actual_output = str(extract_path(resp_data, mapping.actual_output_path))
@@ -627,7 +701,10 @@ class ConnectorEngine:
 async def test_api_connection(api_config: ApiConnectionConfig, sample_row: Dict[str, Any], variable_map: Dict[str, str]) -> Dict[str, Any]:
     """Send a single test request and return the response."""
     body_str = substitute_template(
-        api_config.body_template, sample_row, variable_map
+        api_config.body_template,
+        sample_row,
+        variable_map,
+        escape_for_json=looks_like_json_body(api_config.body_template),
     )
 
     headers = {}

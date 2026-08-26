@@ -1,29 +1,42 @@
 # custom_eval.py
 """
-Custom Evaluation Metric with Verdict-based Scoring.
+Custom Evaluation Metric with pluggable scoring strategies.
 
-Model:
-    - The user supplies one or more `evaluation_criteria` (free-text strings).
-    - Each criterion references the data it cares about via {{placeholders}}
-      (e.g. "Each item in {{follow_up_questions}} is relevant to {{input}}").
-    - The metric builds a single prompt with two blocks:
-          DATA:      every placeholder that appears in any criterion, resolved
-                     from the EvalTestCase + extra_fields + connector metadata.
-          CRITERIA:  the original criterion strings, {{placeholders}} preserved.
-    - The judge LLM returns one verdict per criterion; verdicts are aggregated
-      into a final score via TCVA (Temperature-Controlled Verdict Aggregation).
+Two evaluation strategies are supported:
 
-Filtering rules (logged as warnings in evaluation_log):
-    - A criterion with no {{placeholders}} at all is skipped — there is no data
-      to evaluate against.
-    - A criterion that references an unknown placeholder is skipped — the judge
-      would otherwise see a dangling "{{x}}" with no value.
-    - If every criterion gets filtered out the metric returns score=0 with a
-      clear reason.
+  strategy="verdict" (default, backward-compatible)
+      The judge returns one verdict per criterion, chosen from
+      (fully / mostly / partial / minor / none). Verdict labels are mapped
+      to weights and aggregated into a final score via TCVA
+      (Temperature-Controlled Verdict Aggregation).
+
+  strategy="direct"
+      The judge returns a single integer score 0-10 for the whole test case
+      taken against ALL criteria together. That raw score is normalized to
+      the 0.0-1.0 range (raw / 10).
+
+Both strategies can be repeated `n_runs` times for consensus scoring
+(default n_runs=1 → single call, no aggregation). When n_runs > 1 the
+per-run judge results are combined with `aggregation`:
+
+  "majority"  – most common verdict / most common integer score
+  "median"    – median of the per-run weights / scores
+  "mean"      – arithmetic mean of the per-run weights / scores
+
+When n_runs > 1 the LLM sampling temperature is raised automatically so the
+runs actually differ; otherwise consensus voting would be a no-op.
+
+Placeholder / filtering rules apply to both strategies:
+    - A criterion with no {{placeholders}} at all is skipped.
+    - A criterion referencing an unknown placeholder is skipped.
+    - If every criterion is filtered out, the metric returns score=0.
 """
+import asyncio
 import json
 import re
-from typing import Dict, Any, List, Tuple
+from collections import Counter
+from statistics import mean as _mean, median as _median
+from typing import Dict, Any, List, Tuple, Optional
 from eval_lib.metric_pattern import MetricPattern
 from eval_lib.testcases_schema import EvalTestCase
 from eval_lib.llm_client import chat_complete
@@ -40,6 +53,15 @@ _PLACEHOLDER_RE = re.compile(r"\{\{(\w+)\}\}")
 # need more, raise this constant.
 _HARD_SAFETY_CAP = 50
 
+# Safety ceiling on the number of consensus runs per test case. Same rationale
+# as _HARD_SAFETY_CAP — catches typos (n_runs=100) before the bill catches you.
+_MAX_RUNS = 15
+
+# LLM sampling temperature used when n_runs > 1. Non-zero variance is required
+# for consensus voting to be meaningful; at 0.0 the judge would return the
+# same answer every run.
+_CONSENSUS_LLM_TEMPERATURE = 0.7
+
 
 # Verdict weights for scoring.
 VERDICT_WEIGHTS = {
@@ -50,12 +72,16 @@ VERDICT_WEIGHTS = {
     "none": 0.0,
 }
 
+_ALLOWED_STRATEGIES = {"verdict", "direct"}
+_ALLOWED_AGGREGATIONS = {"majority", "median", "mean"}
+
 
 class CustomEvalMetric(MetricPattern):
-    """Verdict-based custom evaluation against user-defined criteria.
+    """Custom evaluation against user-defined criteria.
 
-    See module docstring for the prompt model. The metric is reusable across
-    test cases — per-row data is resolved fresh every `evaluate()` call.
+    See module docstring for the two scoring strategies and consensus
+    aggregation. The metric is reusable across test cases — per-row data is
+    resolved fresh every `evaluate()` call.
     """
 
     name = "customEval"
@@ -66,6 +92,9 @@ class CustomEvalMetric(MetricPattern):
         threshold: float,
         name: str,
         evaluation_criteria: List[str],
+        strategy: str = "verdict",
+        n_runs: int = 1,
+        aggregation: str = "median",
         temperature: float = 0.8,
         verbose: bool = False,
     ):
@@ -78,9 +107,21 @@ class CustomEvalMetric(MetricPattern):
                 reference data via {{placeholders}}; criteria without any
                 placeholder or with unknown placeholders are skipped at
                 evaluate-time (with a warning in evaluation_log).
-            temperature: TCVA aggregation temperature (NOT LLM sampling — judge
-                calls always run at temperature=0). Low (~0.1) ≈ strict (min),
-                0.5 ≈ arithmetic mean, high (~1.5) ≈ lenient (max). Default 0.8.
+            strategy: "verdict" (default) — per-criterion verdicts aggregated
+                via TCVA. "direct" — single overall integer score 0-10 from
+                the judge, normalized to 0.0-1.0.
+            n_runs: Number of times to call the judge per test case. Default 1
+                (no consensus). When >1, the LLM sampling temperature is
+                raised so the runs actually differ.
+            aggregation: Only used when n_runs > 1. "majority" | "median" |
+                "mean". For "verdict" strategy the aggregation is applied
+                per-criterion across runs (majority=mode of verdict labels;
+                median/mean=of the corresponding verdict weights). For
+                "direct" strategy it is applied to the raw 0-10 scores.
+            temperature: TCVA aggregation temperature (NOT LLM sampling — see
+                n_runs for that). Only used by strategy="verdict". Low (~0.1)
+                ≈ strict (min), 0.5 ≈ arithmetic mean, high (~1.5) ≈ lenient
+                (max). Default 0.8.
             verbose: Enable per-result console logging.
         """
         super().__init__(model=model, threshold=threshold, verbose=verbose)
@@ -95,8 +136,27 @@ class CustomEvalMetric(MetricPattern):
                 "CustomEvalMetric: evaluation_criteria contained only empty/whitespace items."
             )
 
+        if strategy not in _ALLOWED_STRATEGIES:
+            raise ValueError(
+                f"strategy must be one of {sorted(_ALLOWED_STRATEGIES)}, got {strategy!r}"
+            )
+        if not isinstance(n_runs, int) or n_runs < 1:
+            raise ValueError(f"n_runs must be a positive integer, got {n_runs!r}")
+        if n_runs > _MAX_RUNS:
+            raise ValueError(
+                f"n_runs={n_runs} exceeds safety cap of {_MAX_RUNS}; "
+                f"raise _MAX_RUNS in custom_eval.py if you truly need more."
+            )
+        if aggregation not in _ALLOWED_AGGREGATIONS:
+            raise ValueError(
+                f"aggregation must be one of {sorted(_ALLOWED_AGGREGATIONS)}, got {aggregation!r}"
+            )
+
         self.custom_name = name
         self.evaluation_criteria = cleaned
+        self.strategy = strategy
+        self.n_runs = n_runs
+        self.aggregation = aggregation
         self.temperature = temperature
 
     # ==================== TEMPLATE CONTEXT ====================
@@ -137,9 +197,6 @@ class CustomEvalMetric(MetricPattern):
 
         variable_map = meta.get("template_variable_map") or {}
         if isinstance(variable_map, dict):
-            # Aliases: register the alias name -> resolved value so a criterion
-            # written as {{q}} works the same as {{question}} when the
-            # connector maps q -> question.
             for alias, real_name in variable_map.items():
                 if real_name in values and alias not in values:
                     values[alias] = values[real_name]
@@ -230,7 +287,6 @@ fully   – criterion fully satisfied"""
         lines = []
         for name in used_names:
             rendered = cls._format_value(values[name])
-            # Multi-line values get their own line for readability.
             if "\n" in rendered:
                 lines.append(f"- {name}:\n{rendered}")
             else:
@@ -270,22 +326,61 @@ Return JSON array with exactly {len(kept_criteria)} verdicts:
 
 JSON:"""
 
+    @classmethod
+    def _prompt_direct(
+        cls,
+        kept_criteria: List[str],
+        used_names: List[str],
+        values: Dict[str, Any],
+    ) -> str:
+        data_block = cls._build_data_block(used_names, values)
+        criteria_text = "\n".join(
+            f"{i+1}. {c}" for i, c in enumerate(kept_criteria)
+        )
+        return f"""You are evaluating how well the DATA satisfies the EVALUATION CRITERIA.
+
+DATA:
+{data_block}
+
+EVALUATION CRITERIA:
+{criteria_text}
+
+Task: Rate on an integer scale from 0 to 10 how well the DATA satisfies ALL
+the criteria above, taken together.
+    0  = criteria not satisfied at all
+    5  = partially satisfied
+    10 = fully satisfied
+The {{{{placeholders}}}} inside each criterion refer to entries in the DATA block.
+
+**
+Return JSON:
+{{"score": <integer 0-10>, "reason": "<one-sentence justification>"}}
+**
+
+JSON:"""
+
     # ==================== CORE EVALUATION ====================
 
-    async def _generate_verdicts(
+    def _llm_temperature(self) -> float:
+        """Sampling temperature for the judge LLM.
+
+        n_runs=1 stays deterministic (0.0). n_runs>1 needs variance across
+        runs or consensus voting would be a no-op.
+        """
+        return _CONSENSUS_LLM_TEMPERATURE if self.n_runs > 1 else 0.0
+
+    async def _run_verdicts_once(
         self,
         kept_criteria: List[str],
         used_names: List[str],
         values: Dict[str, Any],
-    ) -> Tuple[List[Dict[str, str]], float, float]:
+    ) -> Tuple[List[Dict[str, str]], float]:
         prompt = self._prompt_evaluate(kept_criteria, used_names, values)
-
         text, cost = await chat_complete(
             self.model,
             messages=[{"role": "user", "content": prompt}],
-            temperature=0.0,
+            temperature=self._llm_temperature(),
         )
-
         try:
             raw_json = extract_json_block(text)
             verdicts = json.loads(raw_json)
@@ -294,7 +389,6 @@ JSON:"""
         except Exception as e:
             raise RuntimeError(f"Failed to parse verdicts: {e}\n{text}")
 
-        # Reconcile length mismatches: pad with "none" or truncate.
         if len(verdicts) < len(kept_criteria):
             verdicts.extend(
                 [{"verdict": "none", "reason": "Missing evaluation"}]
@@ -302,22 +396,41 @@ JSON:"""
             )
         elif len(verdicts) > len(kept_criteria):
             verdicts = verdicts[: len(kept_criteria)]
+        return verdicts, cost or 0.0
 
-        weights = [
-            VERDICT_WEIGHTS.get(v.get("verdict", "none"), 0.0)
-            for v in verdicts
-        ]
-        score = round(score_agg(weights, temperature=self.temperature), 4)
-        return verdicts, score, cost or 0.0
+    async def _run_direct_once(
+        self,
+        kept_criteria: List[str],
+        used_names: List[str],
+        values: Dict[str, Any],
+    ) -> Tuple[int, str, float]:
+        prompt = self._prompt_direct(kept_criteria, used_names, values)
+        text, cost = await chat_complete(
+            self.model,
+            messages=[{"role": "user", "content": prompt}],
+            temperature=self._llm_temperature(),
+        )
+        try:
+            raw_json = extract_json_block(text)
+            obj = json.loads(raw_json)
+            if not isinstance(obj, dict):
+                raise ValueError("Expected JSON object with 'score' field")
+            raw = obj.get("score")
+            if raw is None:
+                raise ValueError("Missing 'score' field")
+            raw_score = int(round(float(raw)))
+            raw_score = max(0, min(10, raw_score))
+            reason = str(obj.get("reason", "")).strip()
+        except Exception as e:
+            raise RuntimeError(f"Failed to parse direct score: {e}\n{text}")
+        return raw_score, reason, cost or 0.0
 
     async def evaluate(self, test_case: EvalTestCase) -> Dict[str, Any]:
         # Step 1: resolve all addressable data for this test case.
         values = self._build_substitution_context(test_case)
 
-        # Step 2: safety ceiling before any LLM work. This catches accidents
-        # (e.g. a user pasting hundreds of rows into the criteria list); typical
-        # usage is well under the cap and never triggers truncation.
-        truncation_warning = None
+        # Step 2: safety ceiling on criteria before any LLM work.
+        truncation_warning: Optional[str] = None
         criteria = list(self.evaluation_criteria)
         if len(criteria) > _HARD_SAFETY_CAP:
             truncation_warning = (
@@ -330,58 +443,140 @@ JSON:"""
         kept, skipped = self._filter_criteria(criteria, values)
         used_names = self._collect_used_placeholders(kept)
 
-        # If nothing survived, return a zero result with a clear reason rather
-        # than calling the LLM with an empty criteria list.
         if not kept:
-            reason = (
-                "No criteria could be evaluated: "
-                "all entries lacked placeholders or referenced unknown data."
-            )
-            evaluation_log = {
-                "input_question": test_case.input,
-                "actual_output": test_case.actual_output,
-                "evaluation_criteria_template": list(self.evaluation_criteria),
-                "kept_criteria": [],
-                "skipped_criteria": skipped,
-                "comment_skipped_criteria": "Each entry explains why the criterion was excluded from judging.",
-                "data_used": {},
-                "verdicts": [],
-                "final_score": 0.0,
-                "threshold": self.threshold,
-                "temperature": self.temperature,
-                    "success": False,
-                "summary": reason,
-            }
-            if truncation_warning:
-                evaluation_log["truncation_warning"] = truncation_warning
-            result = {
-                "name": self.name,
-                "score": 0.0,
-                "success": False,
-                "reason": reason,
-                "evaluation_cost": 0.0,
-                "evaluation_log": evaluation_log,
-            }
-            self.print_result(result)
-            return result
+            return self._empty_kept_result(test_case, skipped, truncation_warning)
 
-        # Step 4: judge.
-        verdicts, final_score, cost = await self._generate_verdicts(
-            kept, used_names, values
+        # Step 4: dispatch to strategy.
+        if self.strategy == "verdict":
+            return await self._evaluate_verdict_mode(
+                test_case, criteria, kept, skipped, used_names, values, truncation_warning
+            )
+        return await self._evaluate_direct_mode(
+            test_case, criteria, kept, skipped, used_names, values, truncation_warning
         )
+
+    def _empty_kept_result(
+        self,
+        test_case: EvalTestCase,
+        skipped: List[Dict[str, Any]],
+        truncation_warning: Optional[str],
+    ) -> Dict[str, Any]:
+        reason = (
+            "No criteria could be evaluated: "
+            "all entries lacked placeholders or referenced unknown data."
+        )
+        evaluation_log: Dict[str, Any] = {
+            "strategy": self.strategy,
+            "n_runs": self.n_runs,
+            "aggregation": self.aggregation if self.n_runs > 1 else None,
+            "input_question": test_case.input,
+            "actual_output": test_case.actual_output,
+            "evaluation_criteria_template": list(self.evaluation_criteria),
+            "kept_criteria": [],
+            "skipped_criteria": skipped,
+            "comment_skipped_criteria": "Each entry explains why the criterion was excluded from judging.",
+            "data_used": {},
+            "verdicts": [],
+            "final_score": 0.0,
+            "threshold": self.threshold,
+            "temperature": self.temperature,
+            "success": False,
+            "summary": reason,
+        }
+        if truncation_warning:
+            evaluation_log["truncation_warning"] = truncation_warning
+        result = {
+            "name": self.name,
+            "score": 0.0,
+            "success": False,
+            "reason": reason,
+            "evaluation_cost": 0.0,
+            "evaluation_log": evaluation_log,
+        }
+        self.print_result(result)
+        return result
+
+    # ==================== STRATEGY: VERDICT ====================
+
+    async def _evaluate_verdict_mode(
+        self,
+        test_case: EvalTestCase,
+        criteria: List[str],
+        kept: List[str],
+        skipped: List[Dict[str, Any]],
+        used_names: List[str],
+        values: Dict[str, Any],
+        truncation_warning: Optional[str],
+    ) -> Dict[str, Any]:
+        runs = await asyncio.gather(*[
+            self._run_verdicts_once(kept, used_names, values)
+            for _ in range(self.n_runs)
+        ])
+        # runs: List[(verdicts, cost)]
+        total_cost = sum(r[1] for r in runs)
+        run_verdicts = [r[0] for r in runs]
+
+        per_run_detail: Optional[List[Dict[str, Any]]] = None
+
+        if self.n_runs == 1:
+            final_verdicts = run_verdicts[0]
+            aggregated_weights = [
+                VERDICT_WEIGHTS.get(v.get("verdict", "none"), 0.0)
+                for v in final_verdicts
+            ]
+        else:
+            final_verdicts = []
+            aggregated_weights = []
+            per_run_detail = []
+            for i in range(len(kept)):
+                labels = [rv[i].get("verdict", "none") for rv in run_verdicts]
+                counter = Counter(labels)
+                mode_label, mode_votes = counter.most_common(1)[0]
+
+                if self.aggregation == "majority":
+                    weight = VERDICT_WEIGHTS.get(mode_label, 0.0)
+                    final_verdicts.append({
+                        "verdict": mode_label,
+                        "reason": f"Majority vote {mode_votes}/{self.n_runs} across runs.",
+                    })
+                else:
+                    weights = [VERDICT_WEIGHTS.get(l, 0.0) for l in labels]
+                    if self.aggregation == "median":
+                        weight = float(_median(weights))
+                    else:  # mean
+                        weight = float(_mean(weights))
+                    final_verdicts.append({
+                        "verdict": mode_label,
+                        "reason": (
+                            f"{self.aggregation.capitalize()} weight={round(weight, 3)} "
+                            f"across {self.n_runs} runs (mode verdict shown)."
+                        ),
+                    })
+                aggregated_weights.append(weight)
+                per_run_detail.append({
+                    "criterion_index": i,
+                    "per_run_verdicts": labels,
+                    "aggregated_verdict": final_verdicts[-1]["verdict"],
+                    "aggregated_weight": round(weight, 4),
+                })
+
+        final_score = round(score_agg(aggregated_weights, temperature=self.temperature), 4)
         success = final_score >= self.threshold
 
-        positive = [v for v in verdicts if v.get("verdict") in ("fully", "mostly")]
-        negative = [v for v in verdicts if v.get("verdict") in ("none", "minor", "partial")]
-        total = len(verdicts)
-        if len(positive) >= total * 0.7:
+        positive = [v for v in final_verdicts if v.get("verdict") in ("fully", "mostly")]
+        negative = [v for v in final_verdicts if v.get("verdict") in ("none", "minor", "partial")]
+        total = len(final_verdicts)
+        if total > 0 and len(positive) >= total * 0.7:
             summary = f"Strong performance: {len(positive)}/{total} criteria fully or mostly satisfied."
-        elif len(negative) >= total * 0.7:
+        elif total > 0 and len(negative) >= total * 0.7:
             summary = f"Weak performance: {len(negative)}/{total} criteria not satisfied or minimally addressed."
         else:
             summary = f"Mixed performance: {len(positive)}/{total} criteria satisfied, with room for improvement."
 
         evaluation_log: Dict[str, Any] = {
+            "strategy": "verdict",
+            "n_runs": self.n_runs,
+            "aggregation": self.aggregation if self.n_runs > 1 else None,
             "input_question": test_case.input,
             "actual_output": test_case.actual_output,
             "evaluation_criteria_template": list(self.evaluation_criteria),
@@ -392,16 +587,108 @@ JSON:"""
             "comment_skipped_criteria": "Criteria excluded from judging, with the reason for each.",
             "data_used": {name: values[name] for name in used_names},
             "comment_data_used": "Subset of resolved values that appeared in at least one kept criterion (the DATA block shown to the judge).",
-            "verdicts": verdicts,
-            "comment_verdicts": "Individual verdicts per kept criterion (fully/mostly/partial/minor/none).",
-            "verdict_weights": {
-                i: VERDICT_WEIGHTS.get(v.get("verdict", "none"), 0.0)
-                for i, v in enumerate(verdicts)
-            },
+            "verdicts": final_verdicts,
+            "comment_verdicts": "Per-criterion verdicts (aggregated across runs if n_runs>1).",
+            "verdict_weights": {i: aggregated_weights[i] for i in range(len(aggregated_weights))},
             "final_score": final_score,
             "comment_final_score": f"TCVA aggregation of verdict weights (temperature={self.temperature}).",
             "threshold": self.threshold,
             "temperature": self.temperature,
+            "success": success,
+            "summary": summary,
+        }
+        if per_run_detail is not None:
+            evaluation_log["per_run_detail"] = per_run_detail
+            evaluation_log["comment_per_run_detail"] = (
+                f"Individual verdicts from each of the {self.n_runs} runs before "
+                f"{self.aggregation} aggregation."
+            )
+        if truncation_warning:
+            evaluation_log["truncation_warning"] = truncation_warning
+
+        result = {
+            "name": self.name,
+            "score": final_score,
+            "success": success,
+            "reason": summary,
+            "evaluation_cost": round(total_cost, 6),
+            "evaluation_log": evaluation_log,
+        }
+        self.print_result(result)
+        return result
+
+    # ==================== STRATEGY: DIRECT ====================
+
+    async def _evaluate_direct_mode(
+        self,
+        test_case: EvalTestCase,
+        criteria: List[str],
+        kept: List[str],
+        skipped: List[Dict[str, Any]],
+        used_names: List[str],
+        values: Dict[str, Any],
+        truncation_warning: Optional[str],
+    ) -> Dict[str, Any]:
+        runs = await asyncio.gather(*[
+            self._run_direct_once(kept, used_names, values)
+            for _ in range(self.n_runs)
+        ])
+        # runs: List[(raw_score_0_10, reason, cost)]
+        raw_scores = [r[0] for r in runs]
+        reasons = [r[1] for r in runs]
+        total_cost = sum(r[2] for r in runs)
+
+        if self.n_runs == 1:
+            aggregated_raw: float = float(raw_scores[0])
+            chosen_reason = reasons[0]
+        elif self.aggregation == "majority":
+            winning_raw = Counter(raw_scores).most_common(1)[0][0]
+            aggregated_raw = float(winning_raw)
+            chosen_reason = next(
+                (reasons[i] for i, s in enumerate(raw_scores) if s == winning_raw),
+                reasons[0],
+            )
+        elif self.aggregation == "median":
+            aggregated_raw = float(_median(raw_scores))
+            chosen_reason = f"Median of {self.n_runs} runs: scores={raw_scores}."
+        else:  # mean
+            aggregated_raw = float(_mean(raw_scores))
+            chosen_reason = f"Mean of {self.n_runs} runs: scores={raw_scores}."
+
+        final_score = round(aggregated_raw / 10.0, 4)
+        success = final_score >= self.threshold
+
+        if final_score >= 0.7:
+            summary = f"Strong direct judge score: {aggregated_raw}/10 (normalized {final_score})."
+        elif final_score >= 0.4:
+            summary = f"Mixed direct judge score: {aggregated_raw}/10 (normalized {final_score})."
+        else:
+            summary = f"Weak direct judge score: {aggregated_raw}/10 (normalized {final_score})."
+
+        evaluation_log: Dict[str, Any] = {
+            "strategy": "direct",
+            "n_runs": self.n_runs,
+            "aggregation": self.aggregation if self.n_runs > 1 else None,
+            "input_question": test_case.input,
+            "actual_output": test_case.actual_output,
+            "evaluation_criteria_template": list(self.evaluation_criteria),
+            "comment_evaluation_criteria_template": "Original user-provided criteria with {{placeholders}} preserved.",
+            "kept_criteria": kept,
+            "comment_kept_criteria": f"Criteria actually included in the direct-score prompt ({len(kept)} of {len(criteria)}).",
+            "skipped_criteria": skipped,
+            "data_used": {name: values[name] for name in used_names},
+            "raw_scores_0_10": raw_scores,
+            "comment_raw_scores_0_10": (
+                "Judge's integer scores 0-10 from each run."
+                if self.n_runs > 1
+                else "Judge's integer score 0-10 for this test case."
+            ),
+            "aggregated_raw_score_0_10": aggregated_raw,
+            "final_score": final_score,
+            "comment_final_score": "Raw 0-10 score normalized to 0.0-1.0 (raw / 10).",
+            "reasons": reasons,
+            "chosen_reason": chosen_reason,
+            "threshold": self.threshold,
             "success": success,
             "summary": summary,
         }
@@ -412,8 +699,8 @@ JSON:"""
             "name": self.name,
             "score": final_score,
             "success": success,
-            "reason": summary,
-            "evaluation_cost": round(cost, 6),
+            "reason": chosen_reason or summary,
+            "evaluation_cost": round(total_cost, 6),
             "evaluation_log": evaluation_log,
         }
         self.print_result(result)

@@ -169,13 +169,16 @@ METRIC_REGISTRY = {
     "CustomEvalMetric": {
         "class": CustomEvalMetric,
         "category": "rag",
-        "description": "Custom verdict-based evaluation. Define one or more evaluation criteria; each gets an independent verdict (fully/mostly/partial/minor/none). Supports {{placeholders}} from dataset columns, EvalTestCase fields, extra_fields, and {{system_prompt}}.",
+        "description": "Custom evaluation with pluggable scoring strategies. 'verdict' — one verdict per criterion aggregated via TCVA; 'direct' — one overall 0-10 judge score normalized to 0..1. Optional consensus over n_runs (majority/median/mean). Supports {{placeholders}} from dataset columns, EvalTestCase fields, extra_fields, and {{system_prompt}}.",
         "requires_model": True,
         "required_fields": ["input", "actual_output"],
         "params": [
             {"name": "threshold", "type": "float", "default": 0.5, "min": 0, "max": 1},
             {"name": "name", "type": "string", "default": "CustomMetric"},
             {"name": "evaluation_criteria", "type": "list", "default": []},
+            {"name": "strategy", "type": "enum", "default": "verdict", "enum_values": ["verdict", "direct"]},
+            {"name": "n_runs", "type": "int", "default": 1, "min": 1, "max": 15},
+            {"name": "aggregation", "type": "enum", "default": "median", "enum_values": ["majority", "median", "mean"]},
             {"name": "temperature", "type": "float", "default": 0.8, "min": 0, "max": 2},
         ],
     },

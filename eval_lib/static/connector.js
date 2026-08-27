@@ -732,6 +732,9 @@ function _customMetricDefaults() {
     return {
         name: 'CustomMetric',
         evaluation_criteria: [],
+        strategy: 'verdict',
+        n_runs: 1,
+        aggregation: 'median',
         threshold: 0.5,
         temperature: 0.8,
     };
@@ -775,6 +778,8 @@ function saveCustomMetricsParams() {
         let val = el.value;
         if (field === 'threshold' || field === 'temperature') {
             val = val === '' ? null : parseFloat(val);
+        } else if (field === 'n_runs') {
+            val = val === '' ? 1 : parseInt(val, 10);
         } else if (field === 'evaluation_criteria') {
             // One criterion per non-empty line.
             val = (val || '').split('\n').map(s => s.trim()).filter(s => s);
@@ -786,9 +791,14 @@ function saveCustomMetricsParams() {
 function renderTabMetricsCustomCategory() {
     const hint =
         `Write one <strong>criterion per line</strong>. Each criterion must reference the data it cares about via <code>{{placeholders}}</code> — ` +
-        `the metric extracts those values, lists them in a DATA block above the criteria, and asks the judge to verdict each criterion against that data. ` +
-        `Criteria with no placeholders, or with unknown placeholders, are skipped (with a warning in the result log).` +
-        `<br><br>Available names: any dataset column, <code>{{input}}</code>, <code>{{actual_output}}</code>, <code>{{expected_output}}</code>, ` +
+        `the metric extracts those values, lists them in a DATA block above the criteria, and asks the judge to score them.` +
+        `<br><br>Two scoring <strong>strategies</strong>: ` +
+        `<code>verdict</code> — one verdict per criterion (fully / mostly / partial / minor / none) aggregated via TCVA; ` +
+        `<code>direct</code> — a single integer <code>0-10</code> judge score for all criteria together, normalized to <code>0.0-1.0</code>. ` +
+        `Set <strong>n_runs &gt; 1</strong> to call the judge multiple times and combine per <code>aggregation</code> ` +
+        `(<code>majority</code> / <code>median</code> / <code>mean</code>); the LLM sampling temperature is raised automatically for consensus runs.` +
+        `<br><br>Criteria with no placeholders, or with unknown placeholders, are skipped (with a warning in the result log).` +
+        `<br>Available names: any dataset column, <code>{{input}}</code>, <code>{{actual_output}}</code>, <code>{{expected_output}}</code>, ` +
         `<code>{{retrieval_context}}</code>, <code>{{system_prompt}}</code> (if mapped in the Response tab), plus any field you put in <code>EvalTestCase.extra_fields</code> when calling the library programmatically.`;
 
     let html = `<div class="custom-metrics-intro">${hint}</div>`;
@@ -820,11 +830,30 @@ function renderTabMetricsCustomCategory() {
                         <textarea rows="6" data-custom-id="${cm.id}" data-custom-field="evaluation_criteria" placeholder="{{actual_output}} directly answers {{input}}&#10;{{actual_output}} is factually grounded in {{retrieval_context}}&#10;{{actual_output}} is concise and free of filler">${esc((cm.evaluation_criteria || []).join('\n'))}</textarea>
                     </div>
                     <div class="metric-param">
+                        <label>strategy <span class="param-hint">verdict = per-criterion; direct = one 0-10 score</span></label>
+                        <select data-custom-id="${cm.id}" data-custom-field="strategy">
+                            <option value="verdict" ${(cm.strategy || 'verdict') === 'verdict' ? 'selected' : ''}>verdict</option>
+                            <option value="direct" ${cm.strategy === 'direct' ? 'selected' : ''}>direct</option>
+                        </select>
+                    </div>
+                    <div class="metric-param">
+                        <label>n_runs <span class="param-hint">1 = single call; &gt;1 enables consensus</span></label>
+                        <input type="number" step="1" min="1" max="15" value="${cm.n_runs != null ? cm.n_runs : 1}" data-custom-id="${cm.id}" data-custom-field="n_runs">
+                    </div>
+                    <div class="metric-param">
+                        <label>aggregation <span class="param-hint">only used when n_runs &gt; 1</span></label>
+                        <select data-custom-id="${cm.id}" data-custom-field="aggregation">
+                            <option value="majority" ${cm.aggregation === 'majority' ? 'selected' : ''}>majority</option>
+                            <option value="median" ${(cm.aggregation || 'median') === 'median' ? 'selected' : ''}>median</option>
+                            <option value="mean" ${cm.aggregation === 'mean' ? 'selected' : ''}>mean</option>
+                        </select>
+                    </div>
+                    <div class="metric-param">
                         <label>threshold <span class="param-hint">0.0 - 1.0</span></label>
                         <input type="number" step="0.05" min="0" max="1" value="${cm.threshold != null ? cm.threshold : 0.5}" data-custom-id="${cm.id}" data-custom-field="threshold">
                     </div>
                     <div class="metric-param">
-                        <label>temperature <span class="param-hint">aggregation strictness: low=strict, high=lenient</span></label>
+                        <label>temperature <span class="param-hint">TCVA strictness (verdict only): low=strict, high=lenient</span></label>
                         <input type="number" step="0.05" min="0" max="2" value="${cm.temperature != null ? cm.temperature : 0.8}" data-custom-id="${cm.id}" data-custom-field="temperature">
                     </div>
                 </div>
@@ -1694,6 +1723,9 @@ function _buildMetricsPayload() {
         params: {
             name: cm.name,
             evaluation_criteria: cm.evaluation_criteria || [],
+            strategy: cm.strategy || 'verdict',
+            n_runs: cm.n_runs != null ? cm.n_runs : 1,
+            aggregation: cm.aggregation || 'median',
             threshold: cm.threshold,
             temperature: cm.temperature,
         },
@@ -1984,6 +2016,9 @@ async function loadSelectedConfig() {
                         id: `cm_${Date.now()}_${state._customMetricSeq}`,
                         name: p.name || 'CustomMetric',
                         evaluation_criteria: Array.isArray(p.evaluation_criteria) ? p.evaluation_criteria : [],
+                        strategy: p.strategy || 'verdict',
+                        n_runs: p.n_runs != null ? p.n_runs : 1,
+                        aggregation: p.aggregation || 'median',
                         threshold: p.threshold != null ? p.threshold : 0.5,
                         temperature: p.temperature != null ? p.temperature : 0.8,
                     });

@@ -6,7 +6,7 @@
 
 > Based on [firstlinesoftware/eval-ai-library](https://github.com/firstlinesoftware/eval-ai-library). This is an independently maintained version with additional features and PyPI distribution.
 
-Comprehensive AI model evaluation framework for RAG systems and AI agents. Supports 35+ evaluation metrics, 12 LLM providers, built-in test data generation from documents, and an interactive web dashboard for visualization and analysis. Implements advanced techniques including G-Eval probability-weighted scoring and Temperature-Controlled Verdict Aggregation via Generalized Power Mean.
+Comprehensive AI model evaluation framework for RAG systems and AI agents. Supports 35+ evaluation metrics, 30+ LLM providers (OpenAI, Anthropic, Google, Azure, AWS Bedrock, Vertex AI, Mistral, Groq, xAI, DeepSeek, Cohere, OpenRouter, Together, Fireworks, Ollama, MLX, and more via LiteLLM), built-in test data generation from documents, an interactive web dashboard for visualization and analysis, and a first-class tracing subsystem with framework integrations for LangChain, LlamaIndex, CrewAI, AutoGen, Haystack, Semantic Kernel, Claude Agent SDK, smolagents, phidata, and OpenAI Assistants (plus an OpenTelemetry exporter). Implements advanced techniques including G-Eval probability-weighted scoring and Temperature-Controlled Verdict Aggregation via Generalized Power Mean.
 
 ## Installation
 

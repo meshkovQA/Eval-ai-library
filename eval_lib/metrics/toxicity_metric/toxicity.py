@@ -8,6 +8,7 @@ from typing import Dict, Any
 from eval_lib.metric_pattern import MetricPattern
 from eval_lib.testcases_schema import EvalTestCase
 from eval_lib.llm_client import chat_complete
+from eval_lib.utils import extract_json_block
 
 
 class ToxicityMetric(MetricPattern):
@@ -83,9 +84,9 @@ JSON:"""
         )
         total_cost += cost or 0.0
 
-        # Step 3: Parse response
+        # Step 3: Parse response (tolerant of markdown-fenced / wrapped JSON)
         try:
-            data = json.loads(text)
+            data = json.loads(extract_json_block(text))
         except Exception as e:
             raise RuntimeError(f"Failed to parse JSON response: {e}\n{text}")
 

@@ -13,6 +13,7 @@ from collections import Counter
 from eval_lib.metric_pattern import MetricPattern
 from eval_lib.testcases_schema import EvalTestCase
 from eval_lib.llm_client import chat_complete
+from eval_lib.utils import extract_json_block
 
 
 class GEval(MetricPattern):
@@ -156,9 +157,9 @@ JSON:"""
         """Extract float score from LLM response (0.0-1.0 range)"""
         text = text.strip()
 
-        # Try JSON parsing first
+        # Try JSON parsing first (tolerant of markdown-fenced / wrapped JSON)
         try:
-            data = json.loads(text)
+            data = json.loads(extract_json_block(text))
             if "score" in data:
                 score = float(data["score"])
                 if 0.0 <= score <= 1.0:
@@ -254,7 +255,7 @@ JSON:"""
             total_cost += step_cost or 0.0
 
             try:
-                parsed_steps = json.loads(steps_text)
+                parsed_steps = json.loads(extract_json_block(steps_text))
                 self.evaluation_steps = parsed_steps["steps"]
             except Exception as e:
                 raise RuntimeError(
@@ -284,7 +285,7 @@ JSON:"""
 
         # Parse reason
         try:
-            reason_data = json.loads(reason_text)
+            reason_data = json.loads(extract_json_block(reason_text))
             reason = reason_data.get("reason", reason_text)
         except:
             reason = reason_text.strip()

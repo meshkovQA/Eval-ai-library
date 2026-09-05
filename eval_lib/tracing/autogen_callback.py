@@ -19,9 +19,10 @@ Usage:
     tracer.end_trace()
 """
 
-from typing import Any, Optional
+from typing import Any
 from .types import SpanType
 from .tracer import tracer
+from .trace_utils import safe_str as _safe_str
 
 
 class AutoGenTraceHandler:
@@ -97,11 +98,3 @@ def _agent_name(agent: Any) -> str:
     if name:
         return str(name)
     return type(agent).__name__
-
-
-def _safe_str(obj: Any) -> Optional[str]:
-    """Safely convert to string, truncating if too long."""
-    if obj is None:
-        return None
-    s = str(obj)
-    return s[:2000] if len(s) > 2000 else s

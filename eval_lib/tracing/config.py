@@ -58,3 +58,24 @@ class TracingConfig:
         long-running session that crashes still has its spans on record.
         """
         return os.getenv("TRACING_STREAM", "false").lower() == "true"
+
+    @staticmethod
+    def get_max_field_length() -> Optional[int]:
+        """Max characters kept per captured trace field (span input/output).
+
+        Framework callbacks used to hard-truncate span input/output to a
+        few hundred–thousand characters, silently dropping data before it
+        ever reached the collector. The SDK now preserves fields in full by
+        default; set ``TRACING_MAX_FIELD_LENGTH`` to a positive integer to
+        cap oversized fields (e.g. to bound payload size). Unset, empty,
+        ``0`` or a non-integer all mean *no limit*. When a cap applies the
+        truncation is marked explicitly, never silent.
+        """
+        raw = os.getenv("TRACING_MAX_FIELD_LENGTH")
+        if raw is None or not raw.strip():
+            return None
+        try:
+            value = int(raw)
+        except ValueError:
+            return None
+        return value if value > 0 else None

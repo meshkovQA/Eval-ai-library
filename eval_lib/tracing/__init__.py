@@ -1,7 +1,7 @@
 from .config import TracingConfig
 from .decorators import trace_llm, trace_step, trace_tool
 from .sender import FileSink, HTTPSink, InMemorySink, Sink, TraceSender
-from .trace_utils import extract_test_case_data
+from .trace_utils import extract_test_case_data, safe_str
 from .tracer import AgentTracer, tracer
 from .types import SpanType, TraceSpan
 
@@ -60,5 +60,6 @@ __all__ = [
     "InMemorySink",
     "FileSink",
     "extract_test_case_data",
+    "safe_str",
     *_LAZY.keys(),
 ]

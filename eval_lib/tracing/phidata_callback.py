@@ -25,6 +25,7 @@ Usage:
 from typing import Any, List, Optional
 from .types import SpanType
 from .tracer import tracer
+from .trace_utils import safe_str
 
 
 class PhidataTraceCollector:
@@ -82,7 +83,7 @@ class PhidataTraceCollector:
                         span_type=SpanType.LLM_CALL,
                     )
                     if span:
-                        tracer.end_span(span, output=str(content)[:1000])
+                        tracer.end_span(span, output=safe_str(content))
 
             elif role == "tool":
                 # Tool result — try to match with pending tool span
@@ -92,7 +93,7 @@ class PhidataTraceCollector:
                     span_type=SpanType.TOOL_CALL,
                 )
                 if span:
-                    tracer.end_span(span, output=str(content)[:1000] if content else None)
+                    tracer.end_span(span, output=safe_str(content) if content else None)
 
     def _process_tool_call(self, tool_call: Any):
         """Process a single tool call."""

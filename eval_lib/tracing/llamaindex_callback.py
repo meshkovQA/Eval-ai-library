@@ -25,6 +25,7 @@ Usage:
 from typing import Any, Dict, Optional
 from .types import TraceSpan, SpanType
 from .tracer import tracer
+from .trace_utils import safe_str
 
 
 class EvalLibEventHandler:
@@ -73,7 +74,7 @@ class EvalLibEventHandler:
         span = tracer.start_span(
             name="llm_call",
             span_type=SpanType.LLM_CALL,
-            input_data=str(prompt)[:500] if prompt else None,
+            input_data=safe_str(prompt) if prompt else None,
             metadata={"model": str(model)} if model else None,
         )
         if span:
@@ -86,7 +87,7 @@ class EvalLibEventHandler:
             response = getattr(event, "response", None) or getattr(event, "completion", None)
             token_info = getattr(event, "token_usage", None)
 
-            tracer.end_span(span, output=str(response)[:500] if response else None)
+            tracer.end_span(span, output=safe_str(response) if response else None)
 
             if token_info:
                 tracer.set_trace_metadata(
@@ -189,7 +190,7 @@ class EvalLibSpanHandler:
         """Called when a LlamaIndex span exits successfully."""
         span = self._spans.pop(id_, None)
         if span:
-            output = str(result)[:500] if result else None
+            output = safe_str(result) if result else None
             tracer.end_span(span, output=output)
 
     def prepare_to_drop_span(

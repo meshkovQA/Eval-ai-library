@@ -9,6 +9,34 @@ LangChain, Claude Agent SDK, OpenAI Assistants, or manual tracing.
 from typing import List, Dict, Any, Optional
 from .types import TraceSpan, SpanType
 from .tracer import tracer
+from .config import TracingConfig
+
+
+def safe_str(obj: Any, max_length: Optional[int] = None) -> Optional[str]:
+    """Convert a value to a string for storage in a trace field.
+
+    The tracing SDK must not silently drop data, so by default the value is
+    preserved in full. A length cap is applied only when one is configured —
+    passed explicitly via ``max_length`` or through the
+    ``TRACING_MAX_FIELD_LENGTH`` env var (see
+    :meth:`TracingConfig.get_max_field_length`). When a cap does apply, the
+    truncation is made explicit with a suffix so it is never silent.
+
+    Args:
+        obj: Value to stringify (``None`` passes through as ``None``).
+        max_length: Optional per-call cap; overrides the global config.
+
+    Returns:
+        The full string, a truncated string with a ``…[truncated N chars]``
+        marker, or ``None`` when ``obj`` is ``None``.
+    """
+    if obj is None:
+        return None
+    s = obj if isinstance(obj, str) else str(obj)
+    limit = max_length if max_length is not None else TracingConfig.get_max_field_length()
+    if limit and limit > 0 and len(s) > limit:
+        return s[:limit] + f"…[truncated {len(s) - limit} chars]"
+    return s
 
 
 def spans_to_trace_steps(spans: List[TraceSpan]) -> List[Dict[str, Any]]:

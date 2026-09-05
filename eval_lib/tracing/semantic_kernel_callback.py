@@ -24,6 +24,7 @@ Usage:
 from typing import Any
 from .types import SpanType
 from .tracer import tracer
+from .trace_utils import safe_str
 
 
 def install_sk_tracing(kernel: Any):
@@ -74,7 +75,7 @@ def install_sk_tracing(kernel: Any):
             if span:
                 result = None
                 if context.result:
-                    result = str(context.result.value)[:1000] if hasattr(context.result, 'value') else str(context.result)[:1000]
+                    result = safe_str(context.result.value) if hasattr(context.result, 'value') else safe_str(context.result)
                 tracer.end_span(span, output=result)
         except Exception as e:
             if span:
@@ -92,7 +93,7 @@ def install_sk_tracing(kernel: Any):
                 span_type=SpanType.REASONING,
             )
             if span:
-                tracer.end_span(span, output=str(rendered)[:1000])
+                tracer.end_span(span, output=safe_str(rendered))
 
     try:
         # Also install auto-function filter if available
@@ -112,7 +113,7 @@ def install_sk_tracing(kernel: Any):
             try:
                 await next_fn(context)
                 if span:
-                    result = str(context.function_result)[:1000] if hasattr(context, 'function_result') else None
+                    result = safe_str(context.function_result) if hasattr(context, 'function_result') else None
                     tracer.end_span(span, output=result)
             except Exception as e:
                 if span:

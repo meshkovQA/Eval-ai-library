@@ -25,6 +25,7 @@ Usage:
 from typing import Any
 from .types import SpanType
 from .tracer import tracer
+from .trace_utils import safe_str
 
 
 def smolagents_step_callback(step: Any, agent: Any = None):
@@ -105,7 +106,7 @@ def _process_action_step(step: Any):
         span = tracer.start_span(
             name="code_execution",
             span_type=SpanType.TOOL_CALL,
-            input_data=str(model_output)[:500] if model_output else None,
+            input_data=safe_str(model_output) if model_output else None,
         )
         if span:
             error = getattr(step, "error", None)

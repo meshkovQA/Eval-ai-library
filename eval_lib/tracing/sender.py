@@ -20,6 +20,8 @@ from __future__ import annotations
 import asyncio
 import json
 import logging
+import re
+import uuid
 from abc import ABC, abstractmethod
 from pathlib import Path
 from threading import Lock
@@ -28,19 +30,59 @@ from typing import Any, Dict, List, Optional
 import aiohttp
 
 from .config import TracingConfig
-from .types import TraceSpan
+from .types import TraceSpan, _to_iso
+from .usage import span_token_usage as _span_token_usage
 
 logger = logging.getLogger("eval_lib.tracing")
 
 
-def _safe_serialize(obj: Any, seen: set = None) -> Any:
-    """Recursively serialize an object to JSON-safe types"""
+# Key names whose values are secrets. Matched case-insensitively as a
+# substring of the key, so `openai_api_key`, `X-Api-Key`, `authToken` and
+# `AWS_SECRET_ACCESS_KEY` are all caught. Captured `self` objects from
+# decorated methods routinely carry a live client with its api_key.
+_SECRET_KEY_FRAGMENTS = (
+    "api_key", "apikey", "api-key", "authorization", "auth_token", "authtoken",
+    "access_token", "refresh_token", "secret", "password", "passwd",
+    "private_key", "client_secret", "bearer", "credential", "session_token",
+    "signing_key", "x-api-key",
+)
+# Value shapes that are secrets regardless of the key they sit under.
+_SECRET_VALUE_RE = re.compile(
+    r"^(?:Bearer\s+\S+|sk-[A-Za-z0-9_\-]{8,}|sk-ant-[A-Za-z0-9_\-]{8,}"
+    r"|AKIA[0-9A-Z]{16}|gsk_[A-Za-z0-9]{8,}|xai-[A-Za-z0-9]{8,}|AIza[0-9A-Za-z_\-]{20,})$"
+)
+_REDACTED = "***REDACTED***"
+
+
+def _is_secret_key(key: Any) -> bool:
+    k = str(key).lower()
+    return any(fragment in k for fragment in _SECRET_KEY_FRAGMENTS)
+
+
+def _redact_value(value: Any) -> Any:
+    if isinstance(value, str) and _SECRET_VALUE_RE.match(value.strip()):
+        return _REDACTED
+    return value
+
+
+def _safe_serialize(obj: Any, seen: set = None, *, redact: Optional[bool] = None) -> Any:
+    """Recursively serialize an object to JSON-safe types.
+
+    Secrets are redacted on the way out (``TRACING_REDACT=false`` disables):
+    any mapping/attribute whose name looks like a credential, and any
+    string value shaped like a well-known token. A trace is shipped to a
+    collector and stored; an API key must never ride along.
+    """
     if seen is None:
         seen = set()
+    if redact is None:
+        redact = TracingConfig.is_redact_enabled()
 
     # Handle None and primitives
-    if obj is None or isinstance(obj, (bool, int, float, str)):
+    if obj is None or isinstance(obj, (bool, int, float)):
         return obj
+    if isinstance(obj, str):
+        return _redact_value(obj) if redact else obj
 
     # Prevent infinite recursion
     obj_id = id(obj)
@@ -48,14 +90,22 @@ def _safe_serialize(obj: Any, seen: set = None) -> Any:
         return f"<circular ref: {type(obj).__name__}>"
     seen.add(obj_id)
 
+    def _item(key: Any, value: Any) -> Any:
+        if redact and _is_secret_key(key) and value is not None:
+            return _REDACTED
+        return _safe_serialize(value, seen, redact=redact)
+
     try:
-        # Handle UUID
-        if hasattr(obj, 'hex'):
+        # Handle UUID (an explicit type check — `hasattr(obj, "hex")` also
+        # matched bytes and any object with a field called `hex`).
+        if isinstance(obj, uuid.UUID):
             return str(obj)
+        if isinstance(obj, (bytes, bytearray)):
+            return f"<{len(obj)} bytes>"
 
         # Handle dict
         if isinstance(obj, dict):
-            return {str(k): _safe_serialize(v, seen) for k, v in obj.items()}
+            return {str(k): _item(k, v) for k, v in obj.items()}
 
         # Handle list/tuple
         if isinstance(obj, (list, tuple)):
@@ -94,7 +144,7 @@ def _safe_serialize(obj: Any, seen: set = None) -> Any:
                 result = {"_type": type(obj).__name__}
                 for k, v in obj.__dict__.items():
                     if not k.startswith('_'):
-                        result[k] = _safe_serialize(v, seen)
+                        result[k] = _item(k, v)
                 return result
             except Exception:
                 pass
@@ -124,6 +174,52 @@ class SafeJSONEncoder(json.JSONEncoder):
 # =========================================================================
 
 
+class DeliveryStats:
+    """Counters describing what actually happened to trace payloads.
+
+    Tracing that fails silently is indistinguishable from tracing that
+    works, so every sink keeps a tally the caller can assert on:
+    ``tracer.sender.stats.as_dict()``.
+    """
+
+    __slots__ = ("sent", "failed", "retried", "dropped", "_lock")
+
+    def __init__(self) -> None:
+        self.sent = 0
+        self.failed = 0
+        self.retried = 0
+        self.dropped = 0
+        self._lock = Lock()
+
+    def record_sent(self) -> None:
+        with self._lock:
+            self.sent += 1
+
+    def record_failed(self) -> None:
+        with self._lock:
+            self.failed += 1
+
+    def record_retried(self) -> None:
+        with self._lock:
+            self.retried += 1
+
+    def record_dropped(self) -> None:
+        with self._lock:
+            self.dropped += 1
+
+    def as_dict(self) -> Dict[str, int]:
+        with self._lock:
+            return {
+                "sent": self.sent,
+                "failed": self.failed,
+                "retried": self.retried,
+                "dropped": self.dropped,
+            }
+
+    def __repr__(self) -> str:  # pragma: no cover - debug aid
+        return f"DeliveryStats({self.as_dict()})"
+
+
 class Sink(ABC):
     """Abstract trace transport.
 
@@ -132,9 +228,16 @@ class Sink(ABC):
     directly.
     """
 
+    def __init__(self) -> None:
+        self.stats = DeliveryStats()
+
     @abstractmethod
     async def send(self, payload: Dict[str, Any]) -> None:
         """Persist / forward a single trace payload."""
+
+    async def aclose(self) -> None:
+        """Release transport resources. No-op unless overridden."""
+        return None
 
 
 class HTTPSink(Sink):
@@ -147,17 +250,31 @@ class HTTPSink(Sink):
     ``TRACING_STRICT=true`` upgrades those to raised exceptions.
     """
 
+    # Statuses worth another attempt: the server is busy or broken, not
+    # the payload. Everything else in 4xx is a contract bug — retrying it
+    # just burns time and hides the real problem.
+    RETRYABLE_STATUSES = frozenset({408, 425, 429, 500, 502, 503, 504})
+
     def __init__(
         self,
         url: Optional[str] = None,
         api_key: Optional[str] = None,
         timeout: float = 10.0,
         strict: Optional[bool] = None,
+        max_retries: Optional[int] = None,
+        retry_backoff: Optional[float] = None,
     ):
+        super().__init__()
         self._url = url
         self._api_key = api_key
         self._timeout = timeout
         self._strict = strict
+        self._max_retries = max_retries
+        self._retry_backoff = retry_backoff
+        # One session per event loop, reused across traces. Creating a
+        # ClientSession per payload meant a fresh TCP+TLS handshake for
+        # every trace; a pooled session keeps connections warm.
+        self._sessions: Dict[int, "aiohttp.ClientSession"] = {}
 
     def _resolve_url(self) -> str:
         return self._url if self._url is not None else TracingConfig.get_url()
@@ -168,12 +285,56 @@ class HTTPSink(Sink):
     def _resolve_strict(self) -> bool:
         return self._strict if self._strict is not None else TracingConfig.is_strict()
 
+    def _resolve_max_retries(self) -> int:
+        return self._max_retries if self._max_retries is not None else TracingConfig.get_max_retries()
+
+    def _resolve_backoff(self) -> float:
+        return self._retry_backoff if self._retry_backoff is not None else TracingConfig.get_retry_backoff()
+
+    async def _get_session(self) -> "aiohttp.ClientSession":
+        """Return a pooled session bound to the running loop.
+
+        Sessions are loop-affine, so they are keyed by loop identity and
+        replaced whenever the cached one has been closed.
+        """
+        loop = asyncio.get_running_loop()
+        key = id(loop)
+        session = self._sessions.get(key)
+        # getattr: test doubles and older clients may not expose `closed`.
+        if session is not None and not getattr(session, "closed", False):
+            return session
+        session = aiohttp.ClientSession()
+        self._sessions[key] = session
+        return session
+
+    async def aclose(self) -> None:
+        """Close every pooled session."""
+        sessions, self._sessions = self._sessions, {}
+        for session in sessions.values():
+            if getattr(session, "closed", False):
+                continue
+            close = getattr(session, "close", None)
+            if close is None:
+                continue
+            try:
+                await close()
+            except Exception:  # pragma: no cover - best-effort cleanup
+                pass
+
+    def _report(self, msg: str) -> None:
+        """Record a delivery failure — loudly, or fatally under strict."""
+        self.stats.record_failed()
+        if self._resolve_strict():
+            raise RuntimeError(msg)
+        logger.warning(msg)
+
     async def send(self, payload: Dict[str, Any]) -> None:
         url = self._resolve_url()
         if not url:
             # No URL configured — nothing to do. This isn't an error;
             # tracing without a URL is used e.g. when the user is only
             # exercising the collector.
+            self.stats.record_dropped()
             return
 
         headers = {"Content-Type": "application/json"}
@@ -184,47 +345,58 @@ class HTTPSink(Sink):
         try:
             data = json.dumps(payload, cls=SafeJSONEncoder)
         except Exception as e:
-            msg = f"eval_lib.tracing: failed to serialize payload for {url!r}: {e}"
-            if self._resolve_strict():
-                raise
-            logger.warning(msg)
+            self._report(f"eval_lib.tracing: failed to serialize payload for {url!r}: {e}")
             return
 
-        try:
-            timeout = aiohttp.ClientTimeout(total=self._timeout)
-            async with aiohttp.ClientSession() as session:
+        attempts = self._resolve_max_retries() + 1
+        delay = self._resolve_backoff()
+        timeout = aiohttp.ClientTimeout(total=self._timeout)
+        last_error = f"eval_lib.tracing: POST {url} failed"
+
+        for attempt in range(1, attempts + 1):
+            try:
+                session = await self._get_session()
                 async with session.post(url, data=data, headers=headers, timeout=timeout) as resp:
-                    if resp.status >= 400:
-                        body = await resp.text()
-                        msg = (
-                            f"eval_lib.tracing: POST {url} returned {resp.status}: "
-                            f"{body[:500]}"
-                        )
-                        if self._resolve_strict():
-                            raise RuntimeError(msg)
-                        logger.warning(msg)
-        except aiohttp.ClientError as e:
-            msg = f"eval_lib.tracing: POST {url} failed: {type(e).__name__}: {e}"
-            if self._resolve_strict():
-                raise
-            logger.warning(msg)
-        except asyncio.TimeoutError:
-            msg = f"eval_lib.tracing: POST {url} timed out after {self._timeout}s"
-            if self._resolve_strict():
-                raise
-            logger.warning(msg)
+                    if resp.status < 400:
+                        self.stats.record_sent()
+                        return
+
+                    body = await resp.text()
+                    last_error = (
+                        f"eval_lib.tracing: POST {url} returned {resp.status}: {body[:500]}"
+                    )
+                    if resp.status not in self.RETRYABLE_STATUSES:
+                        # Client error — the payload or auth is wrong.
+                        # Retrying cannot help.
+                        self._report(last_error)
+                        return
+            except (aiohttp.ClientError, asyncio.TimeoutError, OSError) as e:
+                last_error = (
+                    f"eval_lib.tracing: POST {url} failed: {type(e).__name__}: {e}"
+                )
+
+            if attempt < attempts:
+                self.stats.record_retried()
+                logger.debug("%s — retrying (%d/%d)", last_error, attempt, attempts - 1)
+                if delay > 0:
+                    await asyncio.sleep(delay)
+                    delay *= 2
+
+        self._report(f"{last_error} (gave up after {attempts} attempt(s))")
 
 
 class InMemorySink(Sink):
     """Collect payloads in a list. Intended for unit tests."""
 
     def __init__(self):
+        super().__init__()
         self.payloads: List[Dict[str, Any]] = []
         self._lock = Lock()
 
     async def send(self, payload: Dict[str, Any]) -> None:
         with self._lock:
             self.payloads.append(payload)
+        self.stats.record_sent()
 
     def clear(self) -> None:
         with self._lock:
@@ -235,6 +407,7 @@ class FileSink(Sink):
     """Append each payload as one JSON line to ``path`` — local dev / offline runs."""
 
     def __init__(self, path: Optional[str] = None):
+        super().__init__()
         self._path = Path(path or TracingConfig.get_sink_path())
         self._lock = Lock()
 
@@ -244,6 +417,21 @@ class FileSink(Sink):
             self._path.parent.mkdir(parents=True, exist_ok=True)
             with self._path.open("a", encoding="utf-8") as f:
                 f.write(line + "\n")
+        self.stats.record_sent()
+
+
+_TOKEN_KEYS = ("input_tokens", "output_tokens", "total_tokens", "cached_tokens", "reasoning_tokens")
+
+
+def _empty_usage() -> Dict[str, Any]:
+    return {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cached_tokens": 0,
+        "reasoning_tokens": 0,
+        "cost_usd": 0.0,
+        "llm_calls": 0,
+    }
 
 
 def _build_default_sink() -> Sink:
@@ -283,16 +471,76 @@ class TraceSender:
         self._traces: Dict[str, List[TraceSpan]] = {}
         # Store trace-level metadata (model, tokens, output)
         self._trace_metadata: Dict[str, Dict[str, Any]] = {}
+        # Accumulated usage per trace — see add_trace_usage().
+        self._trace_usage: Dict[str, Dict[str, Any]] = {}
+        # Span ids already shipped as partial_span (streaming mode).
+        self._streamed: Dict[str, set] = {}
+        # Strong references to scheduled deliveries — see _dispatch().
+        self._pending: set = set()
+        # Traces already warned about repeated token declarations.
+        self._token_warned: set = set()
         self.sink: Sink = sink if sink is not None else _build_default_sink()
 
     # ------------------------------------------------------------------ API
 
     def set_trace_metadata(self, trace_id: str, metadata: Dict[str, Any]):
-        """Set trace-level metadata (model, tokens, final output, cost)."""
+        """Declare trace-level facts (model, final input/output, session…).
+
+        This *overwrites* — it states what a value **is**. For counters
+        that grow across calls (tokens, cost) use :meth:`add_trace_usage`
+        instead; calling this once per LLM call with that call's tokens
+        keeps only the last call's numbers.
+        """
         with self._lock:
             if trace_id not in self._trace_metadata:
                 self._trace_metadata[trace_id] = {}
-            self._trace_metadata[trace_id].update(metadata)
+            existing = self._trace_metadata[trace_id]
+            # Re-declaring token counts is almost always the per-call
+            # overwrite antipattern (only the last call survives). Say so
+            # once per trace instead of silently keeping the last value.
+            if any(k in metadata for k in _TOKEN_KEYS) and any(k in existing for k in _TOKEN_KEYS):
+                if trace_id not in self._token_warned:
+                    self._token_warned.add(trace_id)
+                    logger.warning(
+                        "eval_lib.tracing: set_trace_metadata() received token counts "
+                        "more than once for trace %s — the earlier values are being "
+                        "overwritten. For per-call counts use tracer.add_trace_usage(), "
+                        "which accumulates.",
+                        trace_id,
+                    )
+            existing.update(metadata)
+
+    def add_trace_usage(
+        self,
+        trace_id: str,
+        *,
+        input_tokens: int = 0,
+        output_tokens: int = 0,
+        cached_tokens: int = 0,
+        reasoning_tokens: int = 0,
+        cost_usd: float = 0.0,
+        calls: int = 1,
+    ) -> None:
+        """Accumulate usage for a trace. Safe to call once per LLM call.
+
+        Every argument is *added* to the running total; the result is
+        emitted as the ``usage`` block of the trace payload and, unless the
+        caller declared explicit totals via :meth:`set_trace_metadata`,
+        also fills the top-level ``input_tokens``/``output_tokens``/… fields.
+        """
+        with self._lock:
+            usage = self._trace_usage.setdefault(trace_id, _empty_usage())
+            usage["input_tokens"] += int(input_tokens or 0)
+            usage["output_tokens"] += int(output_tokens or 0)
+            usage["cached_tokens"] += int(cached_tokens or 0)
+            usage["reasoning_tokens"] += int(reasoning_tokens or 0)
+            usage["cost_usd"] += float(cost_usd or 0.0)
+            usage["llm_calls"] += int(calls or 0)
+
+    def get_trace_usage(self, trace_id: str) -> Dict[str, Any]:
+        """Return the accumulated usage for ``trace_id`` (copy)."""
+        with self._lock:
+            return dict(self._trace_usage.get(trace_id) or _empty_usage())
 
     def add_span(self, span: TraceSpan):
         """Add a span to its trace group."""
@@ -312,27 +560,45 @@ class TraceSender:
         with self._lock:
             return dict(self._trace_metadata.get(trace_id, {}))
 
-    def flush_trace(self, trace_id: str):
-        """Ship all spans for a specific trace to the sink."""
+    def has_trace(self, trace_id: str) -> bool:
+        """True when anything (spans, metadata or usage) is buffered for it."""
         with self._lock:
-            if trace_id not in self._traces:
-                return
-            spans = self._traces.pop(trace_id)
-            trace_meta = self._trace_metadata.pop(trace_id, {})
+            return (
+                trace_id in self._traces
+                or trace_id in self._trace_metadata
+                or trace_id in self._trace_usage
+            )
 
-        if not spans:
+    def flush_trace(self, trace_id: str):
+        """Ship the complete trace — spans, metadata and usage — to the sink.
+
+        A trace with metadata but no spans (e.g. a run that only reported
+        cost/tokens, or a streaming run whose spans already went out as
+        ``partial_span``) is still sent: the final trace payload is the
+        authoritative record and a receiver upserts it by ``trace_id``.
+        """
+        with self._lock:
+            spans = self._traces.pop(trace_id, None)
+            trace_meta = self._trace_metadata.pop(trace_id, None)
+            usage = self._trace_usage.pop(trace_id, None)
+            self._streamed.pop(trace_id, None)
+
+        if spans is None and trace_meta is None and usage is None:
             return
 
-        trace_data = self._build_trace_structure(trace_id, spans, trace_meta or {})
+        trace_data = self._build_trace_structure(
+            trace_id, spans or [], trace_meta or {}, usage
+        )
         payload = {"project": TracingConfig.get_project(), "trace": trace_data}
         self._dispatch(payload)
 
     def flush_span(self, span: TraceSpan):
         """Ship a single span as ``partial_span`` (streaming mode).
 
-        No-op unless ``TRACING_STREAM=true``. Removes the span from the
-        buffered trace so that a later ``flush_trace`` doesn't duplicate
-        it.
+        No-op unless ``TRACING_STREAM=true``. The span **stays** in the
+        buffer so that ``extract_test_case_data`` keeps working and the
+        final :meth:`flush_trace` carries the whole trace; the receiver
+        reconciles by ``span_id``. It is only marked as already streamed.
         """
         if not TracingConfig.is_stream():
             return
@@ -340,13 +606,7 @@ class TraceSender:
             return
 
         with self._lock:
-            spans = self._traces.get(span.trace_id, [])
-            try:
-                spans.remove(span)
-            except ValueError:
-                # add_span may not have been called yet — that's fine, we
-                # still ship the span out-of-band.
-                pass
+            self._streamed.setdefault(span.trace_id, set()).add(span.span_id)
 
         payload = {
             "project": TracingConfig.get_project(),
@@ -358,7 +618,7 @@ class TraceSender:
     def flush(self):
         """Ship every buffered trace."""
         with self._lock:
-            trace_ids = list(self._traces.keys())
+            trace_ids = set(self._traces) | set(self._trace_metadata) | set(self._trace_usage)
         for trace_id in trace_ids:
             self.flush_trace(trace_id)
 
@@ -371,8 +631,14 @@ class TraceSender:
     def _dispatch(self, payload: Dict[str, Any]) -> None:
         """Route ``payload`` to the configured sink.
 
-        If an event loop is already running we schedule the coroutine;
-        otherwise we spin up a temporary loop and await synchronously.
+        If an event loop is already running we schedule the coroutine and
+        keep a strong reference to the task: a bare ``ensure_future`` may
+        be garbage-collected mid-flight, and its exception would surface
+        only as an "exception was never retrieved" warning. Awaiting the
+        scheduled work is possible via :meth:`aflush`.
+
+        Without a running loop we spin up a temporary one and await
+        synchronously.
         """
         coro = self.sink.send(payload)
         try:
@@ -382,18 +648,91 @@ class TraceSender:
             asyncio.set_event_loop(loop)
             try:
                 loop.run_until_complete(coro)
+            except Exception as e:
+                if TracingConfig.is_strict():
+                    raise
+                logger.warning("eval_lib.tracing: trace delivery failed: %r", e)
             finally:
                 loop.close()
+                asyncio.set_event_loop(None)
             return
-        asyncio.ensure_future(coro)
+
+        task = asyncio.ensure_future(coro)
+        with self._lock:
+            self._pending.add(task)
+        task.add_done_callback(self._on_task_done)
+
+    def _on_task_done(self, task: "asyncio.Future") -> None:
+        """Discard the finished task and make any failure visible."""
+        with self._lock:
+            self._pending.discard(task)
+        if task.cancelled():
+            return
+        exc = task.exception()
+        if exc is not None:
+            logger.warning(
+                "eval_lib.tracing: trace delivery failed: %s: %s",
+                type(exc).__name__, exc,
+            )
+
+    async def aflush(self) -> None:
+        """Flush buffered traces **and await** every in-flight send.
+
+        Call this before the process exits (or at the end of a request in
+        a long-lived server) — otherwise scheduled deliveries can be
+        abandoned when the loop shuts down and the traces are lost with
+        no diagnostic.
+        """
+        self.flush()
+        while True:
+            with self._lock:
+                pending = [t for t in self._pending if not t.done()]
+            if not pending:
+                return
+            await asyncio.gather(*pending, return_exceptions=True)
+
+    async def aclose(self) -> None:
+        """Await pending deliveries, then release sink resources."""
+        await self.aflush()
+        await self.sink.aclose()
+
+    @property
+    def stats(self) -> DeliveryStats:
+        """Delivery counters from the active sink."""
+        return self.sink.stats
 
     def _build_trace_structure(
         self,
         trace_id: str,
         spans: List[TraceSpan],
         trace_meta: Dict[str, Any] = None,
+        usage: Optional[Dict[str, Any]] = None,
     ) -> dict:
-        """Build hierarchical trace structure from flat spans list."""
+        """Build the trace payload from flat spans + declared metadata + usage.
+
+        Payload shape (top level of ``"trace"``):
+
+        * identity/timing: ``trace_id``, ``start_time``/``end_time`` (epoch),
+          ``started_at``/``ended_at`` (ISO-8601), ``response_time``
+        * structure: ``spans`` (roots, nested ``children``), ``span_count``,
+          ``tools_called``
+        * ``usage`` — **accumulated** counters: ``input_tokens``,
+          ``output_tokens``, ``total_tokens``, ``cached_tokens``,
+          ``reasoning_tokens``, ``cost_usd``, ``llm_calls``, plus ``source``
+          (``"accumulated"`` from :meth:`add_trace_usage`, ``"spans"`` when
+          rolled up from LLM spans, ``"declared"`` when the caller stated
+          totals).
+        * ``metadata`` — everything the caller passed to
+          :meth:`set_trace_metadata`, verbatim, as one object. Consumers
+          with a dedicated metadata column store this directly.
+        * first-class promotions (``model``, ``input``, ``output``,
+          ``input_tokens``…, ``cost_usd``, ``session_id``, ``user_id``…) at
+          top level for backwards compatibility.
+
+        Precedence for the top-level token/cost fields: declared total
+        (``set_trace_metadata``) > accumulated (``add_trace_usage``) >
+        span roll-up.
+        """
         trace_meta = trace_meta or {}
 
         # Create lookup by span_id
@@ -423,13 +762,18 @@ class TraceSender:
         for root in root_spans:
             attach_children(root)
 
-        # Calculate trace-level metadata
+        # Calculate trace-level timing
         all_times = [s.start_time for s in spans if s.start_time]
         end_times = [s.end_time for s in spans if s.end_time]
+        start_time = min(all_times) if all_times else None
+        end_time = max(end_times) if end_times else None
 
-        # Calculate response_time from root span's duration_ms if available
+        # Wall-clock span of the whole trace. Using only the first root's
+        # duration undercounted every trace with more than one root.
         response_time = None
-        if root_spans:
+        if start_time is not None and end_time is not None and end_time >= start_time:
+            response_time = round(end_time - start_time, 3)
+        elif root_spans:
             root_duration_ms = root_spans[0].get("duration_ms")
             if root_duration_ms:
                 response_time = round(root_duration_ms / 1000, 3)
@@ -443,47 +787,95 @@ class TraceSender:
                 if span.parent_span_id not in tool_span_ids:
                     tools_called.append(span.name)
 
-        # Try to extract tokens from LLM spans if not in trace_meta
-        extracted_input_tokens = 0
-        extracted_output_tokens = 0
+        # ---- usage: accumulated > span roll-up ---------------------------
+        rolled = _empty_usage()
         for span in spans:
-            if span.span_type and span.span_type.value == "llm_call" and span.output:
-                output = span.output
-                if isinstance(output, dict):
-                    llm_output = output.get("llm_output", {})
-                    if llm_output:
-                        token_usage = llm_output.get("token_usage", {})
-                        if token_usage:
-                            extracted_input_tokens += token_usage.get("prompt_tokens", 0)
-                            extracted_output_tokens += token_usage.get("completion_tokens", 0)
+            if not (span.span_type and span.span_type.value == "llm_call"):
+                continue
+            span_usage = _span_token_usage(span)
+            if not span_usage:
+                continue
+            rolled["input_tokens"] += span_usage["input_tokens"]
+            rolled["output_tokens"] += span_usage["output_tokens"]
+            rolled["cached_tokens"] += span_usage["cached_tokens"]
+            rolled["reasoning_tokens"] += span_usage["reasoning_tokens"]
+            rolled["llm_calls"] += 1
+
+        if usage and usage.get("llm_calls"):
+            usage_block: Dict[str, Any] = dict(usage)
+            usage_block["source"] = "accumulated"
+        elif rolled["llm_calls"]:
+            usage_block = rolled
+            usage_block["source"] = "spans"
+        else:
+            usage_block = _empty_usage()
+            usage_block["source"] = "none"
+
+        # Declared totals override whatever was counted.
+        declared = {
+            k: trace_meta[k]
+            for k in ("input_tokens", "output_tokens", "cached_tokens",
+                      "reasoning_tokens", "cost_usd")
+            if trace_meta.get(k) is not None
+        }
+        if declared:
+            usage_block.update(declared)
+            usage_block["source"] = "declared"
+        usage_block["total_tokens"] = (
+            trace_meta.get("total_tokens")
+            if trace_meta.get("total_tokens") is not None
+            else usage_block["input_tokens"] + usage_block["output_tokens"]
+        )
+        usage_block["cost_usd"] = round(float(usage_block.get("cost_usd") or 0.0), 6)
 
         result: Dict[str, Any] = {
             "trace_id": trace_id,
-            "start_time": min(all_times) if all_times else None,
-            "end_time": max(end_times) if end_times else None,
+            "start_time": start_time,
+            "end_time": end_time,
+            "started_at": _to_iso(start_time),
+            "ended_at": _to_iso(end_time),
             "response_time": response_time,
             "tools_called": tools_called if tools_called else None,
             "spans": root_spans,
+            # `span_count` is every span in the trace; `spans` holds only the
+            # roots (children are nested under them). `root_span_count` makes
+            # that explicit so the two numbers stop looking contradictory.
             "span_count": len(spans),
+            "root_span_count": len(root_spans),
+            "usage": usage_block,
+            # Everything the caller declared, as one object, verbatim.
+            "metadata": dict(trace_meta),
         }
+
+        # Promote usage counters to top level (backwards compatibility).
+        # Zero counts are omitted so a consumer can tell "unknown" from "0".
+        for key in ("input_tokens", "output_tokens", "total_tokens",
+                    "cached_tokens", "reasoning_tokens"):
+            if usage_block.get(key):
+                result[key] = usage_block[key]
+        if usage_block["cost_usd"]:
+            result["cost_usd"] = usage_block["cost_usd"]
+            result.setdefault(
+                "cost_source",
+                trace_meta.get("cost_source") or
+                ("reported" if usage_block["source"] == "declared" else "estimated"),
+            )
 
         # First-class trace-level fields, promoted out of metadata so
         # downstream consumers (evalix runtime-eval) can slice / aggregate
         # without having to guess where they landed.
         FIRST_CLASS = (
             "model", "input", "output",
-            "input_tokens", "output_tokens", "total_tokens",
-            "response_time", "cost_usd", "cost_source",
+            "response_time", "cost_source",
             "num_turns", "session_id", "user_id",
         )
-        if trace_meta:
-            for key in FIRST_CLASS:
-                if key in trace_meta:
-                    result[key] = trace_meta[key]
-            # Preserve any remaining custom keys — first-class fields already
-            # placed above win over anything in `result`.
-            for key, value in trace_meta.items():
-                if key not in result:
-                    result[key] = value
+        for key in FIRST_CLASS:
+            if key in trace_meta:
+                result[key] = trace_meta[key]
+        # Custom keys stay at top level too so existing consumers keep
+        # working; `metadata` above is the canonical home for them.
+        for key, value in trace_meta.items():
+            if key not in result:
+                result[key] = value
 
         return result

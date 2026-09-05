@@ -537,8 +537,41 @@ async def chat_complete(
     return await helper(client, llm, messages, temperature)
 
 
+def _usage_attr(usage, *names) -> int:
+    """First non-null integer among ``names`` on a usage object or dict."""
+    for name in names:
+        value = usage.get(name) if isinstance(usage, dict) else getattr(usage, name, None)
+        if isinstance(value, bool):
+            continue
+        if isinstance(value, (int, float)):
+            return int(value)
+    return 0
+
+
+def _usage_sub(usage, name):
+    """Nested usage detail block (``prompt_tokens_details``), or None."""
+    value = usage.get(name) if isinstance(usage, dict) else getattr(usage, name, None)
+    return value
+
+
 def _calculate_cost(llm: LLMDescriptor, usage) -> Optional[float]:
-    """Calculate the cost of the LLM usage based on the model and usage data."""
+    """Calculate the cost of the LLM usage based on the model and usage data.
+
+    Cached prompt tokens are billed at the provider's (much cheaper) cache-read
+    rate. In a multi-agent loop the conversation history is resent every turn,
+    so pricing cache hits at the full input rate overstates spend several-fold.
+
+    The two providers report caching differently and both are handled:
+
+    * OpenAI — ``prompt_tokens`` *includes* the cached tokens, which are
+      detailed in ``prompt_tokens_details.cached_tokens``; the cached part is
+      subtracted from the full-rate input before being re-priced.
+    * Anthropic — ``input_tokens`` *excludes* cache reads, reported separately
+      as ``cache_read_input_tokens``; those are added on at the cache rate.
+
+    Reasoning tokens need no adjustment: providers already count them inside
+    ``completion_tokens`` and bill them at the output rate.
+    """
     if llm.provider == Provider.OLLAMA:
         return 0.0
     if not usage:
@@ -548,10 +581,35 @@ def _calculate_cost(llm: LLMDescriptor, usage) -> Optional[float]:
     if not price:
         return None
 
-    prompt = getattr(usage, "prompt_tokens", 0)
-    completion = getattr(usage, "completion_tokens", 0)
+    prompt = _usage_attr(usage, "prompt_tokens", "input_tokens")
+    completion = _usage_attr(usage, "completion_tokens", "output_tokens")
 
-    return round(prompt * price["input"] / 1_000_000 + completion * price["output"] / 1_000_000, 6)
+    # OpenAI style: cached tokens are a subset of `prompt`.
+    details = _usage_sub(usage, "prompt_tokens_details")
+    cached_inclusive = _usage_attr(details, "cached_tokens") if details else 0
+    # Anthropic style: cache reads are reported outside `prompt`.
+    cached_exclusive = _usage_attr(usage, "cache_read_input_tokens")
+    cache_write = _usage_attr(usage, "cache_creation_input_tokens")
+
+    # Fall back to the full input rate when the model has no cache price.
+    cache_read_rate = price.get("cache_read")
+    if cache_read_rate is None:
+        cache_read_rate = price["input"]
+    cache_write_rate = price.get("cache_write")
+    if cache_write_rate is None:
+        cache_write_rate = price["input"]
+
+    billable_prompt = max(prompt - cached_inclusive, 0)
+    cached_total = cached_inclusive + cached_exclusive
+
+    cost = (
+        billable_prompt * price["input"]
+        + cached_total * cache_read_rate
+        + cache_write * cache_write_rate
+        + completion * price["output"]
+    ) / 1_000_000
+
+    return round(cost, 6)
 
 
 # ---------------------------------------------------------------------------

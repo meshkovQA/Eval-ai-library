@@ -19,6 +19,7 @@ either run locally or are user-defined.
 from __future__ import annotations
 
 import os
+import re
 from typing import Optional
 
 import litellm
@@ -283,20 +284,47 @@ def all_models_by_provider() -> dict[str, list[str]]:
     return out
 
 
-def get_cost_per_million(model: str) -> Optional[dict[str, float]]:
-    """
-    Return {"input": <usd_per_1M>, "output": <usd_per_1M>} for a model id.
+# Release-date suffixes providers append to an otherwise stable model id:
+# "-2025-08-07" (OpenAI) and "-20250514" (Anthropic). Stripping one of these
+# is safe because a date is never a distinct SKU — unlike, say, the "-mini"
+# in "gpt-4o-mini", which must never be stripped.
+_DATE_SUFFIX_RE = re.compile(r"-(?:\d{4}-\d{2}-\d{2}|\d{8})$")
 
-    Resolution order:
-        1. Local override in price.py (model_pricing) — wins if present, lets us
-           patch wrong / missing prices without waiting for a LiteLLM release.
-        2. litellm.model_cost — the canonical table shipped with LiteLLM.
 
-    Returns None if neither source knows the model.
+def _pricing_candidates(model: str) -> list[str]:
+    """Model ids to try, most specific first.
+
+    Handles the two ways a real-world id misses an exact table entry:
+    a release-date suffix the table doesn't carry, and a ``provider/``
+    routing prefix.
     """
+    candidates: list[str] = []
+
+    def add(name: str) -> None:
+        if name and name not in candidates:
+            candidates.append(name)
+
+    for base in (model, model.split("/", 1)[1] if "/" in model else ""):
+        if not base:
+            continue
+        add(base)
+        stripped = _DATE_SUFFIX_RE.sub("", base)
+        add(stripped)
+    return candidates
+
+
+def _lookup_pricing(model: str) -> Optional[dict]:
+    """Resolve one model id against the override table, then LiteLLM."""
     override = _override_pricing.get(model)
     if override:
-        return {"input": override["input"], "output": override["output"]}
+        price = {"input": override["input"], "output": override["output"]}
+        # Cache rates are optional in the override table; only surface the
+        # keys when a value actually exists so the returned shape stays
+        # exactly {"input", "output"} for the common case.
+        for key in ("cache_read", "cache_write"):
+            if override.get(key) is not None:
+                price[key] = override[key]
+        return price
 
     info = litellm.model_cost.get(model)
     if not info:
@@ -307,7 +335,38 @@ def get_cost_per_million(model: str) -> Optional[dict[str, float]]:
     if in_per_token is None and out_per_token is None:
         return None
 
-    return {
+    price = {
         "input": (in_per_token or 0.0) * 1_000_000,
         "output": (out_per_token or 0.0) * 1_000_000,
     }
+    cache_read = info.get("cache_read_input_token_cost")
+    if cache_read is not None:
+        price["cache_read"] = cache_read * 1_000_000
+    cache_write = info.get("cache_creation_input_token_cost")
+    if cache_write is not None:
+        price["cache_write"] = cache_write * 1_000_000
+    return price
+
+
+def get_cost_per_million(model: str) -> Optional[dict[str, float]]:
+    """
+    Return {"input": <usd_per_1M>, "output": <usd_per_1M>} for a model id,
+    plus "cache_read"/"cache_write" when the source knows them (may be None).
+
+    Resolution order, for each candidate id:
+        1. Local override in price.py (model_pricing) — wins if present, lets us
+           patch wrong / missing prices without waiting for a LiteLLM release.
+        2. litellm.model_cost — the canonical table shipped with LiteLLM.
+
+    Candidates are tried most-specific first: the id as given, then with a
+    release-date suffix stripped (``gpt-5-nano-2025-08-07`` → ``gpt-5-nano``),
+    then the same two with a ``provider/`` prefix removed. Without this a
+    dated id that LiteLLM hasn't catalogued yet silently priced at zero.
+
+    Returns None if no candidate is known.
+    """
+    for candidate in _pricing_candidates(model):
+        price = _lookup_pricing(candidate)
+        if price:
+            return price
+    return None

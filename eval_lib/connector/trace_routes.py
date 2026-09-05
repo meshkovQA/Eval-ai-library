@@ -16,6 +16,9 @@ Two ways to mount:
   ``auth_verifier`` for JWT / workspace-scoped access.
 """
 
+import hmac
+import logging
+import os
 from typing import Any, Callable, Optional, Union
 
 from flask import Blueprint, g, jsonify, request
@@ -26,8 +29,42 @@ from eval_lib.connector.trace_storage import TraceStorage
 
 _datasets = {}  # Shared reference — set by cli.py
 
+logger = logging.getLogger("eval_lib.connector")
+
 
 AuthVerifier = Callable[[Any], Union[bool, dict]]
+
+
+def _bearer_token() -> str:
+    auth_header = request.headers.get("Authorization", "")
+    return auth_header[7:] if auth_header.startswith("Bearer ") else ""
+
+
+def _admin_key() -> str:
+    """Optional key guarding project create/list in legacy (no verifier) mode.
+
+    Set ``TRACE_RECEIVER_ADMIN_KEY``. Without it those endpoints stay open,
+    as before — but now with a startup warning instead of silence.
+    """
+    return os.getenv("TRACE_RECEIVER_ADMIN_KEY", "")
+
+
+def _allowed_projects_from_context() -> Optional[set]:
+    """Project scope carried by an ``auth_verifier`` verdict, if any.
+
+    A verifier may return ``{"projects": [...]}`` or ``{"project": "..."}``
+    to restrict the caller; when it does, every project-scoped endpoint
+    enforces it. Verdicts without either key keep the historical
+    "authenticated == allowed everywhere" behaviour.
+    """
+    ctx = getattr(g, "auth_context", None)
+    if not isinstance(ctx, dict):
+        return None
+    if isinstance(ctx.get("projects"), (list, set, tuple)):
+        return {str(p) for p in ctx["projects"]}
+    if ctx.get("project"):
+        return {str(ctx["project"])}
+    return None
 
 
 def create_trace_blueprint(
@@ -60,8 +97,18 @@ def create_trace_blueprint(
 
     store = TraceStore(storage=storage) if storage is not None else TraceStore()
 
-    def _authorise(project_name: Optional[str]) -> Optional[tuple]:
-        """Return an error response tuple if unauthorised, else ``None``."""
+    if auth_verifier is None and not _admin_key():
+        logger.warning(
+            "trace receiver: no auth_verifier and TRACE_RECEIVER_ADMIN_KEY unset — "
+            "project create/list endpoints are unauthenticated."
+        )
+
+    def _authorise(project_name: Optional[str], *, admin: bool = False) -> Optional[tuple]:
+        """Return an error response tuple if unauthorised, else ``None``.
+
+        ``admin=True`` marks project-management endpoints; in legacy mode
+        they are guarded by ``TRACE_RECEIVER_ADMIN_KEY`` when it is set.
+        """
         if auth_verifier is not None:
             try:
                 verdict = auth_verifier(request)
@@ -71,14 +118,19 @@ def create_trace_blueprint(
                 return jsonify({"error": "Unauthorised"}), 401
             if isinstance(verdict, dict):
                 g.auth_context = verdict
+            # Project isolation: honour a scope the verifier handed back.
+            allowed = _allowed_projects_from_context()
+            if project_name is not None and allowed is not None and project_name not in allowed:
+                return jsonify({"error": "Forbidden for this project"}), 403
             return None
 
-        # Legacy static-Bearer path — needs a project to look the hash up.
+        # Legacy static-Bearer path.
         if project_name is None:
+            admin_key = _admin_key()
+            if admin and admin_key and not hmac.compare_digest(_bearer_token(), admin_key):
+                return jsonify({"error": "Invalid admin key"}), 401
             return None
-        auth_header = request.headers.get("Authorization", "")
-        api_key = auth_header[7:] if auth_header.startswith("Bearer ") else ""
-        if not store.validate_api_key(project_name, api_key):
+        if not store.validate_api_key(project_name, _bearer_token()):
             return jsonify({"error": "Invalid API key"}), 401
         return None
 
@@ -86,26 +138,51 @@ def create_trace_blueprint(
 
     @bp.route("/api/traces/ingest", methods=["POST"])
     def ingest_trace():
-        """Receive a trace from a remote agent (TraceSender)."""
+        """Receive a trace — or one streamed span — from a remote agent.
+
+        Accepts both payload shapes ``TraceSender`` emits:
+
+        * ``{"project", "trace": {...}}`` — the complete trace.
+        * ``{"project", "trace_id", "partial_span": {...}}`` — one span
+          shipped early under ``TRACING_STREAM=true``. These were rejected
+          with 400 before, which made streaming mode lose everything.
+        """
         data = request.get_json(silent=True)
         if not data:
             return jsonify({"error": "Invalid JSON payload"}), 400
 
         project_name = data.get("project", "")
-        trace_data = data.get("trace", {})
+        trace_data = data.get("trace")
+        partial_span = data.get("partial_span")
 
         if not project_name:
             return jsonify({"error": "Missing 'project' field"}), 400
-        if not trace_data:
-            return jsonify({"error": "Missing 'trace' field"}), 400
+        if not trace_data and not partial_span:
+            return jsonify({"error": "Missing 'trace' or 'partial_span' field"}), 400
+
+        # Authorise BEFORE revealing whether the project exists — in legacy
+        # mode an unknown project simply fails the key check, so callers can
+        # no longer enumerate project names via 404-vs-401.
+        unauth = _authorise(project_name)
+        if unauth is not None:
+            return unauth
 
         state = store.get_project(project_name)
         if not state:
             return jsonify({"error": f"Project '{project_name}' not found"}), 404
 
-        unauth = _authorise(project_name)
-        if unauth is not None:
-            return unauth
+        if partial_span and not trace_data:
+            trace_id = data.get("trace_id") or partial_span.get("trace_id") or ""
+            stored = store.ingest_partial_span(project_name, trace_id, partial_span)
+            if not stored:
+                return jsonify({"error": "Failed to ingest partial span"}), 500
+            return jsonify({
+                "ok": True,
+                "trace_id": stored.trace_id,
+                "project": project_name,
+                "partial": True,
+                "span_count": stored.span_count,
+            }), 202
 
         # Ingest trace
         trace = store.ingest_trace(project_name, trace_data)
@@ -125,7 +202,7 @@ def create_trace_blueprint(
     @bp.route("/api/traces/projects", methods=["POST"])
     def create_project():
         """Create a trace receiver project."""
-        unauth = _authorise(None)
+        unauth = _authorise(None, admin=True)
         if unauth is not None:
             return unauth
 
@@ -186,11 +263,16 @@ def create_trace_blueprint(
 
     @bp.route("/api/traces/projects", methods=["GET"])
     def list_projects():
-        """List all trace receiver projects."""
-        unauth = _authorise(None)
+        """List trace receiver projects (scoped to the caller when a verifier
+        returned a project scope)."""
+        unauth = _authorise(None, admin=True)
         if unauth is not None:
             return unauth
-        return jsonify(store.list_projects())
+        projects = store.list_projects()
+        allowed = _allowed_projects_from_context()
+        if allowed is not None:
+            projects = [p for p in projects if p.get("project") in allowed]
+        return jsonify(projects)
 
     @bp.route("/api/traces/projects/<project>", methods=["GET"])
     def get_project(project: str):

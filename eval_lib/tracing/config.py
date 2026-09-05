@@ -60,6 +60,48 @@ class TracingConfig:
         return os.getenv("TRACING_STREAM", "false").lower() == "true"
 
     @staticmethod
+    def is_redact_enabled() -> bool:
+        """Redact credential-looking keys/values in serialized trace data.
+
+        Default ``true``. Set ``TRACING_REDACT=false`` only in a trusted,
+        local-only setup — traces are shipped and stored, and a captured
+        client object (``self`` on a decorated method) carries its API key.
+        """
+        return os.getenv("TRACING_REDACT", "true").lower() != "false"
+
+    @staticmethod
+    def get_max_retries() -> int:
+        """Retry attempts for a failed trace POST. Default: ``2`` (3 sends max).
+
+        Only transport errors, timeouts and retryable statuses (5xx, 408,
+        429) are retried; a 4xx is a contract problem and fails fast.
+        Set ``TRACING_MAX_RETRIES=0`` to disable retrying.
+        """
+        raw = os.getenv("TRACING_MAX_RETRIES")
+        if raw is None or not raw.strip():
+            return 2
+        try:
+            value = int(raw)
+        except ValueError:
+            return 2
+        return max(0, value)
+
+    @staticmethod
+    def get_retry_backoff() -> float:
+        """Seconds before the first retry, doubled on each further attempt.
+
+        Default ``0.5``. Set ``TRACING_RETRY_BACKOFF``.
+        """
+        raw = os.getenv("TRACING_RETRY_BACKOFF")
+        if raw is None or not raw.strip():
+            return 0.5
+        try:
+            value = float(raw)
+        except ValueError:
+            return 0.5
+        return max(0.0, value)
+
+    @staticmethod
     def get_max_field_length() -> Optional[int]:
         """Max characters kept per captured trace field (span input/output).
 

@@ -14,10 +14,12 @@ triggering evaluations lives in
 from __future__ import annotations
 
 import json
+import os
 import re
+import threading
 from abc import ABC, abstractmethod
 from pathlib import Path
-from threading import Lock
+from threading import RLock
 from typing import Any, Dict, List, Optional
 
 from eval_lib.connector.trace_models import StoredTrace, TraceProjectState
@@ -84,7 +86,9 @@ class InMemoryStorage(TraceStorage):
     """
 
     def __init__(self) -> None:
-        self._lock = Lock()
+        # Re-entrant so a subclass can hold it across its own work *and*
+        # the inherited in-memory update (FileBackedStorage.save_project).
+        self._lock = RLock()
         self._projects: Dict[str, TraceProjectState] = {}
         self._datasets: Dict[str, Dict[str, Any]] = {}
         self._eval_results: Dict[str, List[Dict[str, Any]]] = {}
@@ -195,12 +199,33 @@ class FileBackedStorage(InMemoryStorage):
                 pass
 
     def save_project(self, project_name: str, state: TraceProjectState) -> None:
-        super().save_project(project_name, state)
-        path = self._project_path(project_name)
-        if path is None:
-            return
-        path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(state.model_dump_json(indent=2))
+        """Snapshot the project to disk atomically.
+
+        The JSON is written to a temporary file and moved into place with
+        ``os.replace`` so a crash mid-write can never leave a truncated
+        file behind — ``_load_from_disk`` silently skips unreadable files,
+        which used to mean the whole project (config, dataset, every trace)
+        disappeared on the next restart. The write happens under the lock
+        so two concurrent ingests cannot interleave bytes in one file.
+        """
+        with self._lock:
+            super().save_project(project_name, state)
+            path = self._project_path(project_name)
+            if path is None:
+                return
+            path.parent.mkdir(parents=True, exist_ok=True)
+            tmp = path.with_name(
+                f".{path.name}.{os.getpid()}.{threading.get_ident()}.tmp"
+            )
+            try:
+                tmp.write_text(state.model_dump_json(indent=2), encoding="utf-8")
+                os.replace(tmp, path)
+            finally:
+                if tmp.exists():
+                    try:
+                        tmp.unlink()
+                    except OSError:
+                        pass
 
     def delete_project(self, project_name: str) -> None:
         super().delete_project(project_name)

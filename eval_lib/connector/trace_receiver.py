@@ -17,10 +17,12 @@ Thread-safe singleton (same pattern as ConnectorEngine).
 import os
 import re
 import hmac
+import json
 import hashlib
 import asyncio
 import threading
-from typing import Dict, List, Optional, Any
+from collections import OrderedDict
+from typing import Dict, List, Optional, Any, Iterator
 from datetime import datetime
 
 from eval_lib.connector.trace_models import (
@@ -155,6 +157,14 @@ class TraceStore:
         )
         return f"scrypt${salt.hex()}${derived.hex()}"
 
+    # scrypt is deliberately slow (~50 ms, 16 MiB per call). Every ingest
+    # presents the same key, so a verified (stored hash, sha256(key)) pair
+    # is remembered. The raw key is never stored; changing the project's
+    # hash naturally misses the cache.
+    _VERIFY_CACHE_MAX = 256
+    _verify_cache: "OrderedDict[tuple, bool]" = OrderedDict()
+    _verify_cache_lock = threading.Lock()
+
     @classmethod
     def _verify_api_key(cls, key: str, stored: str) -> bool:
         """Constant-time check of a presented key against a stored hash.
@@ -163,6 +173,12 @@ class TraceStore:
         digest produced by older versions.
         """
         if stored.startswith("scrypt$"):
+            cache_key = (stored, hashlib.sha256(key.encode("utf-8")).hexdigest())
+            with cls._verify_cache_lock:
+                cached = cls._verify_cache.get(cache_key)
+                if cached is not None:
+                    cls._verify_cache.move_to_end(cache_key)
+                    return cached
             try:
                 _, salt_hex, expected_hex = stored.split("$", 2)
                 salt = bytes.fromhex(salt_hex)
@@ -177,7 +193,13 @@ class TraceStore:
                 p=cls._SCRYPT_P,
                 dklen=len(expected),
             )
-            return hmac.compare_digest(derived, expected)
+            verdict = hmac.compare_digest(derived, expected)
+            with cls._verify_cache_lock:
+                cls._verify_cache[cache_key] = verdict
+                cls._verify_cache.move_to_end(cache_key)
+                while len(cls._verify_cache) > cls._VERIFY_CACHE_MAX:
+                    cls._verify_cache.popitem(last=False)
+            return verdict
         # Legacy SHA-256 digest — constant-time compare, no early exit.
         legacy = hashlib.sha256(key.encode("utf-8")).hexdigest()
         return hmac.compare_digest(legacy, stored)
@@ -192,44 +214,102 @@ class TraceStore:
 
     # ---- Trace ingestion ----
 
+    @staticmethod
+    def _coerce_text(value: Any) -> str:
+        """Trace ``input``/``output`` as text.
+
+        Structured values are serialised as JSON rather than ``str()``'d —
+        a Python repr (``{'q': 'x'}``) never matches a dataset row and is
+        not parseable by anything downstream.
+        """
+        if value is None:
+            return ""
+        if isinstance(value, str):
+            return value
+        try:
+            return json.dumps(value, ensure_ascii=False, default=str)
+        except (TypeError, ValueError):
+            return str(value)
+
+    @staticmethod
+    def _int_or_none(value: Any) -> Optional[int]:
+        if isinstance(value, bool) or value is None:
+            return None
+        if isinstance(value, (int, float)):
+            return int(value)
+        return None
+
     def ingest_trace(self, project: str, trace_data: Dict[str, Any]) -> Optional[StoredTrace]:
         state = self._projects.get(project)
         if not state:
             return None
 
+        usage = trace_data.get("usage") if isinstance(trace_data.get("usage"), dict) else None
+        metadata = trace_data.get("metadata") if isinstance(trace_data.get("metadata"), dict) else None
+
+        def _field(name: str) -> Any:
+            """Top-level value, falling back to the usage / metadata blocks."""
+            if trace_data.get(name) is not None:
+                return trace_data.get(name)
+            if usage and usage.get(name) is not None:
+                return usage.get(name)
+            if metadata and metadata.get(name) is not None:
+                return metadata.get(name)
+            return None
+
         trace = StoredTrace(
             trace_id=trace_data.get("trace_id", ""),
             project=project,
-            input=str(trace_data.get("input", "")),
-            output=str(trace_data.get("output", "")),
-            model=trace_data.get("model"),
-            input_tokens=trace_data.get("input_tokens"),
-            output_tokens=trace_data.get("output_tokens"),
+            input=self._coerce_text(_field("input")),
+            output=self._coerce_text(_field("output")),
+            model=_field("model"),
+            input_tokens=self._int_or_none(_field("input_tokens")),
+            output_tokens=self._int_or_none(_field("output_tokens")),
+            total_tokens=self._int_or_none(_field("total_tokens")),
+            cached_tokens=self._int_or_none(_field("cached_tokens")),
+            reasoning_tokens=self._int_or_none(_field("reasoning_tokens")),
             response_time=trace_data.get("response_time"),
+            started_at=trace_data.get("started_at"),
+            ended_at=trace_data.get("ended_at"),
             tools_called=trace_data.get("tools_called"),
             spans=trace_data.get("spans"),
             span_count=trace_data.get("span_count", 0),
-            cost_usd=trace_data.get("cost_usd"),
-            cost_source=trace_data.get("cost_source"),
+            cost_usd=_field("cost_usd"),
+            cost_source=_field("cost_source"),
+            usage=usage,
+            metadata=metadata,
+            session_id=_field("session_id"),
+            user_id=_field("user_id"),
+            num_turns=self._int_or_none(_field("num_turns")),
         )
 
-        # Check for duplicate trace_id
+        # Duplicate / upgrade check. A record assembled from streamed
+        # partial spans is superseded by the final trace (authoritative);
+        # a second full trace with the same id is a replay and is ignored.
         with self._lock:
-            existing_ids = {t.trace_id for t in state.traces}
-            if trace.trace_id in existing_ids:
-                return next(t for t in state.traces if t.trace_id == trace.trace_id)
+            existing = next((t for t in state.traces if t.trace_id == trace.trace_id), None)
+            if existing is not None:
+                if not existing.is_partial:
+                    return existing
+                trace.received_at = existing.received_at
+                # Keep any streamed spans the final payload does not carry.
+                if not trace.spans and existing.spans:
+                    trace.spans = existing.spans
+                    trace.span_count = trace.span_count or len(existing.spans)
+                state.traces.remove(existing)
 
         # Match with dataset
         query_idx = self._match_trace(state, trace)
-        if query_idx is not None:
-            trace.matched_query_index = query_idx
-            idx_key = str(query_idx)
-            with self._lock:
-                traces_list = state.query_traces.setdefault(idx_key, [])
+
+        # Reserve the run slot and append under ONE lock acquisition —
+        # doing them separately let two concurrent duplicates both pass the
+        # check above and take two slots.
+        with self._lock:
+            if query_idx is not None:
+                trace.matched_query_index = query_idx
+                traces_list = state.query_traces.setdefault(str(query_idx), [])
                 trace.run_index = len(traces_list)
                 traces_list.append(trace.trace_id)
-
-        with self._lock:
             state.traces.append(trace)
 
         # Persist both the trace and the updated project state — a
@@ -242,6 +322,85 @@ class TraceStore:
             self._check_and_trigger_evaluation(state)
 
         return trace
+
+    def ingest_partial_span(
+        self, project: str, trace_id: str, span: Dict[str, Any]
+    ) -> Optional[StoredTrace]:
+        """Accept one streamed span (``TRACING_STREAM=true`` on the agent).
+
+        Spans accumulate on a placeholder record flagged ``is_partial`` and
+        are de-duplicated by ``span_id``. The final trace payload later
+        upgrades the record in :meth:`ingest_trace`. Previously this shape
+        was answered with HTTP 400, so streaming lost every span.
+        """
+        state = self._projects.get(project)
+        if not state or not trace_id or not isinstance(span, dict):
+            return None
+
+        with self._lock:
+            existing = next((t for t in state.traces if t.trace_id == trace_id), None)
+            if existing is None:
+                existing = StoredTrace(
+                    trace_id=trace_id, project=project, is_partial=True, spans=[]
+                )
+                state.traces.append(existing)
+            elif not existing.is_partial:
+                # Final trace already stored — a late partial adds nothing.
+                return existing
+
+            known = {s.get("span_id") for s in (existing.spans or [])}
+            if span.get("span_id") not in known:
+                existing.spans = list(existing.spans or []) + [span]
+                existing.span_count = len(existing.spans)
+
+        self.storage.save_project(project, state)
+        return existing
+
+    # ---- Span flattening ----
+
+    @staticmethod
+    def _iter_spans(spans: List[Dict[str, Any]], parent_id: Optional[str] = None) -> Iterator[Dict[str, Any]]:
+        """Depth-first walk over the nested ``children`` tree the sender emits.
+
+        Yields every span with ``parent_span_id`` filled from the tree when
+        the payload did not carry it. The receiver used to look only at the
+        top-level list, so every nested llm/tool span was invisible to the
+        reliability metrics.
+        """
+        for span in spans or []:
+            if not isinstance(span, dict):
+                continue
+            node = dict(span)
+            if node.get("parent_span_id") is None and parent_id is not None:
+                node["parent_span_id"] = parent_id
+            children = node.pop("children", None) or []
+            yield node
+            yield from TraceStore._iter_spans(children, node.get("span_id"))
+
+    @classmethod
+    def _steps_from_spans(cls, spans: Optional[List[Dict[str, Any]]]) -> Optional[List[TraceStep]]:
+        if not spans:
+            return None
+        steps = [
+            TraceStep(
+                step_id=s.get("span_id"),
+                type=s.get("span_type", s.get("type", "custom")),
+                name=s.get("name"),
+                input=s.get("input"),
+                output=s.get("output"),
+                duration_ms=s.get("duration_ms"),
+                timestamp=s.get("start_time"),
+                status=s.get("status"),
+                error=s.get("error"),
+                error_type=s.get("error_type"),
+                parent_step_id=s.get("parent_span_id"),
+                metadata=s.get("metadata") or None,
+            )
+            for s in cls._iter_spans(spans)
+        ]
+        # Chronological order is what loop/sequence metrics expect.
+        steps.sort(key=lambda st: st.timestamp or 0)
+        return steps or None
 
     # ---- Matching ----
 
@@ -347,27 +506,21 @@ class TraceStore:
 
             primary = traces_for_query[0]
 
-            # Build execution_trace from spans
-            execution_trace = None
-            if primary.spans:
-                execution_trace = [
-                    TraceStep(
-                        type=s.get("span_type", s.get("type", "custom")),
-                        name=s.get("name"),
-                        input=s.get("input"),
-                        output=s.get("output"),
-                        duration_ms=s.get("duration_ms"),
-                        status=s.get("status"),
-                        error=s.get("error"),
-                    )
-                    for s in primary.spans
-                ]
+            # Build execution_trace from the full span tree
+            execution_trace = self._steps_from_spans(primary.spans)
 
             resource_usage = None
-            if primary.input_tokens or primary.output_tokens:
+            if (primary.input_tokens or primary.output_tokens
+                    or primary.cost_usd or primary.response_time):
+                total = primary.total_tokens
+                if total is None and (primary.input_tokens or primary.output_tokens):
+                    total = (primary.input_tokens or 0) + (primary.output_tokens or 0)
                 resource_usage = ResourceUsage(
                     input_tokens=primary.input_tokens,
                     output_tokens=primary.output_tokens,
+                    total_tokens=total,
+                    duration_ms=round(primary.response_time * 1000, 2) if primary.response_time else None,
+                    cost=primary.cost_usd,
                     model=primary.model,
                 )
 

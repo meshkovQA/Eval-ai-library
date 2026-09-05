@@ -35,7 +35,14 @@ class TraceProjectConfig(BaseModel):
 
 
 class StoredTrace(BaseModel):
-    """A single trace received from a remote agent."""
+    """A single trace received from a remote agent.
+
+    Mirrors the sender payload one-to-one so nothing is dropped on ingest:
+    ``usage`` is the accumulated counter block, ``metadata`` is the caller's
+    declared metadata object, verbatim. ``is_partial`` marks a record that
+    was assembled from streamed ``partial_span`` messages and is still
+    waiting for the authoritative final trace.
+    """
     trace_id: str
     project: str
     input: str = ""
@@ -43,12 +50,23 @@ class StoredTrace(BaseModel):
     model: Optional[str] = None
     input_tokens: Optional[int] = None
     output_tokens: Optional[int] = None
+    total_tokens: Optional[int] = None
+    cached_tokens: Optional[int] = None
+    reasoning_tokens: Optional[int] = None
     response_time: Optional[float] = None
+    started_at: Optional[str] = None
+    ended_at: Optional[str] = None
     tools_called: Optional[List[str]] = None
     spans: Optional[List[Dict[str, Any]]] = None
     span_count: int = 0
     cost_usd: Optional[float] = None
     cost_source: Optional[str] = None  # "reported" | "estimated"
+    usage: Optional[Dict[str, Any]] = None
+    metadata: Optional[Dict[str, Any]] = None
+    session_id: Optional[str] = None
+    user_id: Optional[str] = None
+    num_turns: Optional[int] = None
+    is_partial: bool = False
     received_at: str = Field(default_factory=lambda: datetime.now().isoformat())
     matched_query_index: Optional[int] = None
     run_index: int = 0

@@ -10,6 +10,7 @@ from typing import List, Dict, Any, Optional
 from .types import TraceSpan, SpanType
 from .tracer import tracer
 from .config import TracingConfig
+from .usage import span_token_usage
 
 
 def safe_str(obj: Any, max_length: Optional[int] = None) -> Optional[str]:
@@ -98,9 +99,17 @@ def extract_resource_usage(
     spans: List[TraceSpan],
     trace_metadata: Optional[Dict[str, Any]] = None
 ) -> Dict[str, Any]:
-    """Extract resource usage from LLM_CALL spans and trace metadata."""
+    """Extract resource usage from LLM_CALL spans and trace metadata.
+
+    Token counts come from every usage shape :mod:`.usage` understands
+    (LangChain ``llm_output``, OpenAI ``usage``, Anthropic, LlamaIndex),
+    not only LangChain's — the previous version returned ``None`` for an
+    OpenAI-shaped span. Declared trace-level totals still take precedence.
+    """
     total_input_tokens = 0
     total_output_tokens = 0
+    total_cached_tokens = 0
+    total_reasoning_tokens = 0
     total_duration_ms = 0.0
     model = None
 
@@ -108,14 +117,17 @@ def extract_resource_usage(
         if span.duration_ms:
             total_duration_ms += span.duration_ms
 
-        if span.span_type == SpanType.LLM_CALL and span.output:
-            output = span.output
-            if isinstance(output, dict):
-                llm_output = output.get("llm_output", {})
-                if llm_output:
-                    token_usage = llm_output.get("token_usage", {})
-                    total_input_tokens += token_usage.get("prompt_tokens", 0)
-                    total_output_tokens += token_usage.get("completion_tokens", 0)
+        if span.span_type == SpanType.LLM_CALL:
+            usage = span_token_usage(span)
+            if usage:
+                total_input_tokens += usage["input_tokens"]
+                total_output_tokens += usage["output_tokens"]
+                total_cached_tokens += usage["cached_tokens"]
+                total_reasoning_tokens += usage["reasoning_tokens"]
+            if model is None:
+                span_model = (span.metadata or {}).get("model")
+                if span_model:
+                    model = str(span_model)
 
     # Prefer trace-level metadata if available
     if trace_metadata:
@@ -123,6 +135,10 @@ def extract_resource_usage(
             total_input_tokens = trace_metadata["input_tokens"]
         if trace_metadata.get("output_tokens"):
             total_output_tokens = trace_metadata["output_tokens"]
+        if trace_metadata.get("cached_tokens"):
+            total_cached_tokens = trace_metadata["cached_tokens"]
+        if trace_metadata.get("reasoning_tokens"):
+            total_reasoning_tokens = trace_metadata["reasoning_tokens"]
         if trace_metadata.get("model"):
             model = trace_metadata["model"]
 
@@ -130,6 +146,8 @@ def extract_resource_usage(
         "input_tokens": total_input_tokens or None,
         "output_tokens": total_output_tokens or None,
         "total_tokens": (total_input_tokens + total_output_tokens) or None,
+        "cached_tokens": total_cached_tokens or None,
+        "reasoning_tokens": total_reasoning_tokens or None,
         "duration_ms": round(total_duration_ms, 2) if total_duration_ms else None,
         "model": model,
     }
@@ -170,6 +188,18 @@ def extract_test_case_data(trace_id: str) -> Dict[str, Any]:
         return {}
 
     trace_meta = tracer.sender.get_trace_metadata(trace_id)
+
+    # Accumulated add_trace_usage() totals fill any counter the caller did
+    # not declare, so this helper agrees with the shipped payload (declared
+    # > accumulated > span roll-up — the same precedence as the sender).
+    accumulated = tracer.sender.get_trace_usage(trace_id)
+    if accumulated.get("llm_calls"):
+        trace_meta = dict(trace_meta)
+        for key in ("input_tokens", "output_tokens", "cached_tokens", "reasoning_tokens"):
+            if trace_meta.get(key) is None and accumulated.get(key):
+                trace_meta[key] = accumulated[key]
+        if trace_meta.get("cost_usd") is None and accumulated.get("cost_usd"):
+            trace_meta["cost_usd"] = accumulated["cost_usd"]
 
     result = {}
 

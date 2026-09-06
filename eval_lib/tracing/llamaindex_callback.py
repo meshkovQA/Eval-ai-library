@@ -32,12 +32,14 @@ Usage:
     tracer.end_trace()
 """
 
+import re
 import threading
 from collections import OrderedDict
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, Tuple
 
 from .types import TraceSpan, SpanType
 from .tracer import tracer
+from .context import get_parent_span_id
 from .trace_utils import safe_str
 from .usage import usage_from_response
 
@@ -329,18 +331,44 @@ class EvalLibSpanHandler:
     interface.
 
     This is the component that makes the workflow API observable: every method
-    decorated with ``@dispatcher.span`` opens one here, including
-    ``FunctionTool.acall``, which the workflow agents use for tool execution
-    and which emits no event of its own.
+    decorated with ``@dispatcher.span`` opens one here.
 
-    Parentage comes exclusively from LlamaIndex's own ``parent_span_id``. The
-    handler does **not** move the tracer's context pointer — letting both
-    mechanisms run at once (start_span moving the contextvar, then overwriting
-    ``parent_span_id`` by hand) produced contradictory trees under concurrency.
+    **Where tool calls come from.** The workflow runtime (``workflows``
+    package) does not instrument tool execution itself — ``FunctionTool.acall``
+    carries no span and no event. The only place a tool invocation surfaces is
+    the ``call_tool`` *step* span: qualname ``<Workflow>.call_tool`` (the runtime
+    ``functools.wraps`` the real step), tags ``llamaindex.step.input_event ==
+    "ToolCall"`` / ``llamaindex.step.input_summary``, and the ``ToolCall`` event
+    in ``bound_args``. That step span *is* the ``TOOL_CALL`` here, named after
+    the tool, with ``tool_kwargs`` as input and ``ToolCallResult.tool_output``
+    as output. Other steps become ``AGENT_STEP`` ``step:<name>``; the run span
+    ``<Workflow>.run-<uuid>`` is the root.
+
+    **One invocation, one tool span.** A ``TOOL_CALL`` that opens *inside* an
+    open ``TOOL_CALL`` of the same name is the same invocation instrumented one
+    layer deeper (a ``@trace_tool``-decorated function, another handler) — not a
+    repeat. It is folded into the outer span (output/error enrich it) instead
+    of becoming a second span. The rule is structural — nesting under a
+    same-named tool — never "same name and arguments": sibling repeats stay
+    separate so ``repeated_failure`` detection keeps working.
+
+    Parentage comes from LlamaIndex's own ``parent_span_id``; when LlamaIndex
+    reports no parent the span inherits the caller's context span (an outer
+    ``tracer.trace()``). Spans created here are also published as the
+    current context span for their duration, so user code running inside a
+    step (decorators, ``tracer.trace``) nests under the step. That is safe
+    now because ``end_span`` only rewinds the pointer when the closing span is
+    the one on top.
     """
 
     def __init__(self):
         self._spans: Dict[str, TraceSpan] = {}
+        # llama_index span id -> the outer TraceSpan it was folded into.
+        self._aliases: Dict[str, TraceSpan] = {}
+        # eval-lib span id -> error captured from a folded inner span, to be
+        # applied when the outer span closes (finish() would otherwise
+        # overwrite an early error status with "success").
+        self._pending_errors: Dict[str, Any] = {}
         self._lock = threading.Lock()
         # BaseSpanHandler exposes these; keep them so code that introspects a
         # span handler (or a version that reads them) still works.
@@ -366,7 +394,7 @@ class EvalLibSpanHandler:
         tags: Optional[Dict[str, Any]] = None,
         **kwargs,
     ) -> None:
-        if id_ in self._spans:
+        if id_ in self._spans or id_ in self._aliases:
             return
         self.new_span(
             id_=id_,
@@ -406,10 +434,27 @@ class EvalLibSpanHandler:
     # ------------------------------------------------------------- helpers
 
     @staticmethod
-    def _classify(id_: str, instance: Any, tags: Optional[Dict[str, Any]]) -> tuple:
+    def _classify(
+        id_: str,
+        instance: Any,
+        tags: Optional[Dict[str, Any]],
+        bound_args: Any = None,
+    ) -> tuple:
         """Return ``(SpanType, name)`` for a LlamaIndex span."""
         qualname = _qualname_from_span_id(id_)
         lowered = qualname.lower()
+
+        # Workflow runtime spans first — their identity is in tags/bound_args,
+        # and a "ToolCall" step must not fall into the "tool" tag heuristic
+        # as an anonymous tool_call, nor be lost as a generic agent step.
+        if _WORKFLOW_RUN_RE.match(id_ or ""):
+            return SpanType.AGENT_STEP, qualname or "workflow.run"
+        if _is_workflow_step(tags, instance):
+            tool = _workflow_tool_call(bound_args, tags)
+            if tool is not None:
+                return SpanType.TOOL_CALL, tool[0]
+            step = qualname.rsplit(".", 1)[-1] if qualname else ""
+            return SpanType.AGENT_STEP, f"step:{step}" if step else "agent_step"
 
         if any(frag in lowered for frag in _TOOL_QUALNAMES):
             return SpanType.TOOL_CALL, _tool_name(instance, qualname)
@@ -454,22 +499,41 @@ class EvalLibSpanHandler:
         **kwargs,
     ) -> Any:
         """Called when LlamaIndex creates a new span."""
-        span_type, name = self._classify(id_, instance, tags)
+        span_type, name = self._classify(id_, instance, tags, bound_args)
 
-        # Resolve the parent through LlamaIndex's own id mapping. `None` here
-        # is meaningful (a root span), so it is passed explicitly rather than
-        # letting the tracer fall back to the ambient context.
+        # Resolve the parent through LlamaIndex's own id mapping.
         with self._lock:
             parent = self._spans.get(parent_span_id) if parent_span_id else None
-        resolved_parent = parent.span_id if parent else None
+            parent = parent or (self._aliases.get(parent_span_id) if parent_span_id else None)
+
+        # Same invocation, one layer deeper: fold into the open tool span.
+        if span_type == SpanType.TOOL_CALL:
+            outer = self._open_tool_ancestor(parent, name)
+            if outer is not None:
+                with self._lock:
+                    self._aliases[id_] = outer
+                _register_active(id_, outer)
+                return id_
+
+        input_data = _bound_args_input(bound_args, span_type)
+        if span_type == SpanType.TOOL_CALL:
+            tool = _workflow_tool_call(bound_args, tags)
+            if tool is not None and tool[1] is not None:
+                input_data = tool[1]
+
+        kwargs_parent: Dict[str, Any] = {}
+        if parent is not None:
+            kwargs_parent["parent_span_id"] = parent.span_id
+        # else: LlamaIndex reports no parent — inherit the caller's context
+        # span so the run nests under an outer tracer.trace(), if any.
 
         span = tracer.start_span(
             name=name,
             span_type=span_type,
-            input_data=_bound_args_input(bound_args, span_type),
+            input_data=input_data,
             metadata=dict(tags) if tags else None,
-            parent_span_id=resolved_parent,
-            set_current=False,
+            set_current=True,
+            **kwargs_parent,
         )
         if span:
             with self._lock:
@@ -479,6 +543,28 @@ class EvalLibSpanHandler:
             _register_active(id_, span)
 
         return id_
+
+    def _open_tool_ancestor(self, parent: Optional[TraceSpan], name: str) -> Optional[TraceSpan]:
+        """Nearest open TOOL_CALL ancestor with the same tool name, if any.
+
+        Walks the eval-lib parent chain through the spans this handler owns,
+        then checks the caller's context span (a ``@trace_tool`` frame).
+        """
+        with self._lock:
+            by_id = {s.span_id: s for s in self._spans.values()}
+        node = parent
+        seen = set()
+        while node is not None and node.span_id not in seen:
+            seen.add(node.span_id)
+            if node.span_type == SpanType.TOOL_CALL and node.name == name:
+                return node
+            node = by_id.get(node.parent_span_id) if node.parent_span_id else None
+        ctx_id = get_parent_span_id()
+        if ctx_id and ctx_id in by_id:
+            ctx = by_id[ctx_id]
+            if ctx.span_type == SpanType.TOOL_CALL and ctx.name == name:
+                return ctx
+        return None
 
     def prepare_to_exit_span(
         self,
@@ -491,15 +577,34 @@ class EvalLibSpanHandler:
         """Called when a LlamaIndex span exits successfully."""
         with self._lock:
             span = self._spans.pop(id_, None)
+            alias = self._aliases.pop(id_, None)
         _unregister_active(id_)
+
+        if alias is not None:
+            # Folded inner span: contribute output/error to the outer tool
+            # span, which the outer exit will close.
+            error = _tool_error(result)
+            output = _tool_output(result)
+            if output is not None and alias.output is None:
+                alias.output = output
+            if error:
+                with self._lock:
+                    self._pending_errors.setdefault(alias.span_id, error)
+            return
+
         if not span:
             return
 
         # A tool that reports failure in-band is an error, not a success.
         error = _tool_error(result)
+        with self._lock:
+            inner_error = self._pending_errors.pop(span.span_id, None)
+        error = error or inner_error
         # Keep whatever the event handler already attached (e.g. the parsed
         # ChatResponse) when the raw dispatcher result adds nothing.
-        output = safe_str(result) if result is not None else span.output
+        output = _tool_output(result)
+        if output is None:
+            output = span.output
         tracer.end_span(span, output=output, error=error)
 
     def prepare_to_drop_span(
@@ -513,7 +618,12 @@ class EvalLibSpanHandler:
         """Called when a LlamaIndex span drops due to error."""
         with self._lock:
             span = self._spans.pop(id_, None)
+            alias = self._aliases.pop(id_, None)
         _unregister_active(id_)
+        if alias is not None:
+            with self._lock:
+                self._pending_errors.setdefault(alias.span_id, err or "Span dropped")
+            return
         if not span:
             return
         tracer.end_span(span, error=err or "Span dropped")
@@ -549,12 +659,68 @@ def _bound_args_input(bound_args: Any, span_type: SpanType) -> Optional[Any]:
     return safe_str(payload)
 
 
-def _tool_error(result: Any) -> Optional[str]:
-    """Return an error message when a tool output signals failure in-band."""
+# The workflow run span: "<Workflow>.run-<uuid>" (runtime step_function.py).
+_WORKFLOW_RUN_RE = re.compile(r"^[A-Za-z_][\w]*\.run-[0-9a-f]{8}-")
+_STEP_TAG_EVENT = "llamaindex.step.input_event"
+_STEP_TAG_SUMMARY = "llamaindex.step.input_summary"
+
+
+def _is_workflow_step(tags: Optional[Dict[str, Any]], instance: Any) -> bool:
+    """A ``workflows`` runtime step span (tagged by the step runner)."""
+    if tags and _STEP_TAG_EVENT in tags:
+        return True
+    return False
+
+
+def _workflow_tool_call(bound_args: Any, tags: Optional[Dict[str, Any]]) -> Optional[Tuple[str, Any]]:
+    """``(tool_name, tool_kwargs)`` when a step executes a ``ToolCall`` event.
+
+    The event object is in ``bound_args`` (``ev`` of ``call_tool``); the tags
+    carry a rendered summary as a fallback.
+    """
+    arguments = getattr(bound_args, "arguments", None) or {}
+    try:
+        values = list(arguments.values())
+    except Exception:
+        values = []
+    for value in values:
+        if hasattr(value, "tool_name") and hasattr(value, "tool_kwargs"):
+            name = getattr(value, "tool_name", None)
+            if name:
+                return str(name), getattr(value, "tool_kwargs", None)
+    if tags and tags.get(_STEP_TAG_EVENT) == "ToolCall":
+        summary = str(tags.get(_STEP_TAG_SUMMARY) or "")
+        match = re.search(r"tool_name=['\"]([^'\"]+)", summary)
+        return (match.group(1) if match else "tool_call"), None
+    return None
+
+
+def _tool_payload(result: Any) -> Any:
+    """The ``ToolOutput`` inside a ``ToolCallResult`` / ``ToolOutput`` result."""
     if result is None:
         return None
-    if getattr(result, "is_error", False):
-        content = getattr(result, "content", None) or getattr(result, "raw_output", None)
+    inner = getattr(result, "tool_output", None)
+    return inner if inner is not None else result
+
+
+def _tool_output(result: Any) -> Optional[Any]:
+    """Tool result content for the span output, or ``None``."""
+    payload = _tool_payload(result)
+    if payload is None:
+        return None
+    content = getattr(payload, "content", None)
+    if content is not None:
+        return safe_str(content)
+    return safe_str(payload)
+
+
+def _tool_error(result: Any) -> Optional[str]:
+    """Return an error message when a tool output signals failure in-band."""
+    payload = _tool_payload(result)
+    if payload is None:
+        return None
+    if getattr(payload, "is_error", False):
+        content = getattr(payload, "content", None) or getattr(payload, "raw_output", None)
         return safe_str(content) or "tool reported is_error=True"
     return None
 

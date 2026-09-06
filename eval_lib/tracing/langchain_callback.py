@@ -175,7 +175,12 @@ class EvalLibCallbackHandler(BaseCallbackHandler):
             input_data=input_data,
             metadata=metadata,
             parent_span_id=parent_span_id,
-            set_current=False,
+            # Tool spans are published as the context span while the tool
+            # runs (run_inline=True keeps callbacks in the caller's context),
+            # so a @trace_tool-decorated tool function nests under this span
+            # instead of becoming a sibling duplicate. end_span only rewinds
+            # the pointer when this span is on top, so it is safe.
+            set_current=(span_type == SpanType.TOOL_CALL),
         )
         if span is not None:
             with self._lock:

@@ -10,6 +10,7 @@ from typing import List, Dict, Any, Optional
 from .types import TraceSpan, SpanType
 from .tracer import tracer
 from .config import TracingConfig
+from .spans import top_level_tool_calls
 from .usage import span_token_usage
 
 
@@ -67,18 +68,23 @@ def spans_to_trace_steps(spans: List[TraceSpan]) -> List[Dict[str, Any]]:
 
 
 def extract_tools_called(spans: List[TraceSpan]) -> List[str]:
-    """Extract tool names from TOOL_CALL spans."""
-    tool_span_ids = {
-        s.span_id for s in spans
-        if s.span_type == SpanType.TOOL_CALL
-    }
-    tools = []
-    for span in spans:
-        if span.span_type == SpanType.TOOL_CALL:
-            # Only top-level tool calls (parent is not a tool call)
-            if span.parent_span_id not in tool_span_ids:
-                tools.append(span.name)
-    return tools
+    """Tool names, one per distinct invocation.
+
+    A tool span nested under, or time-contained within, a same-named tool
+    span is the same call recorded by a second instrumentation layer and is
+    not listed again (see :mod:`eval_lib.tracing.spans`).
+    """
+    tool_spans = [s for s in spans if s.span_type == SpanType.TOOL_CALL]
+    return [
+        s.name for s in top_level_tool_calls(
+            tool_spans,
+            get_id=lambda s: s.span_id,
+            get_parent=lambda s: s.parent_span_id,
+            get_name=lambda s: s.name,
+            get_start=lambda s: s.start_time,
+            get_end=lambda s: s.end_time,
+        )
+    ]
 
 
 def extract_reasoning(spans: List[TraceSpan]) -> Optional[str]:

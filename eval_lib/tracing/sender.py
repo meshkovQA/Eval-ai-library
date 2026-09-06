@@ -30,6 +30,7 @@ from typing import Any, Dict, List, Optional
 import aiohttp
 
 from .config import TracingConfig
+from .spans import top_level_tool_calls
 from .types import TraceSpan, _to_iso
 from .usage import span_token_usage as _span_token_usage
 
@@ -778,14 +779,20 @@ class TraceSender:
             if root_duration_ms:
                 response_time = round(root_duration_ms / 1000, 3)
 
-        # Collect tools called during the trace (only top-level tool calls, not nested)
-        tool_span_ids = {span.span_id for span in spans if span.span_type and span.span_type.value == "tool_call"}
-
-        tools_called = []
-        for span in spans:
-            if span.span_type and span.span_type.value == "tool_call":
-                if span.parent_span_id not in tool_span_ids:
-                    tools_called.append(span.name)
+        # Tools called during the trace — one entry per distinct invocation
+        # (a nested or time-contained same-named tool span is the same call
+        # recorded by a second layer; see eval_lib.tracing.spans).
+        tool_spans = [s for s in spans if s.span_type and s.span_type.value == "tool_call"]
+        tools_called = [
+            s.name for s in top_level_tool_calls(
+                tool_spans,
+                get_id=lambda s: s.span_id,
+                get_parent=lambda s: s.parent_span_id,
+                get_name=lambda s: s.name,
+                get_start=lambda s: s.start_time,
+                get_end=lambda s: s.end_time,
+            )
+        ]
 
         # ---- usage: accumulated > span roll-up ---------------------------
         rolled = _empty_usage()

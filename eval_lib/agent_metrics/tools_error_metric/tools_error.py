@@ -21,6 +21,7 @@ from eval_lib.metric_pattern import MetricPattern
 from eval_lib.testcases_schema import EvalTestCase
 from eval_lib.llm_client import chat_complete
 from eval_lib.utils import extract_json_block
+from eval_lib.tracing.spans import top_level_tool_calls
 
 
 class ToolsErrorMetric(MetricPattern):
@@ -275,6 +276,29 @@ JSON:"""
         """
         steps = getattr(test_case, "execution_trace", None) or []
         tool_steps = [s for s in steps if str(self._get(s, "type") or "").lower() == "tool_call"]
+
+        # One line per *invocation*. A tool step nested under another tool
+        # step, or a same-named one whose time window lies inside another's,
+        # is the same call recorded by a second instrumentation layer (a
+        # decorated function inside a framework's tool step) — not a retry.
+        # The rules are structural, never "same name and arguments": sibling
+        # repeats run one after another and are all kept, because genuine
+        # retries are exactly what `repeated_failure` has to see.
+        def _end(step: Any) -> Optional[float]:
+            start, duration = self._get(step, "timestamp"), self._get(step, "duration_ms")
+            if start is None or duration is None:
+                return None
+            return float(start) + float(duration) / 1000.0
+
+        tool_steps = top_level_tool_calls(
+            tool_steps,
+            get_id=lambda s: self._get(s, "step_id"),
+            get_parent=lambda s: self._get(s, "parent_step_id"),
+            get_name=lambda s: self._get(s, "name"),
+            get_start=lambda s: self._get(s, "timestamp"),
+            get_end=_end,
+        )
+
         if tool_steps:
             # Keep chronological order when timestamps are present.
             if all(self._get(s, "timestamp") is not None for s in tool_steps):

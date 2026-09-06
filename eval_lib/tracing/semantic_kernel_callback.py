@@ -314,7 +314,9 @@ def build_sk_filters() -> Dict[str, Callable]:
             input_data=args,
             metadata=metadata,
             parent_span_id=_parent_id(),
-            set_current=False,
+            # A tool span is the context span while the function runs, so a
+            # decorated implementation nests under it (no sibling duplicate).
+            set_current=(span_type == SpanType.TOOL_CALL),
         )
         token = _push(span)
         scope_token = None
@@ -393,7 +395,7 @@ def build_sk_filters() -> Dict[str, Callable]:
             input_data=args,
             metadata=metadata,
             parent_span_id=_parent_id(),
-            set_current=False,
+            set_current=True,  # see the function-invocation filter above
         )
         record: Dict[str, Any] = {
             "function": func,

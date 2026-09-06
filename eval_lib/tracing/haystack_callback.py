@@ -379,7 +379,10 @@ class EvalLibHaystackTracer:
             span_type=span_type,
             metadata=metadata,
             parent_span_id=parent_span_id,
-            set_current=False,
+            # Tool spans become the context span while the tool executes, so
+            # a decorated tool function nests here rather than duplicating
+            # the call as a sibling.
+            set_current=(span_type == SpanType.TOOL_CALL),
         )
 
         hs_span = EvalLibHaystackSpan(

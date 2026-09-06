@@ -185,49 +185,114 @@ JSON:"""
 
     # ==================== CORE EVALUATION ====================
 
-    def _extract_tool_history(self, test_case: EvalTestCase) -> str:
-        """Extract tool call history from test case"""
+    # ---- tool-history rendering ------------------------------------------
 
-        # Try to get tool history from various possible locations
-        tool_history = None
+    @staticmethod
+    def _get(step: Any, key: str, default: Any = None) -> Any:
+        """Field access for a ``TraceStep`` model or a plain dict."""
+        if isinstance(step, dict):
+            return step.get(key, default)
+        return getattr(step, key, default)
 
-        # Check if there's a tool_calls field
-        if hasattr(test_case, 'tool_calls'):
-            tool_history = test_case.tool_calls
-        # Check context
-        elif hasattr(test_case, 'context') and test_case.context:
-            if isinstance(test_case.context, dict) and 'tool_calls' in test_case.context:
-                tool_history = test_case.context['tool_calls']
-            elif isinstance(test_case.context, str) and 'tool' in test_case.context.lower():
-                tool_history = test_case.context
-        # Check expected_output if it contains tool info
-        elif hasattr(test_case, 'expected_output') and test_case.expected_output:
-            if isinstance(test_case.expected_output, str) and 'tool' in test_case.expected_output.lower():
-                tool_history = test_case.expected_output
+    @staticmethod
+    def _render_value(value: Any) -> str:
+        """Compact, JSON-shaped rendering of a tool output."""
+        if value is None:
+            return "N/A"
+        if isinstance(value, str):
+            return value
+        try:
+            return json.dumps(value, ensure_ascii=False, default=str)
+        except (TypeError, ValueError):
+            return str(value)
 
-        if tool_history is None:
-            return "No tool calls were made"
+    @classmethod
+    def _render_args(cls, value: Any) -> str:
+        """``key=value`` argument list, matching the few-shot examples."""
+        if value is None:
+            return ""
+        if isinstance(value, dict):
+            return ", ".join(
+                f"{k}={json.dumps(v, ensure_ascii=False, default=str)}"
+                for k, v in value.items()
+            )
+        if isinstance(value, str):
+            return value
+        return cls._render_value(value)
 
-        # Format tool history if it's a list or dict
+    @classmethod
+    def _render_steps(cls, steps: List[Any]) -> str:
+        """``N. name(args) -> output`` lines; failed calls show ``ERROR: …``."""
+        lines = []
+        for i, step in enumerate(steps, 1):
+            name = cls._get(step, "name") or "unknown_tool"
+            args = cls._render_args(cls._get(step, "input"))
+            status = str(cls._get(step, "status") or "").lower()
+            error = cls._get(step, "error")
+            output = cls._get(step, "output")
+            if status == "error" or error:
+                detail = error or output or "unknown error"
+                error_type = cls._get(step, "error_type")
+                prefix = f"ERROR: {error_type} - " if error_type and error_type != "Exception" else "ERROR: "
+                result = f"{prefix}{cls._render_value(detail)}"
+            else:
+                result = cls._render_value(output)
+            lines.append(f"{i}. {name}({args}) -> {result}")
+        return "\n".join(lines)
+
+    @classmethod
+    def _render_legacy(cls, tool_history: Any) -> str:
+        """Render the free-form ``tool_calls`` shapes accepted via ``extra_fields``."""
         if isinstance(tool_history, list):
             formatted = []
             for i, call in enumerate(tool_history, 1):
                 if isinstance(call, dict):
-                    func_name = call.get(
-                        'function', call.get('name', 'unknown'))
-                    params = call.get('parameters', call.get('args', {}))
-                    result = call.get('result', call.get('output', 'N/A'))
-                    formatted.append(f"{i}. {func_name}({params}) -> {result}")
+                    func_name = call.get("function", call.get("name", "unknown"))
+                    params = call.get("parameters", call.get("args", call.get("input", {})))
+                    result = call.get("result", call.get("output", "N/A"))
+                    formatted.append(f"{i}. {func_name}({cls._render_args(params)}) -> {cls._render_value(result)}")
                 else:
                     formatted.append(f"{i}. {call}")
             return "\n".join(formatted)
-        elif isinstance(tool_history, dict):
-            formatted = []
-            for i, (call_id, call_data) in enumerate(tool_history.items(), 1):
-                formatted.append(f"{i}. {call_data}")
-            return "\n".join(formatted)
-        else:
-            return str(tool_history)
+        if isinstance(tool_history, dict):
+            return "\n".join(
+                f"{i}. {call_data}" for i, (_, call_data) in enumerate(tool_history.items(), 1)
+            )
+        return str(tool_history)
+
+    def _extract_tool_history(self, test_case: EvalTestCase) -> str:
+        """Extract tool call history from the test case.
+
+        Source of truth is ``execution_trace`` — the spans collected by the
+        tracing subsystem (online) or loaded from a trace file (offline).
+        Only ``tool_call`` steps are rendered, in order, as
+        ``name(args) -> output`` with ``ERROR: …`` for failed calls, which is
+        the shape the few-shot examples teach the judge.
+
+        Fallbacks, in order: ``extra_fields["tool_calls"]`` (free-form list /
+        dict), then ``tools_called`` (names only — arguments and results are
+        unknown, and the judge is told so).
+        """
+        steps = getattr(test_case, "execution_trace", None) or []
+        tool_steps = [s for s in steps if str(self._get(s, "type") or "").lower() == "tool_call"]
+        if tool_steps:
+            # Keep chronological order when timestamps are present.
+            if all(self._get(s, "timestamp") is not None for s in tool_steps):
+                tool_steps = sorted(tool_steps, key=lambda s: self._get(s, "timestamp"))
+            return self._render_steps(tool_steps)
+
+        extra = getattr(test_case, "extra_fields", None) or {}
+        legacy = extra.get("tool_calls") if isinstance(extra, dict) else None
+        if legacy:
+            return self._render_legacy(legacy)
+
+        names = getattr(test_case, "tools_called", None) or []
+        if names:
+            lines = [f"{i}. {name}(...) -> (result not recorded)" for i, name in enumerate(names, 1)]
+            lines.append("(Only tool names are available — arguments and results were not captured.)")
+            return "\n".join(lines)
+
+        return "No tool calls were made"
 
     async def evaluate(self, test_case: EvalTestCase) -> Dict[str, Any]:
         """

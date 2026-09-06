@@ -169,8 +169,12 @@ JSON:"""
                 predicted_class = torch.argmax(probabilities, dim=-1).item()
                 confidence = torch.max(probabilities).item()
 
-            # Model outputs: 0 = safe, 1 = injection
-            detected = predicted_class == 1
+            # Resolve the injection class through config.id2label
+            # ({0: SAFE, 1: INJECTION} for this checkpoint) rather than
+            # trusting a fixed index.
+            from eval_lib.security_metrics._hf_classifier import harmful_label_index, id2label_of
+            harmful_idx, _ = harmful_label_index(id2label_of(self._deberta_model.config), default=1)
+            detected = predicted_class == harmful_idx
 
             return {
                 "detected": detected,

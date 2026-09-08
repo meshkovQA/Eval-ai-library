@@ -151,6 +151,8 @@ METRIC_REGISTRY = {
         "required_fields": ["actual_output"],
         "params": [
             {"name": "threshold", "type": "float", "default": 0.5, "min": 0, "max": 1},
+            {"name": "custom_patterns", "type": "text", "default": ""},
+            {"name": "use_default_patterns", "type": "bool", "default": True},
         ],
     },
     "GEval": {
